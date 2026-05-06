@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ticket Cita - CitaMed</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: #e5e7eb;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .ticket {
+            width: 300px;
+            margin: 32px auto;
+            background: #fff;
+            font-size: 11px;
+            color: #111;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.12);
+        }
+
+        .logo-area {
+            background: #fff;
+            padding: 20px 16px 16px;
+            text-align: center;
+            border-bottom: 1px dashed #ccc;
+        }
+
+        .logo-area img {
+            width: 80px;
+            height: auto;
+        }
+
+        .cuerpo {
+            padding: 12px 16px;
+        }
+
+        .info-ticket {
+            font-size: 10.5px;
+            margin-bottom: 4px;
+            color: #222;
+        }
+
+        .info-ticket strong {
+            color: #555;
+            font-weight: 600;
+        }
+
+        .separador {
+            border: none;
+            border-top: 1px dashed #ccc;
+            margin: 10px 0;
+        }
+
+        .separador-doble {
+            border: none;
+            border-top: 2px solid #111;
+            margin: 10px 0;
+        }
+
+        .seccion-titulo {
+            font-size: 9.5px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #126565;
+            margin: 10px 0 5px;
+        }
+
+        .tabla-servicios {
+            width: 100%;
+            margin: 6px 0;
+        }
+
+        .tabla-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 9.5px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #555;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 4px;
+            margin-bottom: 4px;
+        }
+
+        .col-concepto { flex: 1; }
+        .col-monto { text-align: right; min-width: 60px; }
+
+        .totales { margin-top: 8px; }
+
+        .fila-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10.5px;
+            color: #444;
+            margin-bottom: 3px;
+        }
+
+        .fila-total.final {
+            font-size: 13px;
+            font-weight: 700;
+            color: #126565;
+            margin-top: 6px;
+            padding-top: 6px;
+            border-top: 1px solid #ddd;
+        }
+
+        .moneda {
+            font-size: 9px;
+            font-weight: 400;
+            color: #888;
+            margin-right: 1px;
+        }
+
+        .fila-total.final .moneda {
+            color: #126565;
+        }
+
+        .mensaje {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #111;
+            margin-bottom: 6px;
+            text-align: center;
+        }
+
+        /* Pie verde con datos */
+        .pie {
+            background: #126565;
+            padding: 12px 16px 16px;
+            text-align: center;
+        }
+
+        .pie-info {
+            color: rgba(255,255,255,0.70);
+            font-size: 9.5px;
+            margin-top: 3px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="ticket">
+
+    <!-- LOGO -->
+    <div class="logo-area">
+        <img src="https://res.cloudinary.com/dxtmosl3k/image/upload/v1777662957/logoCitaMed_nizz29.png" alt="CitaMed">
+    </div>
+
+    <!-- CUERPO -->
+    <div class="cuerpo">
+
+        <div class="info-ticket"><strong>N° CITA:</strong> {{numeroCita}}</div>
+        <div class="info-ticket"><strong>FECHA:</strong> {{fecha}}</div>
+        <div class="info-ticket"><strong>HORA:</strong> {{hora}}</div>
+
+        <hr class="separador">
+
+        <div class="seccion-titulo">Datos del paciente</div>
+        <div class="info-ticket"><strong>PACIENTE:</strong> {{cliente}}</div>
+        <div class="info-ticket"><strong>DNI:</strong> {{dni}}</div>
+
+        <hr class="separador">
+
+        <div class="seccion-titulo">Detalle de la atención</div>
+        <div class="info-ticket"><strong>MÉDICO:</strong> {{medico}}</div>
+        <div class="info-ticket"><strong>ESPECIALIDAD:</strong> {{especialidad}}</div>
+
+        <hr class="separador">
+
+        <div class="tabla-servicios">
+            <div class="tabla-header">
+                <div class="col-concepto">Concepto</div>
+                <div class="col-monto">Monto</div>
+            </div>
+            <div id="servicios">
+                {{servicios}}
+            </div>
+        </div>
+
+        <hr class="separador">
+
+        <div class="info-ticket"><strong>MÉTODO DE PAGO:</strong> {{metodoPago}}</div>
+
+        <div class="totales">
+            <div class="fila-total">
+                <div>Subtotal:</div>
+                <div><span class="moneda">S/.</span>{{subtotal}}</div>
+            </div>
+            <div class="fila-total">
+                <div>Descuento:</div>
+                <div><span class="moneda">S/.</span>{{descuento}}</div>
+            </div>
+            <div class="fila-total final">
+                <div>TOTAL:</div>
+                <div><span class="moneda">S/.</span>{{monto}}</div>
+            </div>
+        </div>
+
+        <hr class="separador-doble">
+
+        <div class="mensaje">¡Gracias por confiar en CitaMed!</div>
+
+    </div>
+
+    <!-- PIE con datos del negocio -->
+    <div class="pie">
+        <div class="pie-info">Chiclayo, Perú</div>
+        <div class="pie-info">Celular: 922 626 148</div>
+        <div class="pie-info">contacto@citamed.com</div>
+        <div class="pie-info">Atención de lunes a sábado</div>
+    </div>
+
+</div>
+
+</body>
+</html>

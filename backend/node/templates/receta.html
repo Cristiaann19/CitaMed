@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Receta Médica - CitaMed</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: '#126565',
+                    },
+                    fontFamily: {
+                        sans: ['"Inter"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-100 flex justify-center p-8 font-sans">
+
+<div class="w-[560px] bg-white shadow-md overflow-hidden">
+
+    <!-- CABECERA -->
+    <div class="flex items-center justify-between px-7 py-5 border-b border-gray-100">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 overflow-hidden border border-none flex items-center justify-center bg-white">
+                <img src="https://res.cloudinary.com/dxtmosl3k/image/upload/v1777662957/logoCitaMed_nizz29.png" alt="Logo" class="w-8">
+            </div>
+            <div>
+                <p class="text-gray-900 font-bold text-sm tracking-wide">CitaMed</p>
+                <p class="text-gray-400 text-xs">Tu salud, en línea</p>
+            </div>
+        </div>
+        <div class="text-right">
+            <p class="text-xs font-semibold text-brand uppercase tracking-widest">Receta Médica</p>
+            <p class="text-gray-400 text-xs mt-0.5">{{fecha}}</p>
+        </div>
+    </div>
+
+    <!-- MÉDICO -->
+    <div class="px-7 py-4 border-b border-gray-100 bg-gray-50">
+        <p class="text-xs text-gray-400 uppercase tracking-widest mb-0.5">Médico tratante</p>
+        <p class="text-gray-900 font-semibold text-sm">{{medico}}</p>
+        <p class="text-gray-500 text-xs mt-0.5">{{especialidad}}</p>
+    </div>
+
+    <!-- CUERPO -->
+    <div class="px-7 py-5">
+
+        <!-- DATOS PACIENTE -->
+        <div class="grid grid-cols-3 gap-4 pb-4 border-b border-gray-100 mb-5">
+            <div>
+                <p class="text-gray-400 text-xs mb-0.5">Paciente</p>
+                <p class="text-gray-900 text-sm font-medium">{{paciente}}</p>
+            </div>
+            <div>
+                <p class="text-gray-400 text-xs mb-0.5">DNI</p>
+                <p class="text-gray-900 text-sm font-medium">{{dni}}</p>
+            </div>
+            <div>
+                <p class="text-gray-400 text-xs mb-0.5">Edad</p>
+                <p class="text-gray-900 text-sm font-medium">{{edad}} años</p>
+            </div>
+        </div>
+
+        <!-- DIAGNÓSTICO -->
+        <div class="mb-5">
+            <p class="text-xs text-gray-400 uppercase tracking-widest mb-2">Diagnóstico</p>
+            <p class="text-gray-800 text-sm leading-relaxed border-l-2 border-brand pl-3">{{diagnostico}}</p>
+        </div>
+
+        <!-- PRESCRIPCIÓN -->
+        <div class="mb-5">
+            <p class="text-xs text-gray-400 uppercase tracking-widest mb-2">Prescripción</p>
+            <div class="bg-gray-50 border border-gray-200 rounded px-4 py-3">
+                <p class="text-brand font-bold text-base mb-1">℞</p>
+                <p class="text-gray-800 text-sm leading-relaxed">{{receta}}</p>
+            </div>
+        </div>
+
+        <!-- INDICACIONES -->
+        <div class="mb-6">
+            <p class="text-xs text-gray-400 uppercase tracking-widest mb-2">Indicaciones</p>
+            <p class="text-gray-700 text-sm leading-relaxed">{{indicaciones}}</p>
+        </div>
+
+        <!-- FIRMA -->
+        <div class="flex justify-end pt-4 border-t border-gray-100">
+            <div class="text-center w-40">
+                <div class="border-t border-gray-400 pt-2">
+                    <p class="text-gray-700 text-xs font-semibold">{{medico}}</p>
+                    <p class="text-gray-400 text-xs mt-0.5">{{especialidad}}</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <!-- PIE -->
+    <div class="px-7 py-3 bg-brand flex justify-between items-center">
+        <p class="text-white/70 text-xs">CitaMed · Documento oficial</p>
+        <p class="text-white/40 text-xs">Válido con sello y firma del médico</p>
+    </div>
+</div>
+</body>
+</html>
