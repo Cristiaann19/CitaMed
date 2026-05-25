@@ -21,17 +21,28 @@ public class JwtUtil {
         this.expiracion = expiration;
     }
 
-    public String generarToken(String username) {
+    // Generate token including roles claim
+    public String generarToken(String username, java.util.List<String> roles) {
         return Jwts.builder()
-                .subject(username)
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + expiracion))
+                .setSubject(username)
+                .claim("roles", roles)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + expiracion))
                 .signWith(key)
                 .compact();
     }
 
     public String extraerUsername(String token) {
         return getClaims(token).getSubject();
+    }
+
+    @SuppressWarnings("unchecked")
+    public java.util.List<String> extraerRoles(String token) {
+        Object roles = getClaims(token).get("roles");
+        if (roles instanceof java.util.List) {
+            return (java.util.List<String>) roles;
+        }
+        return java.util.Collections.emptyList();
     }
 
     public boolean validarToken(String token) {

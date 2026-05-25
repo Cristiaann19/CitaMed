@@ -9,10 +9,24 @@ import { Medico, MedicoDTO } from '../../../model/Medico';
 import { Especialidad } from '../../../model/Especialidad';
 import { Usuario, Rol } from '../../../model/Usuario';
 import { GlobalToast } from '../../../core/services/global-toast';
-import { 
-  LucideAngularModule, 
-  Stethoscope, Heart, Baby, Venus, Bone, Brain, Scan, 
-  Activity, Pill, Eye, BrainCircuit, Droplets, Shield, Ear, Accessibility, User 
+import {
+  LucideAngularModule,
+  Stethoscope,
+  Heart,
+  Baby,
+  Venus,
+  Bone,
+  Brain,
+  Scan,
+  Activity,
+  Pill,
+  Eye,
+  BrainCircuit,
+  Droplets,
+  Shield,
+  Ear,
+  Accessibility,
+  User,
 } from 'lucide-angular';
 
 @Component({
@@ -24,7 +38,7 @@ import {
     HttpClientModule,
     DialogModule,
     ButtonModule,
-    LucideAngularModule
+    LucideAngularModule,
   ],
   templateUrl: './medicos-component.html',
   styleUrls: ['./medicos-component.css'],
@@ -64,12 +78,12 @@ export class MedicosComponent implements OnInit {
   modoEdicion = false;
   medicoEditandoId: number | null = null;
   roles = Object.values(Rol);
-  
+
   nuevoUsuario: Usuario = {
     userName: '',
     password: '',
     rol: Rol.MEDICO,
-    activo: true
+    activo: true,
   };
 
   nuevoMedico: MedicoDTO = {
@@ -85,7 +99,7 @@ export class MedicosComponent implements OnInit {
     numeroColegiatura: '',
     especialidadId: 0,
     userName: '',
-    password: ''
+    password: '',
   };
 
   ngOnInit(): void {
@@ -104,7 +118,7 @@ export class MedicosComponent implements OnInit {
         console.error(err);
         this.mensaje = 'No se pudieron cargar los médicos';
         this.cdr.markForCheck();
-      }
+      },
     });
   }
 
@@ -118,7 +132,7 @@ export class MedicosComponent implements OnInit {
         console.error(err);
         this.mensaje = 'No se pudieron cargar las especialidades';
         this.cdr.markForCheck();
-      }
+      },
     });
   }
 
@@ -146,14 +160,14 @@ export class MedicosComponent implements OnInit {
       numeroColegiatura: medico.numeroColegiatura,
       especialidadId: medico.especialidad.id,
       userName: medico.userName,
-      password: ''
+      password: '',
     };
 
     this.nuevoUsuario = {
       userName: medico.userName,
       password: '',
       rol: Rol.MEDICO,
-      activo: medico.activo ?? true
+      activo: medico.activo ?? true,
     };
 
     this.mostrarModal = true;
@@ -161,7 +175,6 @@ export class MedicosComponent implements OnInit {
   }
 
   registrarMedico(): void {
-
     //VALIDACIONES
     if (!this.nuevoMedico.nombre?.trim()) {
       this.toast.warn('Ingrese el nombre');
@@ -211,24 +224,16 @@ export class MedicosComponent implements OnInit {
       return;
     }
 
-    const cmpLimpio =
-      this.nuevoMedico.numeroColegiatura
-        ?.replace(/\D/g, '');
+    const cmpLimpio = this.nuevoMedico.numeroColegiatura?.replace(/\D/g, '');
     if (!cmpLimpio || cmpLimpio.length < 5) {
       this.toast.warn('Ingrese un CMP válido');
       this.cdr.markForCheck();
       return;
     }
 
-    this.nuevoMedico.numeroColegiatura =
-      `CMP-${cmpLimpio.padStart(6, '0')}`;
+    this.nuevoMedico.numeroColegiatura = `CMP-${cmpLimpio.padStart(6, '0')}`;
 
-    this.nuevoMedico.userName =
-      (
-        this.nuevoMedico.nombre +
-        '_' +
-        this.nuevoMedico.apellidoPaterno
-      )
+    this.nuevoMedico.userName = (this.nuevoMedico.nombre + '_' + this.nuevoMedico.apellidoPaterno)
       .toLowerCase()
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
@@ -236,48 +241,33 @@ export class MedicosComponent implements OnInit {
       .replace(/[^a-z0-9._]/g, '');
 
     this.nuevoMedico.email =
-      (
-        this.nuevoMedico.nombre +
-        '.' +
-        this.nuevoMedico.apellidoPaterno
-      )
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/\s+/g, '')
-      .replace(/[^a-z0-9.]/g, '') +
-      '@citamed.com';
+      (this.nuevoMedico.nombre + '.' + this.nuevoMedico.apellidoPaterno)
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/\s+/g, '')
+        .replace(/[^a-z0-9.]/g, '') + '@citamed.com';
 
-    this.nuevoMedico.password =
-      this.nuevoMedico.dni;
+    this.nuevoMedico.password = this.nuevoMedico.dni;
 
     if (!this.nuevoMedico.direccion) {
       this.nuevoMedico.direccion = '';
     }
 
     if (this.modoEdicion && this.medicoEditandoId !== null) {
-      this.medicoService.modificar(
-        this.medicoEditandoId,
-        this.nuevoMedico
-      ).subscribe({
+      this.medicoService.modificar(this.medicoEditandoId, this.nuevoMedico).subscribe({
         next: (res: any) => {
-          this.toast.success(
-            res.mensaje || res
-          );
+          this.toast.success(res.mensaje || res);
           this.finalizarGuardado();
         },
         error: (err: any) => {
           console.error(err);
           this.toast.error('Error al actualizar el médico');
           this.cdr.markForCheck();
-        }
+        },
       });
-    }
-
-    else {
-      this.medicoService.registrar(
-        this.nuevoMedico
-      ).subscribe({
+    } else {
+      this.medicoService.registrar(this.nuevoMedico).subscribe({
         next: (res: any) => {
           this.toast.success(res);
           this.finalizarGuardado();
@@ -286,7 +276,7 @@ export class MedicosComponent implements OnInit {
           console.error(err);
           this.toast.error('Error al registrar el médico');
           this.cdr.markForCheck();
-        }
+        },
       });
     }
   }
@@ -307,10 +297,10 @@ export class MedicosComponent implements OnInit {
       },
 
       error: (err: any) => {
-        console.error(err);          
+        console.error(err);
         this.toast.error('No se pudo cambiar el estado');
         this.cdr.markForCheck();
-      }
+      },
     });
   }
 
@@ -325,8 +315,7 @@ export class MedicosComponent implements OnInit {
         m.email.toLowerCase().includes(texto) ||
         m.telefono.toLowerCase().includes(texto);
       const coincideEspecialidad =
-        especialidad === '' ||
-        m.especialidad.nombre.toLowerCase().includes(especialidad);
+        especialidad === '' || m.especialidad.nombre.toLowerCase().includes(especialidad);
       return coincideTexto && coincideEspecialidad;
     });
 
@@ -344,22 +333,22 @@ export class MedicosComponent implements OnInit {
 
     const mapaIconos: Record<string, any> = {
       'medicina general': this.Stethoscope,
-      'cardiologia': this.Heart,
-      'pediatria': this.Baby,
-      'ginecologia': this.Venus,
+      cardiologia: this.Heart,
+      pediatria: this.Baby,
+      ginecologia: this.Venus,
       'ginecologia y obstetricia': this.Venus,
-      'traumatologia': this.Bone,
+      traumatologia: this.Bone,
       'traumatologia y ortopedia': this.Bone,
-      'neurologia': this.Brain,
-      'dermatologia': this.Scan,
-      'endocrinologia': this.Activity,
-      'gastroenterologia': this.Pill,
-      'oftalmologia': this.Eye,
-      'psiquiatria': this.BrainCircuit,
-      'nefrologia': this.Droplets,
-      'urologia': this.Shield,
-      'otorrinolaringologia': this.Ear,
-      'reumatologia': this.Accessibility
+      neurologia: this.Brain,
+      dermatologia: this.Scan,
+      endocrinologia: this.Activity,
+      gastroenterologia: this.Pill,
+      oftalmologia: this.Eye,
+      psiquiatria: this.BrainCircuit,
+      nefrologia: this.Droplets,
+      urologia: this.Shield,
+      otorrinolaringologia: this.Ear,
+      reumatologia: this.Accessibility,
     };
 
     return mapaIconos[key] ?? this.Stethoscope;
@@ -379,14 +368,14 @@ export class MedicosComponent implements OnInit {
       numeroColegiatura: '',
       especialidadId: 0,
       userName: '',
-      password: ''
+      password: '',
     };
 
     this.nuevoUsuario = {
       userName: '',
       password: '',
       rol: Rol.MEDICO,
-      activo: true
+      activo: true,
     };
 
     this.cdr.markForCheck();

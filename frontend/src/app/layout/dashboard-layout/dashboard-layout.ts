@@ -1,5 +1,12 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { RouterOutlet, Router, NavigationEnd, ActivatedRoute, RouterLink, RouterLinkActive } from '@angular/router';
+import {
+  RouterOutlet,
+  Router,
+  NavigationEnd,
+  ActivatedRoute,
+  RouterLink,
+  RouterLinkActive,
+} from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { filter, map, mergeMap } from 'rxjs/operators';
 import { AuthService } from '../../core/services/auth-service';
@@ -20,22 +27,24 @@ export class DashboardLayout implements OnInit {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private cdr: ChangeDetectorRef,
-    private authService: AuthService
-  ) { }
+    private authService: AuthService,
+  ) {}
 
   ngOnInit(): void {
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd),
-      map(() => this.activatedRoute),
-      map(route => {
-        while (route.firstChild) route = route.firstChild;
-        return route;
-      }),
-      mergeMap(route => route.data)
-    ).subscribe(data => {
-      this.titulo = data['title'] || 'Panel Administrativo';
-      this.cdr.detectChanges();
-    });
+    this.router.events
+      .pipe(
+        filter((event) => event instanceof NavigationEnd),
+        map(() => this.activatedRoute),
+        map((route) => {
+          while (route.firstChild) route = route.firstChild;
+          return route;
+        }),
+        mergeMap((route) => route.data),
+      )
+      .subscribe((data) => {
+        this.titulo = data['title'] || 'Panel Administrativo';
+        this.cdr.detectChanges();
+      });
 
     this.actualizarTituloManual();
     this.cargarDatosUsuario();
@@ -44,7 +53,7 @@ export class DashboardLayout implements OnInit {
   private actualizarTituloManual(): void {
     let route = this.activatedRoute.root;
     while (route.firstChild) route = route.firstChild;
-    route.data.subscribe(data => {
+    route.data.subscribe((data) => {
       this.titulo = data['title'] || 'Panel Administrativo';
       this.cdr.detectChanges();
     });
@@ -56,8 +65,17 @@ export class DashboardLayout implements OnInit {
 
   private cargarDatosUsuario(): void {
     this.nombre = this.authService.getNombre() || 'Usuario';
-    this.rol = this.authService.getPerfil() || 'Sin Rol';
-    this.inicial = this.nombre.charAt(0).toUpperCase();
+    const primary = this.authService.getPrimaryRole();
+    this.rol = primary || this.authService.getPerfil() || 'Sin Rol';
+    this.inicial = this.nombre ? this.nombre.charAt(0).toUpperCase() : 'U';
     this.cdr.detectChanges();
+  }
+
+  isAdminView(): boolean {
+    return this.authService.isAdmin();
+  }
+
+  isMedicoView(): boolean {
+    return this.authService.isMedico();
   }
 }

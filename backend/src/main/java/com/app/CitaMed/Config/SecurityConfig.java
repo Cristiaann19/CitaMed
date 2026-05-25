@@ -7,6 +7,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -18,6 +19,7 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
@@ -44,12 +46,16 @@ public class SecurityConfig {
                         .requestMatchers("/api/contacto/**").permitAll()
                         .requestMatchers("/api/lading/**").permitAll()
                         .requestMatchers("/api/landing/**").permitAll()
+                        // Public endpoints
                         .requestMatchers("/api/especialidad/**").permitAll()
-                        .requestMatchers("/api/medico/**").permitAll()
-                        .requestMatchers("/api/horarioMedico/**").permitAll()
-                        .requestMatchers("/api/paciente/**").permitAll()
-                        .requestMatchers("/api/email/**").permitAll()
-                        .requestMatchers("/api/dashboard/**").permitAll()
+                        // Protected endpoints by role
+                        .requestMatchers("/api/medico/**").hasAnyRole("ADMIN","MEDICO")
+                        .requestMatchers("/api/horarioMedico/**").hasAnyRole("ADMIN","MEDICO")
+                        .requestMatchers("/api/paciente/**").hasAnyRole("ADMIN","RECEPCIONISTA","ENFERMERO","MEDICO")
+                        .requestMatchers("/api/email/**").authenticated()
+                        .requestMatchers("/api/dashboard/**").hasAnyRole("ADMIN","MEDICO")
+                        .requestMatchers("/api/cita/**").hasAnyRole("ADMIN","MEDICO","RECEPCIONISTA")
+                        .requestMatchers("/api/usuario/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

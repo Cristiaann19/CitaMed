@@ -5,10 +5,14 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,6 +21,7 @@ import java.util.ArrayList;
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
+    private static final Logger logger = LoggerFactory.getLogger(JwtFilter.class);
 
     public JwtFilter(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
@@ -30,18 +35,12 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         String path = request.getRequestURI();
+        // Only skip JWT validation for truly public endpoints
         if (path.startsWith("/api/auth/")
                 || path.startsWith("/api/reniec/")
-                || path.startsWith("/api/contacto")
                 || path.startsWith("/api/lading")
                 || path.startsWith("/api/landing")
-                || path.startsWith("/api/paciente")
-                || path.startsWith("/api/especialidad")
-                || path.startsWith("/api/medico")
-                || path.startsWith("/api/horarioMedico")
-                || path.startsWith("/api/email/")
-                || path.startsWith("/api/dashboard")
-                || path.startsWith("/api/dashboard/")) {
+                || path.startsWith("/api/contacto")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -66,8 +65,18 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String username = jwtUtil.extraerUsername(token);
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            java.util.List<String> roles = jwtUtil.extraerRoles(token);
+            // Log extracted username and roles for debugging
+            logger.info("[JwtFilter] user=\"{}\" roles={}", username, roles);
+            java.util.List<GrantedAuthority> authorities = new java.util.ArrayList<>();
+            for (String r : roles) {
+                // Normalize roles to Spring Security convention ROLE_<NAME>
+                String roleName = r.startsWith("ROLE_") ? r : "ROLE_" + r;
+                authorities.add(new SimpleGrantedAuthority(roleName));
+            }
+
             UsernamePasswordAuthenticationToken authToken =
-                    new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
+                    new UsernamePasswordAuthenticationToken(username, null, authorities);
             authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authToken);
         }

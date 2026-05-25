@@ -27,29 +27,29 @@
         <div class="px-3.5 pt-4 pb-1.5 text-white/30 text-[10px] tracking-[0.12em] uppercase font-semibold">Gestión
             clínica</div>
 
-        <a routerLink="/admin/citas" routerLinkActive="bg-teal !text-white"
+        <a *ngIf="isAdminView() || isMedicoView()" routerLink="/admin/citas" routerLinkActive="bg-teal !text-white"
             class="flex items-center gap-2.5 px-2.5 py-2 mx-2 rounded-[7px] text-white/52 text-[13px] hover:bg-white/[0.07] hover:text-white/90 transition-all">
             <span class="material-symbols-outlined text-[17px] flex-shrink-0">calendar_month</span>
             Citas
             <span
                 class="ml-auto bg-white/[0.14] text-white/70 text-[10px] px-1.5 py-px rounded-full font-medium">N</span>
         </a>
-        <a routerLink="/admin/pacientes" routerLinkActive="bg-teal !text-white"
+        <a *ngIf="isAdminView() || (isMedicoView() && false)" routerLink="/admin/pacientes" routerLinkActive="bg-teal !text-white"
             class="flex items-center gap-2.5 px-2.5 py-2 mx-2 rounded-[7px] text-white/52 text-[13px] hover:bg-white/[0.07] hover:text-white/90 transition-all">
             <span class="material-symbols-outlined text-[17px] flex-shrink-0">person</span>
             Pacientes
         </a>
-        <a routerLink="/admin/medicos" routerLinkActive="bg-teal !text-white"
+        <a *ngIf="isAdminView()" routerLink="/admin/medicos" routerLinkActive="bg-teal !text-white"
             class="flex items-center gap-2.5 px-2.5 py-2 mx-2 rounded-[7px] text-white/52 text-[13px] hover:bg-white/[0.07] hover:text-white/90 transition-all">
             <span class="material-symbols-outlined text-[17px] flex-shrink-0">stethoscope</span>
             Médicos
         </a>
-        <a routerLink="/admin/especialidades" routerLinkActive="bg-teal !text-white"
+        <a *ngIf="isAdminView()" routerLink="/admin/especialidades" routerLinkActive="bg-teal !text-white"
             class="flex items-center gap-2.5 px-2.5 py-2 mx-2 rounded-[7px] text-white/52 text-[13px] hover:bg-white/[0.07] hover:text-white/90 transition-all">
             <span class="material-symbols-outlined text-[17px] flex-shrink-0">local_hospital</span>
             Especialidades
         </a>
-        <a routerLink="/admin/horarios" routerLinkActive="bg-teal !text-white"
+        <a *ngIf="isAdminView() || isMedicoView()" routerLink="/admin/horarios" routerLinkActive="bg-teal !text-white"
             class="flex items-center gap-2.5 px-2.5 py-2 mx-2 rounded-[7px] text-white/52 text-[13px] hover:bg-white/[0.07] hover:text-white/90 transition-all">
             <span class="material-symbols-outlined text-[17px] flex-shrink-0">schedule</span>
             Horarios médicos
@@ -58,12 +58,12 @@
         <!-- Clínica -->
         <div class="px-3.5 pt-4 pb-1.5 text-white/30 text-[10px] tracking-[0.12em] uppercase font-semibold">Clínica
         </div>
-        <a routerLink="/admin/medicamentos" routerLinkActive="bg-teal !text-white"
+        <a *ngIf="isAdminView()" routerLink="/admin/medicamentos" routerLinkActive="bg-teal !text-white"
             class="flex items-center gap-2.5 px-2.5 py-2 mx-2 rounded-[7px] text-white/52 text-[13px] hover:bg-white/[0.07] hover:text-white/90 transition-all">
             <span class="material-symbols-outlined text-[17px] flex-shrink-0">medication</span>
             Medicamentos
         </a>
-        <a routerLink="/admin/historial-medico" routerLinkActive="bg-teal !text-white"
+        <a *ngIf="isAdminView() || isMedicoView()" routerLink="/admin/historial-medico" routerLinkActive="bg-teal !text-white"
             class="flex items-center gap-2.5 px-2.5 py-2 mx-2 rounded-[7px] text-white/52 text-[13px] hover:bg-white/[0.07] hover:text-white/90 transition-all">
             <span class="material-symbols-outlined text-[17px] flex-shrink-0">history</span>
             Historial médico
@@ -73,22 +73,22 @@
         <div class="px-3.5 pt-4 pb-1.5 text-white/30 text-[10px] tracking-[0.12em] uppercase font-semibold">
             Administración</div>
 
-        <a routerLink="/admin/empleados" routerLinkActive="bg-teal !text-white"
+        <a *ngIf="isAdminView()" routerLink="/admin/empleados" routerLinkActive="bg-teal !text-white"
             class="flex items-center gap-2.5 px-2.5 py-2 mx-2 rounded-[7px] text-white/52 text-[13px] hover:bg-white/[0.07] hover:text-white/90 transition-all">
             <span class="material-symbols-outlined text-[17px] flex-shrink-0">badge</span>
             Empleados
         </a>
-        <a routerLink="/admin/pagos" routerLinkActive="bg-teal !text-white"
+        <a *ngIf="isAdminView()" routerLink="/admin/pagos" routerLinkActive="bg-teal !text-white"
             class="flex items-center gap-2.5 px-2.5 py-2 mx-2 rounded-[7px] text-white/52 text-[13px] hover:bg-white/[0.07] hover:text-white/90 transition-all">
             <span class="material-symbols-outlined text-[17px] flex-shrink-0">payments</span>
             Pagos
         </a>
-        <a routerLink="/admin/usuarios" routerLinkActive="bg-teal !text-white"
+        <a *ngIf="isAdminView()" routerLink="/admin/usuarios" routerLinkActive="bg-teal !text-white"
             class="flex items-center gap-2.5 px-2.5 py-2 mx-2 rounded-[7px] text-white/52 text-[13px] hover:bg-white/[0.07] hover:text-white/90 transition-all">
             <span class="material-symbols-outlined text-[17px] flex-shrink-0">shield_person</span>
             Usuarios
         </a>
-        <a routerLink="/admin/reportes" routerLinkActive="bg-teal !text-white"
+        <a *ngIf="isAdminView()" routerLink="/admin/reportes" routerLinkActive="bg-teal !text-white"
             class="flex items-center gap-2.5 px-2.5 py-2 mx-2 rounded-[7px] text-white/52 text-[13px] hover:bg-white/[0.07] hover:text-white/90 transition-all">
             <span class="material-symbols-outlined text-[17px] flex-shrink-0">bar_chart</span>
             Reportes
