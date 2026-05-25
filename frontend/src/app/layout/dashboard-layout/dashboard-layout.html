@@ -34,7 +34,7 @@
             <span
                 class="ml-auto bg-white/[0.14] text-white/70 text-[10px] px-1.5 py-px rounded-full font-medium">N</span>
         </a>
-        <a *ngIf="isAdminView() || (isMedicoView() && false)" routerLink="/admin/pacientes" routerLinkActive="bg-teal !text-white"
+        <a *ngIf="isAdminView() || isMedicoView() " routerLink="/admin/pacientes" routerLinkActive="bg-teal !text-white"
             class="flex items-center gap-2.5 px-2.5 py-2 mx-2 rounded-[7px] text-white/52 text-[13px] hover:bg-white/[0.07] hover:text-white/90 transition-all">
             <span class="material-symbols-outlined text-[17px] flex-shrink-0">person</span>
             Pacientes
