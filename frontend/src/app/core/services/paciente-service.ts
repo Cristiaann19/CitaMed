@@ -11,12 +11,11 @@ export class PacienteService {
 
   constructor(private http: HttpClient) {}
 
-  listar(page?: number, size?: number): Observable<PageResponse<Paciente>> {
-    if (page != null && size != null) {
-      return this.http.get<PageResponse<Paciente>>(`${this.api}?page=${page}&size=${size}`);
-    }
-    // when no pagination requested, return a wrapper with content array
-    return this.http.get<PageResponse<Paciente>>(`${this.api}` as any);
+  listar(page: number, size: number, termino?: string, incluirInactivos?: boolean): Observable<PageResponse<Paciente>> {
+    let params = `?page=${page}&size=${size}`;
+    if (termino) params += `&termino=${encodeURIComponent(termino)}`;
+    if (incluirInactivos) params += `&incluirInactivos=true`;
+    return this.http.get<PageResponse<Paciente>>(`${this.api}${params}`);
   }
 
   listarTodos(): Observable<Paciente[]> {

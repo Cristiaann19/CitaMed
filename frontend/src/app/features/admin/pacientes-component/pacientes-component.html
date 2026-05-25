@@ -21,6 +21,15 @@
             class="w-full pl-11 pr-4 h-12 rounded-xl border-2 border-gray-200 focus:border-[#329791] focus:ring-4 focus:ring-[#329791]/10 transition-all outline-none text-sm bg-white" />
         </div>
 
+        <label class="flex items-center gap-2 cursor-pointer text-sm text-gray-600 whitespace-nowrap">
+          <input
+            type="checkbox"
+            [(ngModel)]="incluirInactivos"
+            (change)="filtrar()"
+            class="w-4 h-4 rounded border-gray-300 text-[#329791] focus:ring-[#329791]" />
+          Mostrar inactivos
+        </label>
+
         <button
           (click)="openNuevo()"
           class="h-[48px] px-5 rounded-xl bg-[#329791] hover:bg-[#267c77] text-white font-bold text-sm transition-all shadow-sm cursor-pointer flex items-center gap-2 justify-center w-full sm:w-auto">
@@ -37,8 +46,11 @@
       [paginator]="true"
       [rows]="10"
       [rowsPerPageOptions]="[5,10,20]"
+      [totalRecords]="totalRecords"
+      [lazy]="true"
       [responsiveLayout]="'scroll'"
       [loading]="loading"
+      (onPage)="onPage($event)"
       class="min-w-full">
 
       <ng-template pTemplate="header">
@@ -107,8 +119,8 @@
 
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td colspan="5" class="text-center py-20 text-gray-400">
-            <i class="pi pi-user-minus text-6xl mb-4 block"></i>
+          <td colspan="5" class="!text-center !align-middle py-20 text-gray-400">
+            <i class="pi pi-user-minus !text-6xl mb-4 block"></i>
             <p class="font-semibold text-lg">No se encontraron pacientes</p>
           </td>
         </tr>

@@ -45,7 +45,13 @@
   </div>
 
   <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-    <p-table [value]="medicosFiltrados" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[5,10,20]" [responsiveLayout]="'scroll'"  class="min-w-full">
+    <p-table
+      [value]="medicosFiltrados"
+      [paginator]="true"
+      [rows]="10"
+      [rowsPerPageOptions]="[5,10,20]"
+      [responsiveLayout]="'scroll'"
+      class="min-w-full">
       <ng-template pTemplate="header">
         <tr class="bg-[#e4f1f1]/20 border-b border-[#e4f1f1]/10">
           <th class="text-left px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">Médico</th>
@@ -62,18 +68,22 @@
         <tr class="border-b border-gray-100 hover:bg-[#329791]/[0.03] transition-all">
           <td class="px-6 py-5">
             <div class="flex items-center gap-4">
-              <div class="w-14 h-14 rounded-2xl bg-[#329791]/10 flex items-center justify-center border border-[#329791]/20">
-                <i-lucide [img]="obtenerIconoEspecialidad(medico.especialidad?.nombre)" class="w-6 h-6 text-[#329791]"></i-lucide>
+              <div
+                class="w-14 h-14 rounded-2xl bg-[#329791]/10 flex items-center justify-center border border-[#329791]/20">
+                <i-lucide [img]="obtenerIconoEspecialidad(medico.especialidad?.nombre)"
+                          class="w-6 h-6 text-[#329791]"></i-lucide>
               </div>
               <div>
-                <h5 class="font-bold text-gray-800 text-sm">{{ medico.nombre }} {{ medico.apellidoPaterno }} {{ medico.apellidoMaterno }}</h5>
+                <h5
+                  class="font-bold text-gray-800 text-sm">{{ medico.nombre }} {{ medico.apellidoPaterno }} {{ medico.apellidoMaterno }}</h5>
                 <p class="text-xs text-gray-400 mt-1">DNI: {{ medico.dni }}</p>
               </div>
             </div>
           </td>
 
           <td class="px-6 py-5">
-            <span class="inline-block px-3 py-1.5 rounded-xl bg-[#329791]/10 text-[#329791] text-xs font-bold">{{ medico.especialidad?.nombre || '' }}</span>
+            <span
+              class="inline-block px-3 py-1.5 rounded-xl bg-[#329791]/10 text-[#329791] text-xs font-bold">{{ medico.especialidad?.nombre || '' }}</span>
           </td>
 
           <td class="px-6 py-5">
@@ -90,7 +100,8 @@
           </td>
 
           <td class="px-6 py-5">
-            <span [ngClass]="medico.genero === 'MASCULINO' ? 'bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold' : 'bg-pink-100 text-pink-700 px-3 py-1 rounded-full text-xs font-bold'">{{ medico.genero }}</span>
+            <span
+              [ngClass]="medico.genero === 'MASCULINO' ? 'bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-xs font-bold' : 'bg-pink-100 text-pink-700 px-3 py-1 rounded-full text-xs font-bold'">{{ medico.genero }}</span>
           </td>
 
           <td class="px-6 py-5">
@@ -98,36 +109,34 @@
           </td>
 
           <td class="px-6 py-5 text-center">
-            <span [ngClass]="medico.activo ? 'bg-green-100 text-green-700 px-4 py-2 rounded-full text-xs font-bold' : 'bg-red-100 text-red-700 px-4 py-2 rounded-full text-xs font-bold'">{{ medico.activo ? 'ACTIVO' : 'INACTIVO' }}</span>
+            <span
+              [ngClass]="medico.activo ? 'bg-green-100 text-green-700 px-4 py-2 rounded-full text-xs font-bold' : 'bg-red-100 text-red-700 px-4 py-2 rounded-full text-xs font-bold'">{{ medico.activo ? 'ACTIVO' : 'INACTIVO' }}</span>
           </td>
 
           <td class="px-6 py-5">
             <div class="flex items-center justify-center gap-2">
-              <button (click)="editarMedico(medico)" class="w-10 h-10 rounded-xl bg-blue-100 hover:bg-blue-200 text-blue-700 flex items-center justify-center cursor-pointer">
+              <button (click)="editarMedico(medico)"
+                      class="w-10 h-10 rounded-xl bg-blue-100 hover:bg-blue-200 text-blue-700 flex items-center justify-center cursor-pointer">
                 <i class="pi pi-pencil"></i>
               </button>
-              <button (click)="cambiarEstado(medico)" class="px-4 py-2 rounded-xl text-white text-sm font-bold transition-all cursor-pointer" [ngClass]="medico.activo ? 'bg-red-500 hover:bg-red-600' : 'bg-[#329791] hover:bg-[#267c77]'">{{ medico.activo ? 'Desactivar' : 'Activar' }}</button>
+              <button (click)="cambiarEstado(medico)"
+                      class="px-4 py-2 rounded-xl text-white text-sm font-bold transition-all cursor-pointer"
+                      [ngClass]="medico.activo ? 'bg-red-500 hover:bg-red-600' : 'bg-[#329791] hover:bg-[#267c77]'">{{ medico.activo ? 'Desactivar' : 'Activar' }}
+              </button>
             </div>
           </td>
         </tr>
       </ng-template>
 
       <ng-template pTemplate="emptymessage">
-        <div class="text-center py-20 text-gray-400">
-          <i class="pi pi-user-minus text-6xl mb-4 block"></i>
-          <p class="font-semibold text-lg">No se encontraron médicos</p>
-        </div>
+        <tr>
+          <td colspan="7" class="!text-center !align-middle py-20 text-gray-400">
+            <i class="pi pi-user-minus !text-6xl mb-4 block"></i>
+            <p class="font-semibold text-lg">No se encontraron medicos</p>
+          </td>
+        </tr>
       </ng-template>
     </p-table>
-  </div>
-
-  <div
-    *ngIf="medicosFiltrados.length === 0"
-    class="text-center py-20 text-gray-400">
-    <i class="pi pi-user-minus text-6xl mb-4 block"></i>
-    <p class="font-semibold text-lg">
-      No se encontraron médicos
-    </p>
   </div>
 
   <p-dialog

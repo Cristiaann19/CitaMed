@@ -24,6 +24,17 @@ public class PacienteService {
         return pacienteRepository.findByActivoTrue(pageable);
     }
 
+    public org.springframework.data.domain.Page<Paciente> findAll(boolean incluirInactivos, org.springframework.data.domain.Pageable pageable) {
+        if (incluirInactivos) {
+            return pacienteRepository.findAll(pageable);
+        }
+        return pacienteRepository.findByActivoTrue(pageable);
+    }
+
+    public org.springframework.data.domain.Page<Paciente> buscar(String termino, boolean incluirInactivos, org.springframework.data.domain.Pageable pageable) {
+        return pacienteRepository.buscarConFiltros(termino, incluirInactivos, pageable);
+    }
+
     public Paciente findById(Long id) {
         return pacienteRepository.findById(id).orElse(null);
     }

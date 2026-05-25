@@ -31,6 +31,7 @@ export class PacientesComponent implements OnInit {
   modoEdicion = false;
   pacienteEditando: Paciente | null = null;
   terminoBusqueda = '';
+  incluirInactivos = false;
   nuevoPaciente: PacienteDTO = {
     nombre: '',
     apellidoPaterno: '',
@@ -55,23 +56,7 @@ export class PacientesComponent implements OnInit {
   }
 
   filtrar(): void {
-    const texto = (this.terminoBusqueda || '').toLowerCase().trim();
-    if (!texto) {
-      this.pacientesFiltrados = [...this.pacientes];
-      this.cdr.markForCheck();
-      return;
-    }
-
-    this.pacientesFiltrados = this.pacientes.filter((p) => {
-      const nombreCompleto = `${p.nombre} ${p.apellidoPaterno} ${p.apellidoMaterno}`.toLowerCase();
-      const coincideTexto =
-        nombreCompleto.includes(texto) ||
-        (p.dni ?? '').toLowerCase().includes(texto) ||
-        (p.email ?? '').toLowerCase().includes(texto) ||
-        (p.telefono ?? '').toLowerCase().includes(texto);
-      return coincideTexto;
-    });
-    this.cdr.markForCheck();
+    this.obtenerPacientes(0);
   }
 
   resetFormulario(): void {
@@ -93,47 +78,20 @@ export class PacientesComponent implements OnInit {
   }
 
   finalizarGuardado(): void {
-    this.obtenerPacientes();
     this.resetFormulario();
     this.mostrarModal = false;
+    this.obtenerPacientes(0);
     this.cdr.markForCheck();
   }
 
-  loadPage(page: number): void {
+  obtenerPacientes(page: number = 0): void {
     this.loading = true;
-    this.pacienteService.listar(page, this.size).subscribe({
-      next: (res: PageResponse<Paciente> | any) => {
-        if (res && res.content) {
-          this.pacientes = res.content;
-          this.totalRecords = res.totalElements;
-        } else if (Array.isArray(res)) {
-          this.pacientes = res;
-          this.totalRecords = res.length;
-        } else if (res && Array.isArray(res.content) === false && res instanceof Object) {
-          // if backend returned list wrapped as PageResponse incorrectly
-          this.pacientes = (res as any).content || [];
-          this.totalRecords = (res as any).totalElements || this.pacientes.length;
-        }
-        this.page = page;
-        this.loading = false;
-        this.cdr.markForCheck();
-      },
-      error: (err) => {
-        console.error(err);
-        this.toast.error('Error cargando pacientes');
-        this.loading = false;
-        this.cdr.markForCheck();
-      },
-    });
-  }
-
-  obtenerPacientes(): void {
-    this.loading = true;
-    this.pacienteService.listarTodos().subscribe({
-      next: (data: Paciente[]) => {
-        this.pacientes = data;
-        this.pacientesFiltrados = [...data];
-        this.totalRecords = data.length;
+    this.page = page;
+    this.pacienteService.listar(page, this.size, this.terminoBusqueda, this.incluirInactivos).subscribe({
+      next: (res: PageResponse<Paciente>) => {
+        this.pacientes = res.content;
+        this.pacientesFiltrados = res.content;
+        this.totalRecords = res.totalElements;
         this.loading = false;
         this.cdr.markForCheck();
       },
@@ -142,20 +100,15 @@ export class PacientesComponent implements OnInit {
         this.toast.error('No se pudieron cargar los pacientes');
         this.loading = false;
         this.cdr.markForCheck();
-      }
+      },
     });
   }
 
   onPage(event: any): void {
-    const pageFromProp = event && (event.page ?? null);
-    if (pageFromProp !== null && pageFromProp !== undefined) {
-      this.loadPage(pageFromProp);
-      return;
-    }
     const first = Number(event?.first ?? 0);
     const rows = Number(event?.rows ?? this.size ?? 10);
     const page = rows > 0 ? Math.floor(first / rows) : 0;
-    this.loadPage(page);
+    this.obtenerPacientes(page);
   }
 
   openNuevo(): void {
@@ -246,7 +199,7 @@ export class PacientesComponent implements OnInit {
     this.pacienteService.eliminar(p.id).subscribe({
       next: (res: any) => {
         this.toast.success('Paciente eliminado');
-        this.obtenerPacientes();
+        this.obtenerPacientes(this.page);
       },
       error: (err) => {
         console.error(err);
@@ -260,11 +213,12 @@ export class PacientesComponent implements OnInit {
     this.pacienteService.toggleActivo(p.id).subscribe({
       next: (res: any) => {
         this.toast.success('Estado actualizado');
-        this.obtenerPacientes();
+        this.obtenerPacientes(this.page);
       },
       error: (err) => {
         console.error(err);
         this.toast.error('No se pudo actualizar estado');
+        this.cdr.markForCheck();
       },
     });
   }

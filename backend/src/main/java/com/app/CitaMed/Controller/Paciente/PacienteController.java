@@ -6,6 +6,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import java.util.List;
 
 @RestController
@@ -18,13 +21,17 @@ public class PacienteController {
 
     @GetMapping
     public ResponseEntity<?> findAll(
-            @org.springframework.web.bind.annotation.RequestParam(required = false) Integer page,
-            @org.springframework.web.bind.annotation.RequestParam(required = false) Integer size
+            @RequestParam(required = false) Integer page,
+            @RequestParam(required = false) Integer size,
+            @RequestParam(required = false, defaultValue = "") String termino,
+            @RequestParam(required = false, defaultValue = "false") boolean incluirInactivos
     ) {
         if (page != null && size != null) {
-            org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(page, size);
-            org.springframework.data.domain.Page<Paciente> result = pacienteService.findAll(pageable);
-            return ResponseEntity.ok(result);
+            Pageable pageable = PageRequest.of(page, size, Sort.by("nombre").ascending());
+            if (!termino.isEmpty()) {
+                return ResponseEntity.ok(pacienteService.buscar(termino, incluirInactivos, pageable));
+            }
+            return ResponseEntity.ok(pacienteService.findAll(incluirInactivos, pageable));
         }
         return ResponseEntity.ok(pacienteService.findAll());
     }

@@ -40,3 +40,5 @@ dist/
 
 #backend
 backend/.env
+
+AGENTS.md
