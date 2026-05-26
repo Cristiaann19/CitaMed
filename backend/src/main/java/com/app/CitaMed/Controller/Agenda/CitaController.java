@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -92,5 +93,13 @@ public class CitaController {
         String resultado = citaService.noAsistio(id);
         if (resultado.equals("Cita no encontrada")) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(resultado);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Map<String, String>> eliminar(@PathVariable Long id) {
+        String resultado = citaService.eliminar(id);
+        if (resultado.equals("Cita no encontrada"))
+            return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(Map.of("mensaje", resultado));
     }
 }

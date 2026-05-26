@@ -9,7 +9,6 @@ import { MedicosComponent } from './features/admin/medicos-component/medicos-com
 import { PacientesComponent } from './features/admin/pacientes-component/pacientes-component';
 import { EspecialidadesComponent } from './features/admin/especialidades-component/especialidades-component';
 import { HorarioComponent } from './features/admin/horario-component/horario-component';
-import { MedicamentosComponent } from './features/admin/medicamentos-component/medicamentos-component';
 import { EmpleadoComponent } from './features/admin/empleado-component/empleado-component';
 import { PagosComponent } from './features/admin/pagos-component/pagos-component';
 import { Reportes } from './features/admin/reportes/reportes';
@@ -33,6 +32,7 @@ export const routes: Routes = [
     title: 'Dashboard',
     canActivate: [authGuard],
     children: [
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       {
         path: 'usuarios',
         component: UsuarioComponent,
@@ -67,12 +67,6 @@ export const routes: Routes = [
         path: 'horarios',
         component: HorarioComponent,
         data: { title: 'Horarios', roles: ['ADMIN', 'MEDICO'] },
-        canActivate: [() => import('./core/guards/role.guard').then((m) => m.roleGuard as any)],
-      },
-      {
-        path: 'medicamentos',
-        component: MedicamentosComponent,
-        data: { title: 'Medicamentos', roles: ['ADMIN'] },
         canActivate: [() => import('./core/guards/role.guard').then((m) => m.roleGuard as any)],
       },
       {

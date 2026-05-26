@@ -46,28 +46,40 @@ public class ReservaService {
         if (dia == null) return Collections.emptyList();
 
         List<Medico> medicos = medicoRepository.findByEspecialidadIdAndActivoTrue(especialidadId);
+        if (medicos.isEmpty()) return Collections.emptyList();
+
+        List<Long> medicoIds = medicos.stream().map(Medico::getId).collect(Collectors.toList());
+
+        List<HorarioMedico> todosHorarios = horarioMedicoRepository
+                .findByMedicoIdInAndDiaAndActivoTrue(medicoIds, dia);
+
+        if (todosHorarios.isEmpty()) return Collections.emptyList();
+
+        Map<Long, List<HorarioMedico>> horariosPorMedico = todosHorarios.stream()
+                .collect(Collectors.groupingBy(h -> h.getMedico().getId()));
+
+        LocalDateTime inicioDia = fechaBase.toLocalDate().atStartOfDay();
+        LocalDateTime finDia = inicioDia.plusDays(1);
+        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
 
         List<SlotDisponibleDTO> resultado = new ArrayList<>();
 
         for (Medico medico : medicos) {
-            List<HorarioMedico> horarios = horarioMedicoRepository
-                    .findByMedicoIdAndActivoTrue(medico.getId())
-                    .stream()
-                    .filter(h -> h.getDia() == dia)
-                    .collect(Collectors.toList());
+            List<HorarioMedico> horarios = horariosPorMedico.get(medico.getId());
+            if (horarios == null) continue;
 
-            if (horarios.isEmpty()) continue;
+            List<Cita> citasDelDia = citaRepository
+                    .findByMedicoIdAndFechaHoraBetweenAndEstadoNot(
+                            medico.getId(), inicioDia, finDia, EstadoCita.CANCELADA);
 
-            List<String> citasOcupadas = citaRepository.findByMedicoId(medico.getId())
-                    .stream()
-                    .filter(c -> c.getEstado() != EstadoCita.CANCELADA)
-                    .map(c -> c.getFechaHora().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")))
-                    .collect(Collectors.toList());
+            Set<String> horasOcupadas = citasDelDia.stream()
+                    .map(c -> c.getFechaHora().format(fmt))
+                    .collect(Collectors.toSet());
 
             for (HorarioMedico horario : horarios) {
                 List<String> slots = generarSlots(horario.getHoraInicio(), horario.getHoraFin(), fechaStr);
                 List<String> slotsLibres = slots.stream()
-                        .filter(s -> !citasOcupadas.contains(s.substring(0, 16)))
+                        .filter(s -> !horasOcupadas.contains(s.substring(0, 16)))
                         .collect(Collectors.toList());
 
                 if (!slotsLibres.isEmpty()) {
@@ -128,9 +140,9 @@ public class ReservaService {
 
         if (!medico.isActivo()) throw new RuntimeException("El médico no está activo");
 
-        Consultorio consultorio = consultorioRepository.findById(dto.getConsultorioId()).orElseThrow(() -> new RuntimeException("Consultorio no encontrado"));
+        if (medico.getConsultorio() == null) throw new RuntimeException("El médico no tiene un consultorio asignado");
 
-        if (!consultorio.isDisponible()) throw new RuntimeException("El consultorio no está disponible");
+        Consultorio consultorio = medico.getConsultorio();
 
         LocalDateTime fechaHora = LocalDateTime.parse(dto.getFechaHora(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"));
 

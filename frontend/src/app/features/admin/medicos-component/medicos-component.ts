@@ -1,12 +1,13 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { MedicoService } from '../../../core/services/medico-service';
 import { Medico, MedicoDTO } from '../../../model/Medico';
 import { Especialidad } from '../../../model/Especialidad';
+import { Consultorio } from '../../../model/Consultorio';
 import { Usuario, Rol } from '../../../model/Usuario';
 import { GlobalToast } from '../../../core/services/global-toast';
 import {
@@ -52,6 +53,7 @@ export class MedicosComponent implements OnInit {
     private medicoService: MedicoService,
     private cdr: ChangeDetectorRef,
     private toast: GlobalToast,
+    private http: HttpClient,
   ) {}
 
   Stethoscope = Stethoscope;
@@ -74,6 +76,7 @@ export class MedicosComponent implements OnInit {
   medicos: Medico[] = [];
   medicosFiltrados: Medico[] = [];
   especialidades: Especialidad[] = [];
+  consultorios: Consultorio[] = [];
   mensaje = '';
   terminoBusqueda = '';
   filtroEspecialidad = '';
@@ -108,6 +111,7 @@ export class MedicosComponent implements OnInit {
   ngOnInit(): void {
     this.obtenerMedicos();
     this.obtenerEspecialidades();
+    this.obtenerConsultorios();
   }
 
   obtenerMedicos(): void {
@@ -139,6 +143,13 @@ export class MedicosComponent implements OnInit {
     });
   }
 
+  obtenerConsultorios(): void {
+    this.http.get<Consultorio[]>('http://localhost:8080/api/consultorio').subscribe({
+      next: (data) => { this.consultorios = data; this.cdr.markForCheck(); },
+      error: () => {},
+    });
+  }
+
   abrirNuevoMedico(): void {
     this.modoEdicion = false;
     this.medicoEditandoId = null;
@@ -162,6 +173,7 @@ export class MedicosComponent implements OnInit {
       genero: medico.genero,
       numeroColegiatura: medico.numeroColegiatura,
       especialidadId: medico.especialidad.id,
+      consultorioId: medico.consultorio?.id,
       userName: medico.userName,
       password: '',
     };
@@ -370,6 +382,7 @@ export class MedicosComponent implements OnInit {
       genero: '',
       numeroColegiatura: '',
       especialidadId: 0,
+      consultorioId: undefined,
       userName: '',
       password: '',
     };

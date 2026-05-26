@@ -7,7 +7,6 @@ import java.time.LocalDateTime;
 public class CitaDTO {
     private Long pacienteId;
     private Long medicoId;
-    private Long consultorioId;
     private LocalDateTime fechaHora;
     private String motivoConsulta;
 }

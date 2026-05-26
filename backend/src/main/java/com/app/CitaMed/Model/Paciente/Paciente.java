@@ -44,7 +44,6 @@ public class Paciente {
     @Pattern(regexp = "\\d{9}", message = "El teléfono debe tener 9 dígitos")
     private String telefono;
 
-    @NotBlank(message = "La dirección es obligatoria")
     @Size(max = 150)
     private String direccion;
 

@@ -1,6 +1,7 @@
 package com.app.CitaMed.Model.Medico;
 import com.app.CitaMed.Enums.Genero;
 import com.app.CitaMed.Model.Agenda.HorarioMedico;
+import com.app.CitaMed.Model.Administrativo.Consultorio;
 import com.app.CitaMed.Model.Administrativo.Usuario;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -71,6 +72,10 @@ public class Medico {
     @ManyToOne
     @JoinColumn(name = "especialidad_id", nullable = false)
     private Especialidad especialidad;
+
+    @ManyToOne
+    @JoinColumn(name = "consultorio_id")
+    private Consultorio consultorio;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JsonIgnore

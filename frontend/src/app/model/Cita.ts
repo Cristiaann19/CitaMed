@@ -27,7 +27,6 @@ export interface CitaDetalle {
 export interface CitaDTO {
   pacienteId: number;
   medicoId: number;
-  consultorioId: number;
   fechaHora: string;
   motivoConsulta: string;
 }

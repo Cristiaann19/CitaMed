@@ -17,7 +17,6 @@ import { CitaService } from '../../../core/services/cita-service';
 import { CitaDetalle, CitaDTO, EstadoCita } from '../../../model/Cita';
 import { Medico } from '../../../model/Medico';
 import { Paciente } from '../../../model/Paciente';
-import { Consultorio } from '../../../model/Consultorio';
 import { Especialidad } from '../../../model/Especialidad';
 import { GlobalToast } from '../../../core/services/global-toast';
 import { HttpClient } from '@angular/common/http';
@@ -51,7 +50,6 @@ export class CitasComponent implements OnInit {
   medicos: Medico[] = [];
   medicosFiltrados: Medico[] = [];
   pacientes: Paciente[] = [];
-  consultorios: Consultorio[] = [];
   especialidades: Especialidad[] = [];
 
   readonly hoy: Date = new Date();
@@ -60,7 +58,12 @@ export class CitasComponent implements OnInit {
   mostrarModal = false;
   mostrarDetalleModal = false;
   mostrarReprogramarModal = false;
+  mostrarConfirmarDelete = false;
+  mostrarConfirmarCancelar = false;
   modoEdicion = false;
+
+  citaDeleteando: CitaDetalle | null = null;
+  citaCancelando: CitaDetalle | null = null;
 
   nuevaCita: CitaDTO = this.resetCitaForm();
   fechaHoraCita: Date | null = null;
@@ -76,6 +79,44 @@ export class CitasComponent implements OnInit {
   filtroMedico: number | null = null;
   filtroFechaInicio: Date | null = null;
   filtroFechaFin: Date | null = null;
+
+  // DNI search state
+  dniPaciente = '';
+  dniTouched = false;
+  buscandoDni = false;
+  pacienteEncontrado: Paciente | null = null;
+  pacienteNoEncontrado = false;
+  mostrarCamposPaciente = false;
+  reniecCargando = false;
+
+  // New patient form
+  nuevoPaciente = {
+    nombre: '',
+    apellidoPaterno: '',
+    apellidoMaterno: '',
+    telefono: '',
+    email: '',
+    direccion: '',
+    fechaNacimiento: '',
+    genero: '',
+    grupoSanguineo: ''
+  };
+
+  generos = [
+    { label: 'Masculino', value: 'MASCULINO' },
+    { label: 'Femenino', value: 'FEMENINO' },
+  ];
+
+  gruposSanguineos = [
+    { label: 'A+', value: 'A_POSITIVO' },
+    { label: 'A-', value: 'A_NEGATIVO' },
+    { label: 'B+', value: 'B_POSITIVO' },
+    { label: 'B-', value: 'B_NEGATIVO' },
+    { label: 'AB+', value: 'AB_POSITIVO' },
+    { label: 'AB-', value: 'AB_NEGATIVO' },
+    { label: 'O+', value: 'O_POSITIVO' },
+    { label: 'O-', value: 'O_NEGATIVO' },
+  ];
 
   estadosDisponibles: FiltroEstado[] = [
     { label: 'Todas',      value: null },
@@ -96,7 +137,6 @@ export class CitasComponent implements OnInit {
     this.cargarCitas();
     this.cargarMedicos();
     this.cargarPacientes();
-    this.cargarConsultorios();
     this.cargarEspecialidades();
   }
 
@@ -129,12 +169,6 @@ export class CitasComponent implements OnInit {
           : (data as any).content ?? [];
         this.cdr.markForCheck();
       },
-    });
-  }
-
-  cargarConsultorios(): void {
-    this.citaService.obtenerConsultoriosDisponibles().subscribe({
-      next: (data) => { this.consultorios = data; this.cdr.markForCheck(); },
     });
   }
 
@@ -188,7 +222,139 @@ export class CitasComponent implements OnInit {
     this.fechaHoraCita = null;
     this.especialidadSeleccionada = null;
     this.medicosFiltrados = [...this.medicos];
+    this.resetDniSearch();
     this.mostrarModal = true;
+  }
+
+  private resetDniSearch(): void {
+    this.dniPaciente = '';
+    this.dniTouched = false;
+    this.pacienteEncontrado = null;
+    this.pacienteNoEncontrado = false;
+    this.mostrarCamposPaciente = false;
+    this.buscandoDni = false;
+    this.reniecCargando = false;
+    this.nuevoPaciente = {
+      nombre: '', apellidoPaterno: '', apellidoMaterno: '',
+      telefono: '', email: '', direccion: '',
+      fechaNacimiento: '', genero: '', grupoSanguineo: ''
+    };
+  }
+
+  get dniValido(): boolean {
+    return /^\d{8}$/.test(this.dniPaciente?.trim());
+  }
+
+  get pacienteResuelto(): boolean {
+    return !!this.pacienteEncontrado || this.nuevaCita.pacienteId > 0;
+  }
+
+  buscarPacientePorDni(): void {
+    this.dniTouched = true;
+    const dni = this.dniPaciente?.trim();
+    if (!dni || !/^\d{8}$/.test(dni)) {
+      this.toast.warn('Ingrese un DNI válido de 8 dígitos');
+      return;
+    }
+
+    this.buscandoDni = true;
+    this.pacienteEncontrado = null;
+    this.pacienteNoEncontrado = false;
+    this.mostrarCamposPaciente = false;
+    this.nuevaCita.pacienteId = 0;
+
+    this.citaService.buscarPacientePorDni(dni).subscribe({
+      next: (paciente) => {
+        this.pacienteEncontrado = paciente;
+        this.nuevaCita.pacienteId = paciente.id;
+        this.buscandoDni = false;
+        this.toast.success(`Paciente encontrado: ${paciente.nombre} ${paciente.apellidoPaterno}`);
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.consultarReniec(dni);
+      }
+    });
+  }
+
+  private consultarReniec(dni: string): void {
+    this.reniecCargando = true;
+
+    this.citaService.consultarReniec(dni).subscribe({
+      next: (data) => {
+        this.pacienteNoEncontrado = true;
+        this.mostrarCamposPaciente = true;
+        if (data) {
+          this.nuevoPaciente.nombre = data.nombres || data.first_name || '';
+          this.nuevoPaciente.apellidoPaterno = data.apellidoPaterno || data.first_last_name || '';
+          this.nuevoPaciente.apellidoMaterno = data.apellidoMaterno || data.second_last_name || '';
+        }
+        this.reniecCargando = false;
+        this.buscandoDni = false;
+        this.cdr.markForCheck();
+      },
+      error: () => {
+        this.pacienteNoEncontrado = true;
+        this.mostrarCamposPaciente = true;
+        this.reniecCargando = false;
+        this.buscandoDni = false;
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+  get pacienteFormValido(): boolean {
+    return !!(
+      this.nuevoPaciente.nombre.trim() &&
+      this.nuevoPaciente.apellidoPaterno.trim() &&
+      this.nuevoPaciente.telefono &&
+      /^\d{9}$/.test(this.nuevoPaciente.telefono) &&
+      this.nuevoPaciente.fechaNacimiento &&
+      this.nuevoPaciente.genero &&
+      this.nuevoPaciente.grupoSanguineo
+    );
+  }
+
+  registrarPacienteYContinuar(): void {
+    if (!this.nuevoPaciente.nombre?.trim()) {
+      this.toast.warn('Ingrese el nombre del paciente'); return;
+    }
+    if (!this.nuevoPaciente.apellidoPaterno?.trim()) {
+      this.toast.warn('Ingrese el apellido paterno'); return;
+    }
+    if (!this.nuevoPaciente.apellidoMaterno?.trim()) {
+      this.toast.warn('Ingrese el apellido materno'); return;
+    }
+    if (!/^\d{9}$/.test(this.nuevoPaciente.telefono)) {
+      this.toast.warn('El teléfono debe tener 9 dígitos'); return;
+    }
+    if (!this.nuevoPaciente.fechaNacimiento) {
+      this.toast.warn('Seleccione la fecha de nacimiento'); return;
+    }
+    if (!this.nuevoPaciente.genero) {
+      this.toast.warn('Seleccione el género'); return;
+    }
+    if (!this.nuevoPaciente.grupoSanguineo) {
+      this.toast.warn('Seleccione el grupo sanguíneo'); return;
+    }
+
+    const payload = { dni: this.dniPaciente.trim(), ...this.nuevoPaciente };
+
+    this.citaService.registrarPaciente(payload).subscribe({
+      next: (res: any) => {
+        const pacienteId = res?.id;
+        if (pacienteId) this.nuevaCita.pacienteId = pacienteId;
+        this.pacienteEncontrado = { id: pacienteId, dni: this.dniPaciente.trim(), ...this.nuevoPaciente } as any;
+        this.pacienteNoEncontrado = false;
+        this.mostrarCamposPaciente = false;
+        this.toast.success('Paciente registrado correctamente');
+        this.cargarPacientes();
+        this.cdr.markForCheck();
+      },
+      error: (err) => {
+        this.toast.error(err?.error?.mensaje || 'Error al registrar paciente');
+      }
+    });
   }
 
   verDetalle(cita: CitaDetalle): void {
@@ -216,12 +382,45 @@ export class CitasComponent implements OnInit {
     }
   }
 
+  get now(): Date { return new Date(); }
+
+  esFechaFutura(d: Date): boolean { return d > this.now; }
+
+  get motivoInvalido(): boolean {
+    const m = this.nuevaCita.motivoConsulta;
+    return m.trim().length > 0 && m.trim().length < 5;
+  }
+
+  get formValido(): boolean {
+    return !!(
+      this.pacienteResuelto &&
+      this.nuevaCita.medicoId &&
+      this.nuevaCita.medicoId > 0 &&
+      this.fechaHoraCita &&
+      this.fechaHoraCita > this.now &&
+      this.nuevaCita.motivoConsulta.trim().length >= 5
+    );
+  }
+
   guardarCita(): void {
-    if (!this.nuevaCita.pacienteId)    { this.toast.warn('Seleccione un paciente');    return; }
-    if (!this.nuevaCita.medicoId)      { this.toast.warn('Seleccione un médico');      return; }
-    if (!this.nuevaCita.consultorioId) { this.toast.warn('Seleccione un consultorio'); return; }
-    if (!this.fechaHoraCita)           { this.toast.warn('Seleccione fecha y hora');   return; }
-    if (!this.nuevaCita.motivoConsulta.trim()) { this.toast.warn('Ingrese el motivo'); return; }
+    if (!this.nuevaCita.pacienteId || this.nuevaCita.pacienteId === 0) {
+      this.toast.warn('Busque y seleccione un paciente por DNI'); return;
+    }
+    if (!this.nuevaCita.medicoId) {
+      this.toast.warn('Seleccione un médico'); return;
+    }
+    if (!this.fechaHoraCita) {
+      this.toast.warn('Seleccione fecha y hora'); return;
+    }
+    if (this.fechaHoraCita <= new Date()) {
+      this.toast.warn('La fecha debe ser posterior a la actual'); return;
+    }
+    if (!this.nuevaCita.motivoConsulta?.trim()) {
+      this.toast.warn('Ingrese el motivo de consulta'); return;
+    }
+    if (this.nuevaCita.motivoConsulta.trim().length < 5) {
+      this.toast.warn('El motivo debe tener al menos 5 caracteres'); return;
+    }
 
     this.nuevaCita.fechaHora = this.fechaHoraCita.toISOString();
 
@@ -243,6 +442,10 @@ export class CitasComponent implements OnInit {
       this.toast.warn('Seleccione una nueva fecha y hora');
       return;
     }
+    if (this.nuevaFechaReprogramacion <= new Date()) {
+      this.toast.warn('La nueva fecha debe ser posterior a la actual');
+      return;
+    }
     this.citaService.reprogramar(this.citaSeleccionada.id, this.nuevaFechaReprogramacion.toISOString()).subscribe({
       next: (res) => {
         this.toast.success(res);
@@ -253,11 +456,38 @@ export class CitasComponent implements OnInit {
     });
   }
 
-  cancelarCita(cita: CitaDetalle): void {
-    const nombre = `${cita.pacienteNombre} ${cita.pacienteApellidoPaterno}`;
-    if (!confirm(`¿Cancelar la cita de ${nombre}?`)) return;
-    this.citaService.cancelar(cita.id).subscribe({
-      next: (res) => { this.toast.success(res); this.cargarCitas(); },
+  confirmarEliminar(cita: CitaDetalle): void {
+    this.citaDeleteando = cita;
+    this.mostrarConfirmarDelete = true;
+  }
+
+  eliminarCita(): void {
+    if (!this.citaDeleteando) return;
+    this.citaService.eliminar(this.citaDeleteando.id).subscribe({
+      next: () => {
+        this.toast.success('Cita eliminada correctamente');
+        this.mostrarConfirmarDelete = false;
+        this.citaDeleteando = null;
+        this.cargarCitas();
+      },
+      error: (err) => this.toast.error(err?.error?.mensaje || 'Error al eliminar la cita'),
+    });
+  }
+
+  confirmarCancelar(cita: CitaDetalle): void {
+    this.citaCancelando = cita;
+    this.mostrarConfirmarCancelar = true;
+  }
+
+  cancelarCita(): void {
+    if (!this.citaCancelando) return;
+    this.citaService.cancelar(this.citaCancelando.id).subscribe({
+      next: (res) => {
+        this.toast.success(res);
+        this.mostrarConfirmarCancelar = false;
+        this.citaCancelando = null;
+        this.cargarCitas();
+      },
       error: (err) => this.toast.error(err.error || 'Error al cancelar'),
     });
   }
@@ -282,20 +512,17 @@ export class CitasComponent implements OnInit {
   }
 
   private resetCitaForm(): CitaDTO {
-    return { pacienteId: 0, medicoId: 0, consultorioId: 0, fechaHora: '', motivoConsulta: '' };
+    return { pacienteId: 0, medicoId: 0, fechaHora: '', motivoConsulta: '' };
   }
 
-  /** Construye nombre completo de paciente desde campos planos del DTO */
   nombrePaciente(cita: CitaDetalle): string {
     return `${cita.pacienteNombre} ${cita.pacienteApellidoPaterno} ${cita.pacienteApellidoMaterno}`;
   }
 
-  /** Construye nombre completo de médico desde campos planos del DTO */
   nombreMedico(cita: CitaDetalle): string {
     return `${cita.medicoNombre} ${cita.medicoApellidoPaterno} ${cita.medicoApellidoMaterno}`;
   }
 
-  /** Nombre completo para paciente/medico desde objeto Medico o Paciente en listas del formulario */
   obtenerNombreCompleto(entidad: any): string {
     if (!entidad) return '';
     return `${entidad.nombre ?? ''} ${entidad.apellidoPaterno ?? ''} ${entidad.apellidoMaterno ?? ''}`.trim();
@@ -315,4 +542,21 @@ export class CitasComponent implements OnInit {
   puedeCancelar        = (c: CitaDetalle) => c.estado === EstadoCita.PROGRAMADA;
   puedeCompletar       = (c: CitaDetalle) => c.estado === EstadoCita.PROGRAMADA;
   puedeMarcarNoAsistio = (c: CitaDetalle) => c.estado === EstadoCita.PROGRAMADA;
+
+  // Validation helpers for HTML
+  isInvalid(value: string | null | undefined): boolean {
+    return !value?.trim();
+  }
+
+  emailValido(email: string): boolean {
+    return !email || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  telefonoValido(tel: string): boolean {
+    return /^\d{9}$/.test(tel);
+  }
+
+  dni8Valido(dni: string): boolean {
+    return /^\d{8}$/.test(dni);
+  }
 }

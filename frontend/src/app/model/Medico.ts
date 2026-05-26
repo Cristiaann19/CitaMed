@@ -1,4 +1,5 @@
 import { Especialidad } from './Especialidad';
+import { Consultorio } from './Consultorio';
 
 export interface Medico {
   id?: number;
@@ -15,6 +16,7 @@ export interface Medico {
   userName: string;
   activo: boolean;
   especialidad: Especialidad;
+  consultorio?: Consultorio;
 }
 
 export interface MedicoDTO {
@@ -29,6 +31,7 @@ export interface MedicoDTO {
   genero: string;
   numeroColegiatura: string;
   especialidadId: number;
+  consultorioId?: number;
   userName: string;
   password: string;
 }

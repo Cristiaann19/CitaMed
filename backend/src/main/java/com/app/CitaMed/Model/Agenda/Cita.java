@@ -1,10 +1,9 @@
 package com.app.CitaMed.Model.Agenda;
-
 import com.app.CitaMed.Enums.EstadoCita;
 import com.app.CitaMed.Model.Administrativo.Consultorio;
 import com.app.CitaMed.Model.Administrativo.Pago;
 import com.app.CitaMed.Model.Medico.Medico;
-import com.app.CitaMed.Model.Paciente.ConsultaMedica;
+import com.app.CitaMed.Model.Medico.Diagnostico;
 import com.app.CitaMed.Model.Paciente.Paciente;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -23,8 +22,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "citas")
-public class Cita {
 
+public class Cita {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -64,5 +63,5 @@ public class Cita {
 
     @JsonIgnore
     @OneToOne(mappedBy = "cita", cascade = CascadeType.ALL)
-    private ConsultaMedica consultaMedica;
+    private Diagnostico diagnostico;
 }

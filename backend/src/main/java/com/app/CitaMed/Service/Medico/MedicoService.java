@@ -4,7 +4,9 @@ import com.app.CitaMed.DTO.MedicoPerfilDTO;
 import com.app.CitaMed.Enums.Rol;
 import com.app.CitaMed.Model.Medico.Especialidad;
 import com.app.CitaMed.Model.Medico.Medico;
+import com.app.CitaMed.Model.Administrativo.Consultorio;
 import com.app.CitaMed.Model.Administrativo.Usuario;
+import com.app.CitaMed.Repository.Administrativo.ConsultorioRepository;
 import com.app.CitaMed.Repository.Medico.EspecialidadRepository;
 import com.app.CitaMed.Repository.Medico.MedicoRepository;
 import com.app.CitaMed.Repository.Administrativo.UsuarioRepository;
@@ -21,6 +23,7 @@ import java.util.concurrent.ThreadLocalRandom;
 public class MedicoService {
     private final MedicoRepository medicoRepository;
     private final EspecialidadRepository especialidadRepository;
+    private final ConsultorioRepository consultorioRepository;
     private final UsuarioRepository usuarioRepository;
 
     public List<Medico> findAll() {
@@ -45,6 +48,11 @@ public class MedicoService {
         Especialidad especialidad = especialidadRepository.findById(dto.getEspecialidadId()).orElse(null);
         if (especialidad == null) return "Especialidad no encontrada";
 
+        Consultorio consultorio = null;
+        if (dto.getConsultorioId() != null) {
+            consultorio = consultorioRepository.findById(dto.getConsultorioId()).orElse(null);
+        }
+
         Usuario usuario = new Usuario();
         usuario.setUserName(dto.getUserName());
         usuario.setPassword(dto.getPassword());
@@ -64,6 +72,7 @@ public class MedicoService {
         medico.setGenero(dto.getGenero());
         medico.setNumeroColegiatura(dto.getNumeroColegiatura());
         medico.setEspecialidad(especialidad);
+        medico.setConsultorio(consultorio);
         medico.setUsuario(usuario);
         medico.setActivo(true);
         medicoRepository.save(medico);
@@ -126,6 +135,11 @@ public class MedicoService {
         medico.setGenero(dto.getGenero());
         medico.setNumeroColegiatura(dto.getNumeroColegiatura());
         medico.setEspecialidad(especialidad);
+
+        if (dto.getConsultorioId() != null) {
+            Consultorio consultorio = consultorioRepository.findById(dto.getConsultorioId()).orElse(null);
+            medico.setConsultorio(consultorio);
+        }
 
         if (medico.getUsuario() != null) {
             Usuario usuario = medico.getUsuario();

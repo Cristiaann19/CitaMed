@@ -4,10 +4,10 @@
     <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-5">
       <div>
         <h3 class="text-4xl font-bold text-[#329791] mb-2">
-          Gestión de Citas Médicas
+          Gesti&oacute;n de Citas M&eacute;dicas
         </h3>
         <p class="text-gray-600 text-sm">
-          Programación y seguimiento de citas médicas
+          Programaci&oacute;n y seguimiento de citas m&eacute;dicas
         </p>
       </div>
 
@@ -23,18 +23,16 @@
   <!-- FILTROS -->
   <div class="bg-white rounded-3xl shadow-sm border border-blue-100/50 p-6 mb-6">
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-      <!-- Búsqueda general -->
       <div class="relative">
         <i class="pi pi-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
         <input
           type="text"
           [(ngModel)]="terminoBusqueda"
           (input)="aplicarFiltros()"
-          placeholder="Buscar paciente, médico..."
+          placeholder="Buscar paciente, m&eacute;dico..."
           class="w-full pl-11 pr-4 h-12 rounded-xl border-2 border-gray-200 focus:border-[#329791] focus:ring-4 focus:ring-[#329791]/10 transition-all outline-none text-sm bg-white" />
       </div>
 
-      <!-- Filtro por estado -->
       <div>
         <p-select
           [(ngModel)]="filtroEstado"
@@ -48,20 +46,18 @@
         </p-select>
       </div>
 
-      <!-- Filtro por médico -->
       <div>
         <select
           [(ngModel)]="filtroMedico"
           (change)="aplicarFiltros()"
           class="w-full h-12 px-4 rounded-xl border-2 border-gray-200 focus:border-[#329791] focus:ring-4 focus:ring-[#329791]/10 transition-all outline-none text-sm bg-white">
-          <option [ngValue]="null">Todos los médicos</option>
+          <option [ngValue]="null">Todos los m&eacute;dicos</option>
           <option *ngFor="let m of medicos" [ngValue]="m.id">
-            {{ obtenerNombreCompleto(m) }} — {{ m.especialidad?.nombre }}
+            {{ obtenerNombreCompleto(m) }} &mdash; {{ m.especialidad.nombre }}
           </option>
         </select>
       </div>
 
-      <!-- Fecha inicio -->
       <div>
         <p-datepicker
           [(ngModel)]="filtroFechaInicio"
@@ -75,7 +71,6 @@
         </p-datepicker>
       </div>
 
-      <!-- Fecha fin -->
       <div>
         <p-datepicker
           [(ngModel)]="filtroFechaFin"
@@ -113,7 +108,7 @@
       <ng-template pTemplate="header">
         <tr class="bg-[#e4f1f1]/20 border-b border-[#e4f1f1]/10">
           <th class="text-left px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">Paciente</th>
-          <th class="text-left px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">Médico</th>
+          <th class="text-left px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">M&eacute;dico</th>
           <th class="text-left px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">Consultorio</th>
           <th class="text-left px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">Fecha y Hora</th>
           <th class="text-left px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">Estado</th>
@@ -124,7 +119,6 @@
       <ng-template pTemplate="body" let-cita>
         <tr class="border-b border-gray-100 hover:bg-[#329791]/[0.03] transition-all">
 
-          <!-- Paciente — usa campos planos del DTO -->
           <td class="px-6 py-5">
             <div>
               <h5 class="font-bold text-gray-800 text-sm">
@@ -134,7 +128,6 @@
             </div>
           </td>
 
-          <!-- Médico — usa campos planos del DTO -->
           <td class="px-6 py-5">
             <div>
               <h5 class="font-semibold text-gray-700 text-sm">
@@ -146,7 +139,6 @@
             </div>
           </td>
 
-          <!-- Consultorio -->
           <td class="px-6 py-5">
             <div class="font-semibold text-gray-700 text-sm">
               Consultorio {{ cita.consultorioNumero }}
@@ -156,7 +148,6 @@
             </div>
           </td>
 
-          <!-- Fecha y Hora -->
           <td class="px-6 py-5">
             <div class="font-bold text-gray-800 text-sm">
               {{ cita.fechaHora | date:'dd/MM/yyyy' }}
@@ -167,7 +158,6 @@
             </div>
           </td>
 
-          <!-- Estado -->
           <td class="px-6 py-5">
             <span
               class="inline-block px-3 py-1.5 rounded-full text-xs font-bold"
@@ -176,10 +166,8 @@
             </span>
           </td>
 
-          <!-- Acciones -->
           <td class="px-6 py-5">
             <div class="flex items-center justify-center gap-2">
-              <!-- Ver detalle -->
               <button
                 (click)="verDetalle(cita)"
                 class="w-9 h-9 rounded-lg bg-blue-100 hover:bg-blue-200 text-blue-700 flex items-center justify-center cursor-pointer transition-all"
@@ -187,7 +175,6 @@
                 <i class="pi pi-eye text-sm"></i>
               </button>
 
-              <!-- Reprogramar -->
               <button
                 *ngIf="puedeReprogramar(cita)"
                 (click)="abrirReprogramar(cita)"
@@ -196,7 +183,6 @@
                 <i class="pi pi-calendar text-sm"></i>
               </button>
 
-              <!-- Completar -->
               <button
                 *ngIf="puedeCompletar(cita)"
                 (click)="completarCita(cita)"
@@ -205,7 +191,6 @@
                 <i class="pi pi-check text-sm"></i>
               </button>
 
-              <!-- No asistió -->
               <button
                 *ngIf="puedeMarcarNoAsistio(cita)"
                 (click)="marcarNoAsistio(cita)"
@@ -214,13 +199,19 @@
                 <i class="pi pi-user-minus text-sm"></i>
               </button>
 
-              <!-- Cancelar -->
               <button
                 *ngIf="puedeCancelar(cita)"
-                (click)="cancelarCita(cita)"
+                (click)="confirmarCancelar(cita)"
                 class="w-9 h-9 rounded-lg bg-red-100 hover:bg-red-200 text-red-700 flex items-center justify-center cursor-pointer transition-all"
                 title="Cancelar cita">
                 <i class="pi pi-times text-sm"></i>
+              </button>
+
+              <button
+                (click)="confirmarEliminar(cita)"
+                class="w-9 h-9 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-700 flex items-center justify-center cursor-pointer transition-all"
+                title="Eliminar cita">
+                <i class="pi pi-trash text-sm"></i>
               </button>
             </div>
           </td>
@@ -240,99 +231,219 @@
   </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     MODAL: NUEVA / EDITAR CITA
-══════════════════════════════════════════ -->
+<!-- ============================================
+     MODAL: NUEVA CITA
+============================================ -->
 <p-dialog
   header="Registrar Nueva Cita"
   [(visible)]="mostrarModal"
   [modal]="true"
-  [style]="{ width: '700px' }"
+  [style]="{ width: '900px' }"
   [draggable]="false"
   [resizable]="false">
 
   <div class="grid grid-cols-2 gap-4 mt-4">
 
-    <!-- Filtro por especialidad (opcional, facilita búsqueda de médico) -->
+    <!-- BUSQUEDA POR DNI -->
     <div class="col-span-2">
-      <label class="text-xs font-semibold text-gray-600 block mb-2">Filtrar médico por especialidad</label>
-      <select
-        [(ngModel)]="especialidadSeleccionada"
-        (change)="onEspecialidadChange()"
-        class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#329791] outline-none transition-all">
-        <option [ngValue]="null">Todas las especialidades</option>
-        <option *ngFor="let e of especialidades" [ngValue]="e.id">{{ e.nombre }}</option>
-      </select>
-    </div>
+      <label class="text-xs font-semibold text-gray-600 block mb-2">
+        Buscar paciente por DNI <span class="text-red-500">*</span>
+      </label>
+      <div class="flex gap-2">
+        <div class="flex-1 relative">
+          <input
+            type="text"
+            [(ngModel)]="dniPaciente"
+            (input)="dniTouched = true"
+            maxlength="8"
+            placeholder="Ingrese DNI del paciente"
+            class="w-full px-4 py-3 rounded-xl border-2 outline-none transition-all"
+            [class.border-green-400]="pacienteEncontrado"
+            [class.border-red-400]="dniTouched && !dniValido && !pacienteEncontrado && !mostrarCamposPaciente"
+            [class.border-gray-200]="!dniTouched && !pacienteEncontrado" />
+          <div
+            *ngIf="dniTouched && !dniValido && !pacienteEncontrado && !mostrarCamposPaciente"
+            class="text-xs text-red-500 mt-1">
+            El DNI debe tener 8 d&iacute;gitos
+          </div>
+        </div>
+        <button
+          (click)="buscarPacientePorDni()"
+          [disabled]="buscandoDni || reniecCargando || !dniValido"
+          class="px-5 py-3 rounded-xl bg-[#329791] hover:bg-[#267c77] text-white font-bold text-sm cursor-pointer transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+          <i class="pi pi-search mr-1"></i>
+          Buscar
+        </button>
+      </div>
 
-    <!-- Paciente -->
-    <div class="col-span-2">
-      <label class="text-xs font-semibold text-gray-600 block mb-2">Paciente *</label>
-      <select
-        [(ngModel)]="nuevaCita.pacienteId"
-        class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#329791] outline-none transition-all">
-        <option [ngValue]="0">Seleccione un paciente</option>
-        <option *ngFor="let p of pacientes" [ngValue]="p.id">
-          {{ obtenerNombreCompleto(p) }} — {{ p.dni }}
-        </option>
-      </select>
-    </div>
-
-    <!-- Médico -->
-    <div class="col-span-2">
-      <label class="text-xs font-semibold text-gray-600 block mb-2">Médico *</label>
-      <select
-        [(ngModel)]="nuevaCita.medicoId"
-        class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#329791] outline-none transition-all">
-        <option [ngValue]="0">Seleccione un médico</option>
-        <option *ngFor="let m of medicosFiltrados" [ngValue]="m.id">
-          {{ obtenerNombreCompleto(m) }} — {{ m.especialidad?.nombre }}
-        </option>
-      </select>
-    </div>
-
-    <!-- Consultorio -->
-    <div>
-      <label class="text-xs font-semibold text-gray-600 block mb-2">Consultorio *</label>
-      <select
-        [(ngModel)]="nuevaCita.consultorioId"
-        class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#329791] outline-none transition-all">
-        <option [ngValue]="0">Seleccione consultorio</option>
-        <option *ngFor="let c of consultorios" [ngValue]="c.id">
-          Consultorio {{ c.numero }} — {{ c.descripcion }}
-        </option>
-      </select>
-    </div>
-
-    <!-- Fecha y Hora -->
-    <div>
-      <label class="text-xs font-semibold text-gray-600 block mb-2">Fecha y Hora *</label>
-      <p-datepicker
-        [(ngModel)]="fechaHoraCita"
-        [showTime]="true"
-        [showIcon]="true"
-        dateFormat="dd/mm/yy"
-        hourFormat="24"
-        [minDate]="hoy"
-        placeholder="Seleccione fecha y hora"
-        [style]="{'width': '100%'}">
-      </p-datepicker>
-    </div>
-
-    <!-- Motivo de consulta -->
-    <div class="col-span-2">
-      <label class="text-xs font-semibold text-gray-600 block mb-2">Motivo de Consulta *</label>
-      <textarea
-        [(ngModel)]="nuevaCita.motivoConsulta"
-        rows="3"
-        maxlength="200"
-        placeholder="Describa el motivo de la consulta..."
-        class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#329791] outline-none transition-all resize-none">
-      </textarea>
-      <div class="text-xs text-gray-400 mt-1 text-right">
-        {{ nuevaCita.motivoConsulta.length }}/200
+      <div *ngIf="buscandoDni || reniecCargando" class="mt-2 text-sm text-gray-500">
+        <i class="pi pi-spin pi-spinner mr-2"></i>{{ buscandoDni ? 'Buscando en base de datos...' : 'Consultando RENIEC...' }}
+      </div>
+      <div *ngIf="pacienteEncontrado" class="mt-2 flex items-center gap-2 text-sm text-green-600 font-semibold bg-green-50 px-3 py-2 rounded-lg">
+        <i class="pi pi-check-circle"></i>
+        Paciente: {{ pacienteEncontrado.nombre }} {{ pacienteEncontrado.apellidoPaterno }} {{ pacienteEncontrado.apellidoMaterno }}
       </div>
     </div>
+
+    <!-- CAMPOS MANUALES (cuando RENIEC falla o no hay datos) -->
+    <ng-container *ngIf="mostrarCamposPaciente">
+      <div class="col-span-2 border-t pt-4 mt-2">
+        <h4 class="text-sm font-bold text-gray-700 mb-3">Registrar nuevo paciente</h4>
+      </div>
+
+      <div>
+        <label class="text-xs font-semibold text-gray-600 block mb-2">Nombres <span class="text-red-500">*</span></label>
+        <input type="text" [(ngModel)]="nuevoPaciente.nombre" placeholder="Nombres"
+          class="w-full px-4 py-3 rounded-xl border-2 outline-none transition-all"
+          [class.border-red-400]="!nuevoPaciente.nombre.trim() && dniTouched"
+          [class.border-gray-200]="nuevoPaciente.nombre.trim() || !dniTouched" />
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-gray-600 block mb-2">Ap. Paterno <span class="text-red-500">*</span></label>
+        <input type="text" [(ngModel)]="nuevoPaciente.apellidoPaterno" placeholder="Apellido paterno"
+          class="w-full px-4 py-3 rounded-xl border-2 outline-none transition-all"
+          [class.border-red-400]="!nuevoPaciente.apellidoPaterno.trim() && dniTouched"
+          [class.border-gray-200]="nuevoPaciente.apellidoPaterno.trim() || !dniTouched" />
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-gray-600 block mb-2">Ap. Materno</label>
+        <input type="text" [(ngModel)]="nuevoPaciente.apellidoMaterno" placeholder="Apellido materno"
+          class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 outline-none transition-all" />
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-gray-600 block mb-2">Tel&eacute;fono <span class="text-red-500">*</span></label>
+        <input type="text" [(ngModel)]="nuevoPaciente.telefono" maxlength="9" placeholder="Tel&eacute;fono"
+          class="w-full px-4 py-3 rounded-xl border-2 outline-none transition-all"
+          [class.border-red-400]="!telefonoValido(nuevoPaciente.telefono) && nuevoPaciente.telefono.length > 0"
+          [class.border-gray-200]="!nuevoPaciente.telefono || telefonoValido(nuevoPaciente.telefono)" />
+        <div *ngIf="nuevoPaciente.telefono.length > 0 && !telefonoValido(nuevoPaciente.telefono)" class="text-xs text-red-500 mt-1">
+          Debe tener 9 d&iacute;gitos
+        </div>
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-gray-600 block mb-2">Email</label>
+        <input type="email" [(ngModel)]="nuevoPaciente.email" placeholder="Email"
+          class="w-full px-4 py-3 rounded-xl border-2 outline-none transition-all"
+          [class.border-red-400]="nuevoPaciente.email && !emailValido(nuevoPaciente.email)"
+          [class.border-gray-200]="!nuevoPaciente.email || emailValido(nuevoPaciente.email)" />
+        <div *ngIf="nuevoPaciente.email && !emailValido(nuevoPaciente.email)" class="text-xs text-red-500 mt-1">
+          Email inv&aacute;lido
+        </div>
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-gray-600 block mb-2">Direcci&oacute;n</label>
+        <input type="text" [(ngModel)]="nuevoPaciente.direccion" placeholder="Direcci&oacute;n"
+          class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 outline-none transition-all" />
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-gray-600 block mb-2">Fecha Nacimiento <span class="text-red-500">*</span></label>
+        <input type="date" [(ngModel)]="nuevoPaciente.fechaNacimiento"
+          class="w-full px-4 py-3 rounded-xl border-2 outline-none transition-all"
+          [class.border-red-400]="!nuevoPaciente.fechaNacimiento && dniTouched"
+          [class.border-gray-200]="nuevoPaciente.fechaNacimiento || !dniTouched" />
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-gray-600 block mb-2">G&eacute;nero <span class="text-red-500">*</span></label>
+        <select [(ngModel)]="nuevoPaciente.genero"
+          class="w-full px-4 py-3 rounded-xl border-2 outline-none transition-all"
+          [class.border-red-400]="!nuevoPaciente.genero && dniTouched"
+          [class.border-gray-200]="nuevoPaciente.genero || !dniTouched">
+          <option value="">Seleccione</option>
+          <option *ngFor="let g of generos" [ngValue]="g.value">{{ g.label }}</option>
+        </select>
+      </div>
+      <div>
+        <label class="text-xs font-semibold text-gray-600 block mb-2">Grupo Sangu&iacute;neo <span class="text-red-500">*</span></label>
+        <select [(ngModel)]="nuevoPaciente.grupoSanguineo"
+          class="w-full px-4 py-3 rounded-xl border-2 outline-none transition-all"
+          [class.border-red-400]="!nuevoPaciente.grupoSanguineo && dniTouched"
+          [class.border-gray-200]="nuevoPaciente.grupoSanguineo || !dniTouched">
+          <option value="">Seleccione</option>
+          <option *ngFor="let g of gruposSanguineos" [ngValue]="g.value">{{ g.label }}</option>
+        </select>
+      </div>
+
+      <div class="col-span-2">
+        <button
+          (click)="registrarPacienteYContinuar()"
+          [disabled]="!pacienteFormValido"
+          class="w-full py-3 rounded-xl bg-green-600 hover:bg-green-700 text-white font-bold text-sm cursor-pointer transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+          <i class="pi pi-user-plus mr-2"></i>
+          Registrar Paciente y Continuar
+        </button>
+      </div>
+    </ng-container>
+
+    <!-- DATOS DE LA CITA (visible solo cuando paciente está resuelto) -->
+    <ng-container *ngIf="pacienteResuelto">
+      <div class="col-span-2 border-t pt-4 mt-2">
+        <h4 class="text-sm font-bold text-gray-700 mb-3">Datos de la cita</h4>
+      </div>
+
+      <div class="col-span-2">
+        <label class="text-xs font-semibold text-gray-600 block mb-2">Filtrar m&eacute;dico por especialidad</label>
+        <select
+          [(ngModel)]="especialidadSeleccionada"
+          (change)="onEspecialidadChange()"
+          class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#329791] outline-none transition-all">
+          <option [ngValue]="null">Todas las especialidades</option>
+          <option *ngFor="let e of especialidades" [ngValue]="e.id">{{ e.nombre }}</option>
+        </select>
+      </div>
+
+      <div class="col-span-2">
+        <label class="text-xs font-semibold text-gray-600 block mb-2">M&eacute;dico <span class="text-red-500">*</span></label>
+        <select
+          [(ngModel)]="nuevaCita.medicoId"
+          class="w-full px-4 py-3 rounded-xl border-2 outline-none transition-all"
+          [class.border-red-400]="!nuevaCita.medicoId && fechaHoraCita !== null"
+          [class.border-gray-200]="nuevaCita.medicoId || fechaHoraCita === null">
+          <option [ngValue]="0">Seleccione un m&eacute;dico</option>
+          <option *ngFor="let m of medicosFiltrados" [ngValue]="m.id">
+            {{ obtenerNombreCompleto(m) }} &mdash; {{ m.especialidad.nombre }}
+            <ng-container *ngIf="m.consultorio"> &middot; Cons. {{ m.consultorio.numero }}</ng-container>
+          </option>
+        </select>
+      </div>
+
+      <div>
+        <label class="text-xs font-semibold text-gray-600 block mb-2">Fecha y Hora <span class="text-red-500">*</span></label>
+        <p-datepicker
+          [(ngModel)]="fechaHoraCita"
+          [showTime]="true"
+          [showIcon]="true"
+          dateFormat="dd/mm/yy"
+          hourFormat="24"
+          [minDate]="hoy"
+          placeholder="Seleccione fecha y hora"
+          [style]="{'width': '100%'}">
+        </p-datepicker>
+        <div *ngIf="fechaHoraCita && !esFechaFutura(fechaHoraCita)" class="text-xs text-red-500 mt-1">
+          La fecha debe ser posterior a la actual
+        </div>
+      </div>
+
+      <div class="col-span-2">
+        <label class="text-xs font-semibold text-gray-600 block mb-2">Motivo de Consulta <span class="text-red-500">*</span></label>
+        <textarea
+          [(ngModel)]="nuevaCita.motivoConsulta"
+          rows="3"
+          maxlength="200"
+          placeholder="Describa el motivo de la consulta (m&iacute;n. 5 caracteres)..."
+          class="w-full px-4 py-3 rounded-xl border-2 outline-none transition-all resize-none"
+          [class.border-red-400]="motivoInvalido"
+          [class.border-gray-200]="!nuevaCita.motivoConsulta || nuevaCita.motivoConsulta.trim().length >= 5">
+        </textarea>
+        <div class="flex justify-between mt-1">
+          <span *ngIf="motivoInvalido" class="text-xs text-red-500">
+            M&iacute;nimo 5 caracteres
+          </span>
+          <span class="text-xs text-gray-400 ml-auto">
+            {{ nuevaCita.motivoConsulta.length }}/200
+          </span>
+        </div>
+      </div>
+    </ng-container>
   </div>
 
   <ng-template pTemplate="footer">
@@ -344,7 +455,8 @@
       </button>
       <button
         (click)="guardarCita()"
-        class="px-5 py-2.5 rounded-xl bg-[#329791] hover:bg-[#267c77] text-white font-bold cursor-pointer transition-all">
+        [disabled]="!formValido"
+        class="px-5 py-2.5 rounded-xl bg-[#329791] hover:bg-[#267c77] text-white font-bold cursor-pointer transition-all disabled:opacity-50 disabled:cursor-not-allowed">
         <i class="pi pi-save mr-2"></i>
         Guardar Cita
       </button>
@@ -352,9 +464,9 @@
   </ng-template>
 </p-dialog>
 
-<!-- ══════════════════════════════════════════
+<!-- ============================================
      MODAL: DETALLE DE CITA
-══════════════════════════════════════════ -->
+============================================ -->
 <p-dialog
   header="Detalle de Cita"
   [(visible)]="mostrarDetalleModal"
@@ -365,7 +477,6 @@
 
   <div *ngIf="citaSeleccionada" class="space-y-4">
 
-    <!-- Estado -->
     <div class="bg-[#e4f1f1]/20 rounded-xl p-4 border-l-4 border-[#329791]">
       <div class="flex items-center justify-between">
         <span class="text-sm font-semibold text-gray-600">Estado de la Cita</span>
@@ -377,7 +488,6 @@
       </div>
     </div>
 
-    <!-- Paciente -->
     <div class="border-b border-gray-200 pb-4">
       <h4 class="text-sm font-bold text-[#329791] mb-3 uppercase tracking-wide">
         <i class="pi pi-user mr-2"></i>Paciente
@@ -394,10 +504,9 @@
       </div>
     </div>
 
-    <!-- Médico -->
     <div class="border-b border-gray-200 pb-4">
       <h4 class="text-sm font-bold text-[#329791] mb-3 uppercase tracking-wide">
-        <i class="pi pi-id-card mr-2"></i>Médico Asignado
+        <i class="pi pi-id-card mr-2"></i>M&eacute;dico Asignado
       </h4>
       <div class="space-y-2">
         <div class="flex justify-between">
@@ -411,7 +520,6 @@
       </div>
     </div>
 
-    <!-- Detalles -->
     <div class="border-b border-gray-200 pb-4">
       <h4 class="text-sm font-bold text-[#329791] mb-3 uppercase tracking-wide">
         <i class="pi pi-calendar mr-2"></i>Detalles de la Cita
@@ -428,13 +536,12 @@
         <div class="flex justify-between">
           <span class="text-sm text-gray-600">Consultorio:</span>
           <span class="text-sm font-semibold text-gray-800">
-            {{ citaSeleccionada.consultorioNumero }} — {{ citaSeleccionada.consultorioDescripcion }}
+            {{ citaSeleccionada.consultorioNumero }} &mdash; {{ citaSeleccionada.consultorioDescripcion }}
           </span>
         </div>
       </div>
     </div>
 
-    <!-- Motivo -->
     <div>
       <h4 class="text-sm font-bold text-[#329791] mb-2 uppercase tracking-wide">
         <i class="pi pi-file-edit mr-2"></i>Motivo de Consulta
@@ -456,9 +563,9 @@
   </ng-template>
 </p-dialog>
 
-<!-- ══════════════════════════════════════════
+<!-- ============================================
      MODAL: REPROGRAMAR CITA
-══════════════════════════════════════════ -->
+============================================ -->
 <p-dialog
   header="Reprogramar Cita"
   [(visible)]="mostrarReprogramarModal"
@@ -469,7 +576,6 @@
 
   <div *ngIf="citaSeleccionada" class="space-y-4">
 
-    <!-- Info actual -->
     <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-lg">
       <h5 class="text-sm font-bold text-amber-800 mb-2">Cita Actual</h5>
       <div class="space-y-1">
@@ -482,9 +588,8 @@
       </div>
     </div>
 
-    <!-- Nueva fecha -->
     <div>
-      <label class="text-sm font-semibold text-gray-700 block mb-2">Nueva Fecha y Hora *</label>
+      <label class="text-sm font-semibold text-gray-700 block mb-2">Nueva Fecha y Hora <span class="text-red-500">*</span></label>
       <p-datepicker
         [(ngModel)]="nuevaFechaReprogramacion"
         [showTime]="true"
@@ -495,12 +600,15 @@
         placeholder="Seleccione nueva fecha y hora"
         [style]="{'width': '100%'}">
       </p-datepicker>
+      <div *ngIf="nuevaFechaReprogramacion && !esFechaFutura(nuevaFechaReprogramacion)" class="text-xs text-red-500 mt-1">
+        La nueva fecha debe ser posterior a la actual
+      </div>
     </div>
 
     <div class="bg-blue-50 border-l-4 border-blue-500 p-3 rounded-lg">
       <p class="text-xs text-blue-700">
         <i class="pi pi-info-circle mr-2"></i>
-        Se notificará al paciente sobre el cambio de fecha
+        Se notificar&aacute; al paciente sobre el cambio de fecha
       </p>
     </div>
   </div>
@@ -517,6 +625,127 @@
         class="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-white font-bold cursor-pointer transition-all">
         <i class="pi pi-calendar mr-2"></i>
         Reprogramar
+      </button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<!-- ============================================
+     MODAL: CONFIRMAR ELIMINAR
+============================================ -->
+<p-dialog
+  header="Confirmar Eliminaci&oacute;n"
+  [(visible)]="mostrarConfirmarDelete"
+  [modal]="true"
+  [style]="{ width: '450px' }"
+  [draggable]="false"
+  [resizable]="false">
+
+  <div *ngIf="citaDeleteando" class="py-4">
+    <div class="flex items-center gap-4 mb-4">
+      <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+        <i class="pi pi-exclamation-triangle text-red-600 text-xl"></i>
+      </div>
+      <div>
+        <h4 class="font-bold text-gray-800">Eliminar cita</h4>
+        <p class="text-sm text-gray-500">Esta acci&oacute;n no se puede deshacer</p>
+      </div>
+    </div>
+
+    <div class="bg-gray-50 rounded-xl p-4 space-y-2 text-sm">
+      <div class="flex justify-between">
+        <span class="text-gray-600">Paciente:</span>
+        <span class="font-semibold text-gray-800">{{ nombrePaciente(citaDeleteando) }}</span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-gray-600">M&eacute;dico:</span>
+        <span class="font-semibold text-gray-800">{{ nombreMedico(citaDeleteando) }}</span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-gray-600">Fecha:</span>
+        <span class="font-semibold text-gray-800">{{ citaDeleteando.fechaHora | date:'dd/MM/yyyy HH:mm' }}</span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-gray-600">Estado:</span>
+        <span class="font-semibold"
+          [ngClass]="citaDeleteando.estado === 'PROGRAMADA' ? 'text-teal-600' : 'text-gray-600'">
+          {{ citaDeleteando.estado }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-end gap-3">
+      <button
+        (click)="mostrarConfirmarDelete = false"
+        class="px-5 py-2.5 rounded-xl bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold cursor-pointer transition-all">
+        Cancelar
+      </button>
+      <button
+        (click)="eliminarCita()"
+        class="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold cursor-pointer transition-all">
+        <i class="pi pi-trash mr-2"></i>
+        Eliminar
+      </button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<!-- ============================================
+     MODAL: CONFIRMAR CANCELAR
+============================================ -->
+<p-dialog
+  header="Confirmar Cancelaci&oacute;n"
+  [(visible)]="mostrarConfirmarCancelar"
+  [modal]="true"
+  [style]="{ width: '450px' }"
+  [draggable]="false"
+  [resizable]="false">
+
+  <div *ngIf="citaCancelando" class="py-4">
+    <div class="flex items-center gap-4 mb-4">
+      <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+        <i class="pi pi-exclamation-triangle text-red-600 text-xl"></i>
+      </div>
+      <div>
+        <h4 class="font-bold text-gray-800">Cancelar cita</h4>
+        <p class="text-sm text-gray-500">La cita ser&aacute; cancelada y se notificar&aacute; al paciente</p>
+      </div>
+    </div>
+
+    <div class="bg-gray-50 rounded-xl p-4 space-y-2 text-sm">
+      <div class="flex justify-between">
+        <span class="text-gray-600">Paciente:</span>
+        <span class="font-semibold text-gray-800">{{ nombrePaciente(citaCancelando) }}</span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-gray-600">M&eacute;dico:</span>
+        <span class="font-semibold text-gray-800">{{ nombreMedico(citaCancelando) }}</span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-gray-600">Fecha:</span>
+        <span class="font-semibold text-gray-800">{{ citaCancelando.fechaHora | date:'dd/MM/yyyy HH:mm' }}</span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-gray-600">Estado:</span>
+        <span class="font-semibold text-teal-600">PROGRAMADA</span>
+      </div>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-end gap-3">
+      <button
+        (click)="mostrarConfirmarCancelar = false"
+        class="px-5 py-2.5 rounded-xl bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold cursor-pointer transition-all">
+        Volver
+      </button>
+      <button
+        (click)="cancelarCita()"
+        class="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold cursor-pointer transition-all">
+        <i class="pi pi-times mr-2"></i>
+        Cancelar Cita
       </button>
     </div>
   </ng-template>

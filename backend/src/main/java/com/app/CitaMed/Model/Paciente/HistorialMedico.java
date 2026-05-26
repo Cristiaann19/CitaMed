@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import java.util.List;
 
 @Getter
 @Setter
@@ -26,7 +25,4 @@ public class HistorialMedico {
     @JoinColumn(name = "paciente_id", nullable = false, unique = true)
     private Paciente paciente;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "historial")
-    private List<ConsultaMedica> consultas;
 }

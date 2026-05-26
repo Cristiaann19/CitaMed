@@ -4,12 +4,10 @@ import com.app.CitaMed.DTO.CitaDTO;
 import com.app.CitaMed.Enums.EstadoCita;
 import com.app.CitaMed.Enums.EstadoPago;
 import com.app.CitaMed.Enums.MetodoPago;
-import com.app.CitaMed.Model.Administrativo.Consultorio;
 import com.app.CitaMed.Model.Administrativo.Pago;
 import com.app.CitaMed.Model.Agenda.Cita;
 import com.app.CitaMed.Model.Medico.Medico;
 import com.app.CitaMed.Model.Paciente.Paciente;
-import com.app.CitaMed.Repository.Administrativo.ConsultorioRepository;
 import com.app.CitaMed.Repository.Administrativo.PagoRepository;
 import com.app.CitaMed.Repository.Agenda.CitaRepository;
 import com.app.CitaMed.Repository.Medico.MedicoRepository;
@@ -30,7 +28,6 @@ public class CitaService {
     private final CitaRepository citaRepository;
     private final PacienteRepository pacienteRepository;
     private final MedicoRepository medicoRepository;
-    private final ConsultorioRepository consultorioRepository;
     private final EmailService emailService;
     private final PagoRepository pagoRepository;
 
@@ -72,10 +69,7 @@ public class CitaService {
 
         if (!medico.isActivo()) return "El médico no está activo";
 
-        Consultorio consultorio = consultorioRepository.findById(dto.getConsultorioId()).orElse(null);
-        if (consultorio == null) return "Consultorio no encontrado";
-
-        if (!consultorio.isDisponible()) return "El consultorio no está disponible";
+        if (medico.getConsultorio() == null) return "El médico no tiene un consultorio asignado";
 
         if (citaRepository.existsByMedicoIdAndFechaHoraAndEstadoNot(dto.getMedicoId(), dto.getFechaHora(), EstadoCita.CANCELADA))
             return "El médico ya tiene una cita en ese horario";
@@ -86,7 +80,7 @@ public class CitaService {
         Cita cita = new Cita();
         cita.setPaciente(paciente);
         cita.setMedico(medico);
-        cita.setConsultorio(consultorio);
+        cita.setConsultorio(medico.getConsultorio());
         cita.setFechaHora(dto.getFechaHora());
         cita.setMotivoConsulta(dto.getMotivoConsulta());
         cita.setEstado(EstadoCita.PROGRAMADA);
@@ -176,13 +170,6 @@ public class CitaService {
         if (cita.getEstado() != EstadoCita.PROGRAMADA)
             return "Solo se pueden editar citas en estado PROGRAMADA";
 
-        if (dto.getConsultorioId() != null) {
-            Consultorio consultorio = consultorioRepository.findById(dto.getConsultorioId()).orElse(null);
-            if (consultorio == null) return "Consultorio no encontrado";
-            if (!consultorio.isDisponible()) return "El consultorio no está disponible";
-            cita.setConsultorio(consultorio);
-        }
-
         if (dto.getFechaHora() != null && !dto.getFechaHora().equals(cita.getFechaHora())) {
             if (citaRepository.existsByMedicoIdAndFechaHoraAndEstadoNot(cita.getMedico().getId(), dto.getFechaHora(), EstadoCita.CANCELADA))
                 return "El médico ya tiene una cita en ese horario";
@@ -194,5 +181,18 @@ public class CitaService {
 
         citaRepository.save(cita);
         return "Cita actualizada correctamente";
+    }
+
+    @Transactional
+    public String eliminar(Long id) {
+        Cita cita = citaRepository.findById(id).orElse(null);
+        if (cita == null) return "Cita no encontrada";
+
+        if (cita.getPago() != null) {
+            pagoRepository.delete(cita.getPago());
+        }
+
+        citaRepository.delete(cita);
+        return "Cita eliminada correctamente";
     }
 }

@@ -1,5 +1,5 @@
 package com.app.CitaMed.Model.Medico;
-import com.app.CitaMed.Model.Paciente.ConsultaMedica;
+import com.app.CitaMed.Model.Agenda.Cita;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -26,12 +26,18 @@ public class Diagnostico {
     @Size(max = 100, message = "El nombre de la enfermedad no puede superar los 100 caracteres")
     private String enfermedad;
 
-    @Size(max = 300, message = "La descripción no puede superar los 300 caracteres")
+    @Size(max = 500, message = "La descripción no puede superar los 500 caracteres")
     private String descripcion;
 
-    @NotNull(message = "Debe existir una consulta médica asociada")
-    @ManyToOne
+    @Size(max = 500, message = "La receta no puede superar los 500 caracteres")
+    private String receta;
+
+    @Size(max = 500, message = "Las indicaciones no pueden superar los 500 caracteres")
+    private String indicaciones;
+
+    @NotNull(message = "Debe existir una cita asociada")
+    @OneToOne
     @JsonIgnore
-    @JoinColumn(name = "consulta_id", nullable = false)
-    private ConsultaMedica consulta;
+    @JoinColumn(name = "cita_id", nullable = false, unique = true)
+    private Cita cita;
 }

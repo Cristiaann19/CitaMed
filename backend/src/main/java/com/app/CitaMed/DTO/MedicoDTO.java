@@ -17,6 +17,7 @@ public class MedicoDTO {
     private Genero genero;
     private String numeroColegiatura;
     private Long especialidadId;
+    private Long consultorioId;
     private String userName;
     private String password;
 }

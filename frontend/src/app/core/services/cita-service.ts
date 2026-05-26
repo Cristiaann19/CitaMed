@@ -67,4 +67,20 @@ export class CitaService {
   obtenerConsultoriosDisponibles(): Observable<Consultorio[]> {
     return this.http.get<Consultorio[]>(`${this.apiUrl}/consultorio/disponibles`);
   }
+
+  buscarPacientePorDni(dni: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/paciente/dni/${dni}`);
+  }
+
+  consultarReniec(dni: string): Observable<any> {
+    return this.http.get(`${this.apiUrl}/reniec/dni/${dni}`);
+  }
+
+  registrarPaciente(dto: any): Observable<any> {
+    return this.http.post(`${this.apiUrl}/paciente`, dto);
+  }
+
+  eliminar(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/cita/${id}`);
+  }
 }

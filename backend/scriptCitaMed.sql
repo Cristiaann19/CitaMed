@@ -93,17 +93,22 @@ INSERT INTO Empleados (nombre, apellido_paterno, apellido_materno, dni, telefono
 -- ========================
 -- 5. MEDICOS
 -- ========================
-INSERT INTO Medicos (nombre, apellido_paterno, apellido_materno, dni, telefono, direccion, email, fecha_nacimiento, genero, numero_colegiatura, activo, especialidad_id, usuario_id) VALUES
-('LUIS',      'GARCIA',   'MONTOYA',  '12345601', '912345601', 'Av. Pardo 101, Chiclayo',            'luis.garcia@citamed.com',    '1978-05-12', 'MASCULINO', 'CMP-045231', true,  1,  8),
-('ROSA',      'TORRES',   'GUTIERREZ','12345602', '912345602', 'Jr. Colon 202, Chiclayo',            'rosa.torres@citamed.com',    '1980-09-18', 'FEMENINO',  'CMP-038742', true,  2,  9),
-('MIGUEL',    'RAMIREZ',  'DELGADO',  '12345603', '912345603', 'Calle Real 303, Chiclayo',           'miguel.ramirez@citamed.com', '1975-03-27', 'MASCULINO', 'CMP-029183', true,  3,  10),
-('CARMEN',    'FLORES',   'ESPINOZA', '12345604', '912345604', 'Av. Venezuela 404, Chiclayo',        'carmen.flores@citamed.com',  '1982-07-08', 'FEMENINO',  'CMP-051647', true,  4,  11),
-('JORGE',     'CASTRO',   'HUAMAN',   '12345605', '912345605', 'Jr. Tacna 505, Chiclayo',            'jorge.castro@citamed.com',   '1977-11-14', 'MASCULINO', 'CMP-034829', true,  5,  12),
-('PATRICIA',  'HERRERA',  'LEON',     '12345606', '912345606', 'Av. Balta 606, Chiclayo',            'patricia.herrera@citamed.com','1983-01-30', 'FEMENINO',  'CMP-062318', true,  6,  13),
-('FERNANDO',  'VEGA',     'QUISPE',   '12345607', '912345607', 'Calle Elias Aguirre 707, Chiclayo',  'fernando.vega@citamed.com',  '1979-06-22', 'MASCULINO', 'CMP-041095', true,  7,  14),
-('SANDRA',    'MORA',     'PAREDES',  '12345608', '912345608', 'Jr. Torres Paz 808, Chiclayo',       'sandra.mora@citamed.com',    '1981-10-03', 'FEMENINO',  'CMP-057382', true,  8,  15),
-('HECTOR',    'RIVAS',    'CARDENAS', '12345609', '912345609', 'Av. Jose Balta 909, Chiclayo',       'hector.rivas@citamed.com',   '1976-04-17', 'MASCULINO', 'CMP-027461', true,  9,  16),
-('GABRIELA',  'PINTO',    'SALINAS',  '12345610', '912345610', 'Calle Siete de Enero 1010, Chiclayo','gabriela.pinto@citamed.com', '1984-08-25', 'FEMENINO',  'CMP-068754', true,  1,  17);
+INSERT INTO Medicos (nombre, apellido_paterno, apellido_materno, dni, telefono, direccion, email, fecha_nacimiento, genero, numero_colegiatura, activo, especialidad_id, usuario_id, consultorio_id) VALUES
+('LUIS',      'GARCIA',   'MONTOYA',  '12345601', '912345601', 'Av. Pardo 101, Chiclayo',            'luis.garcia@citamed.com',    '1978-05-12', 'MASCULINO', 'CMP-045231', true,  1,  8,  1),
+('ROSA',      'TORRES',   'GUTIERREZ','12345602', '912345602', 'Jr. Colon 202, Chiclayo',            'rosa.torres@citamed.com',    '1980-09-18', 'FEMENINO',  'CMP-038742', true,  2,  9,  2),
+('MIGUEL',    'RAMIREZ',  'DELGADO',  '12345603', '912345603', 'Calle Real 303, Chiclayo',           'miguel.ramirez@citamed.com', '1975-03-27', 'MASCULINO', 'CMP-029183', true,  3,  10, 1),
+('CARMEN',    'FLORES',   'ESPINOZA', '12345604', '912345604', 'Av. Venezuela 404, Chiclayo',        'carmen.flores@citamed.com',  '1982-07-08', 'FEMENINO',  'CMP-051647', true,  4,  11, 4),
+('JORGE',     'CASTRO',   'HUAMAN',   '12345605', '912345605', 'Jr. Tacna 505, Chiclayo',            'jorge.castro@citamed.com',   '1977-11-14', 'MASCULINO', 'CMP-034829', true,  5,  12, 6),
+('PATRICIA',  'HERRERA',  'LEON',     '12345606', '912345606', 'Av. Balta 606, Chiclayo',            'patricia.herrera@citamed.com','1983-01-30', 'FEMENINO',  'CMP-062318', true,  6,  13, 8),
+('FERNANDO',  'VEGA',     'QUISPE',   '12345607', '912345607', 'Calle Elias Aguirre 707, Chiclayo',  'fernando.vega@citamed.com',  '1979-06-22', 'MASCULINO', 'CMP-041095', true,  7,  14, 10),
+('SANDRA',    'MORA',     'PAREDES',  '12345608', '912345608', 'Jr. Torres Paz 808, Chiclayo',       'sandra.mora@citamed.com',    '1981-10-03', 'FEMENINO',  'CMP-057382', true,  8,  15, 11),
+('HECTOR',    'RIVAS',    'CARDENAS', '12345609', '912345609', 'Av. Jose Balta 909, Chiclayo',       'hector.rivas@citamed.com',   '1976-04-17', 'MASCULINO', 'CMP-027461', true,  9,  16, 2),
+('GABRIELA',  'PINTO',    'SALINAS',  '12345610', '912345610', 'Calle Siete de Enero 1010, Chiclayo','gabriela.pinto@citamed.com', '1984-08-25', 'FEMENINO',  'CMP-068754', true,  1,  17, 2);
+-- ========================
+-- 5b. ASEGURAR QUE TODOS LOS MEDICOS TENGAN CONSULTORIO
+-- ========================
+UPDATE Medicos SET consultorio_id = 1 WHERE consultorio_id IS NULL;
+
 -- ========================
 -- 6. HORARIOS MEDICOS (CORREGIDO - agregado médico 10)
 -- ========================
@@ -250,178 +255,47 @@ INSERT INTO Pagos (cita_id, monto, metodo_pago, estado, fecha_pago) VALUES
 (30, 120.00, 'TARJETA',       'PAGADO', '2025-09-02 09:05:00');
 
 -- ========================
--- 11. CONSULTAS MEDICAS
+-- 11. ELIMINADO: ConsultasMedicas ya no existe
 -- ========================
-INSERT INTO Consultas_Medicas (cita_id, historial_id, observaciones, peso, talla, presion_arterial, temperatura) VALUES
-(1,  1,  'Paciente refiere cefalea tensional. Se indica descanso y analgesicos.',         75.5, 1.72, '120/80', '36.5'),
-(2,  2,  'Hipertension en seguimiento. Se ajusta dosis de antihipertensivo.',             82.0, 1.65, '150/95', '36.8'),
-(3,  3,  'Nino con desarrollo adecuado para su edad. Vacunacion al dia.',                 18.5, 1.10, '90/60',  '36.4'),
-(4,  4,  'Ciclos irregulares. Se solicita ecografia pelvica.',                            58.0, 1.63, '110/70', '36.6'),
-(5,  5,  'Contusion en rodilla derecha. Se indica reposo y antiinflamatorio.',            88.0, 1.78, '125/82', '36.7'),
-(6,  6,  'Migrana cronica con aura. Se inicia profilaxis con propranolol.',               62.0, 1.68, '118/76', '36.5'),
-(7,  7,  'Infeccion respiratoria alta. Antibioticoterapia por 7 dias.',                  70.0, 1.70, '118/78', '37.8'),
-(8,  8,  'Palpitaciones por estres. ECG normal. Se recomienda reducir cafeina.',          65.0, 1.60, '130/85', '36.6'),
-(9,  9,  'Dermatitis atopica leve. Se indica crema con corticoide topico.',               55.0, 1.55, '112/72', '36.5'),
-(10, 10, 'Hipotiroidismo. Se inicia levotiroxina. Control en 4 semanas.',                 78.0, 1.62, '115/75', '36.4'),
-(11, 11, 'Gastritis cronica. Se pauta omeprazol y dieta blanda.',                         90.0, 1.80, '128/84', '36.6'),
-(12, 12, 'Chequeo general sin hallazgos patologicos. Examenes de rutina normales.',       68.0, 1.75, '115/75', '36.5'),
-(13, 13, 'Amigdalitis bacteriana. Amoxicilina 500mg cada 8h por 7 dias.',                 25.0, 1.30, '95/60',  '38.5'),
-(14, 14, 'Embarazo semana 22. Feto en presentacion cefalica. Todo normal.',               66.0, 1.61, '108/68', '36.5'),
-(15, 15, 'Lumbalgia mecanica. Fisioterapia y relajantes musculares.',                     95.0, 1.82, '130/88', '36.6'),
-(16, 16, 'Faringoamigdalitis viral. Tratamiento sintomatico, reposo e hidratacion.',     55.0, 1.58, '108/70', '37.5'),
-(17, 17, 'Neuropatia periferica leve en manos. Vitaminas B y control en 1 mes.',         72.0, 1.74, '120/80', '36.5'),
-(18, 18, 'Post-operatorio de bypass coronario. Evolucion favorable. Sin complicaciones.',80.0, 1.69, '125/82', '36.7'),
-(19, 19, 'Gastritis aguda por AINES. Se retira ibuprofeno y se inicia omeprazol.',       77.0, 1.76, '122/80', '36.6'),
-(20, 20, 'Quiste ovarico funcional de 3cm. Control ecografico en 2 meses.',              60.0, 1.64, '110/70', '36.5'),
-(21, 21, 'Control de crecimiento dentro de percentiles normales. Vacuna triple viral.',  32.0, 1.42, '95/62',  '36.4'),
-(22, 22, 'SII con predominio diarreico. Se ajusta dieta y se agrega probioticos.',       68.0, 1.65, '118/76', '36.5'),
-(23, 23, 'Esguince grado II tobillo izquierdo. Inmovilizacion 10 dias.',                 72.0, 1.71, '120/80', '36.6'),
-(24, 24, 'Acne grado 2. Tretinona topica nocturna y antibiotico oral.',                  58.0, 1.60, '110/72', '36.5'),
-(25, 25, 'Diabetes tipo 2 descompensada. Ajuste de metformina e insulina basal.',        85.0, 1.66, '138/90', '36.7'),
-(26, 26, 'Lumbalgia por sobrecarga laboral. Fisioterapia y cambio ergonomico.',           62.0, 1.59, '115/75', '36.5'),
-(27, 27, 'Vertigo posicional benigno. Maniobra de Epley. Mejoria inmediata.',            88.0, 1.80, '122/80', '36.6'),
-(28, 28, 'HTA no controlada. Se anade amlodipino al tratamiento actual.',                74.0, 1.70, '158/100','36.8'),
-(29, 29, 'Asma bronquial en nino. Salbutamol de rescate y budesonida inhalada.',         29.0, 1.35, '92/60',  '36.5'),
-(30, 30, 'Arritmia supraventricular estable. Se mantiene anticoagulacion.',              78.0, 1.67, '128/82', '36.6');
 
 -- ========================
 -- 12. DIAGNOSTICOS
 -- ========================
-INSERT INTO Diagnosticos (enfermedad, descripcion, consulta_id) VALUES
-('CEFALEA TENSIONAL',                  'Dolor de cabeza de tipo tensional sin signos neurologicos focales',              1),
-('HIPERTENSION ARTERIAL',              'HTA grado 2, en control farmacologico con enalapril',                            2),
-('DESARROLLO NORMAL',                  'Nino sano, desarrollo psicomotor adecuado para 5 anos',                          3),
-('OLIGOMENORREA',                      'Ciclos menstruales irregulares, posible etiologia hormonal',                     4),
-('CONTUSION DE RODILLA',               'Traumatismo directo en cara anterior de rodilla derecha sin fractura',           5),
-('MIGRANA CON AURA',                   'Migrana cronica episodica con fenomenos visuales previos',                       6),
-('INFECCION RESPIRATORIA AGUDA',       'Rinofaringitis aguda de probable etiologia viral',                               7),
-('TAQUICARDIA SINUSAL',                'Taquicardia sinusal por ansiedad, sin cardiopatia subyacente',                   8),
-('DERMATITIS ATOPICA',                 'Dermatitis atopica leve en pliegues de codos y rodillas',                        9),
-('HIPOTIROIDISMO PRIMARIO',            'Hipotiroidismo diagnosticado por TSH elevada y T4 libre bajo',                   10),
-('GASTRITIS CRONICA',                  'Gastritis antral cronica no erosiva, H. pylori negativo',                        11),
-('SIN PATOLOGIA AGUDA',                'Examen fisico y laboratorios dentro de rangos normales',                         12),
-('AMIGDALITIS BACTERIANA',             'Amigdalitis pultacea compatible con Streptococcus pyogenes',                     13),
-('EMBARAZO NORMAL SEMANA 22',          'Gestacion de bajo riesgo con feto en adecuadas condiciones',                     14),
-('LUMBALGIA MECANICA',                 'Lumbalgia inespecifica de tipo mecanico sin irradiacion',                        15),
-('FARINGOAMIGDALITIS VIRAL',           'Infeccion viral de vias respiratorias altas sin complicaciones',                 16),
-('NEUROPATIA PERIFERICA LEVE',         'Parestesias en manos sin deficit motor, origen a determinar',                   17),
-('POST-OPERATORIO BYPASS',             'Buena evolucion post bypass aortocoronario de doble vaso',                       18),
-('GASTRITIS POR AINES',                'Irritacion gastrica secundaria al uso cronico de ibuprofeno',                    19),
-('QUISTE OVARICO FUNCIONAL',           'Quiste folicular en ovario derecho de 3cm, sin tabiques',                        20),
-('DESARROLLO NORMAL',                  'Crecimiento y desarrollo acordes a percentiles para la edad',                   21),
-('SINDROME DE INTESTINO IRRITABLE',    'SII con predominio diarreico, criterios de Roma IV',                             22),
-('ESGUINCE DE TOBILLO GRADO II',       'Lesion ligamentosa parcial en tobillo izquierdo',                                23),
-('ACNE VULGAR GRADO 2',                'Acne inflamatorio moderado en region facial y dorsal',                           24),
-('DIABETES MELLITUS TIPO 2',           'DM2 descompensada con HbA1c de 9.2%',                                           25),
-('LUMBALGIA OCUPACIONAL',              'Dolor lumbar secundario a postura inadecuada y sobrecarga',                      26),
-('VERTIGO POSICIONAL BENIGNO',         'VPPB de canal posterior derecho, test de Dix-Hallpike positivo',                 27),
-('HIPERTENSION ARTERIAL NO CONTROLADA','HTA con cifras persistentemente elevadas pese a monoterapia',                   28),
-('ASMA BRONQUIAL',                     'Asma intermitente en nino con FEV1 80% del predicho',                            29),
-('FIBRILACION AURICULAR',              'FA paroxistica en seguimiento con anticoagulacion oral',                         30),
-('RINITIS ALERGICA',                   'Rinitis perenne con sensibilizacion a acaros del polvo',                         7),
-('BRONCOESPASMO LEVE',                 'Episodio de broncoespasmo asociado a infeccion viral',                           7),
-('DISLIPIDEMIA',                       'Hipercolesterolemia mixta, LDL 180 mg/dL, control con dieta',                   2),
-('OBESIDAD GRADO I',                   'IMC 31.2, se indica plan nutricional y actividad fisica',                        11),
-('ANEMIA FERROPENICA LEVE',            'Hemoglobina 10.8 g/dL con microcitosis, se inicia sulfato ferroso',              26);
+INSERT INTO Diagnosticos (enfermedad, descripcion, receta, indicaciones, cita_id) VALUES
+('CEFALEA TENSIONAL',                  'Dolor de cabeza de tipo tensional sin signos neurologicos focales',              'Ibuprofeno 400mg / Paracetamol 500mg',                                                                   'Reposo relativo, evitar pantallas, hidratacion. Tomar cada 8 horas con alimentos.',      1),
+('HIPERTENSION ARTERIAL',              'HTA grado 2, en control farmacologico con enalapril',                            'Enalapril 10mg cada 12h / Hidroclorotiazida 12.5mg',                                                     'Dieta hiposodica, ejercicio moderado diario. No suspender sin consultar.',                2),
+('DESARROLLO NORMAL',                  'Nino sano, desarrollo psicomotor adecuado para 5 anos',                         'Vitamina D 1000UI / Vitamina C 500mg',                                                                  'Dieta equilibrada, actividad fisica regular. Suplemento vitaminico.',                     3),
+('OLIGOMENORREA',                      'Ciclos menstruales irregulares, posible etiologia hormonal',                    'Anticonceptivo oral combinado 1 comprimido cada 24h / Acido folico 5mg',                                 'Tomar a la misma hora todos los dias. Control ecografico en 30 dias.',                   4),
+('CONTUSION DE RODILLA',               'Traumatismo directo en cara anterior de rodilla derecha sin fractura',          'Naproxeno 500mg cada 12h / Tramadol 50mg cada 8h segun dolor',                                           'Reposo, hielo local 20 min cada 4h. Puede producir somnolencia.',                        5),
+('MIGRANA CON AURA',                   'Migrana cronica episodica con fenomenos visuales previos',                      'Propranolol 40mg/dia / Sumatriptan 50mg en crisis',                                                      'No suspender bruscamente. Usar sumatriptan al inicio del dolor. Max 200mg/dia.',         6),
+('INFECCION RESPIRATORIA AGUDA',       'Rinofaringitis aguda de probable etiologia viral',                              'Amoxicilina 500mg cada 8h / Ibuprofeno 400mg cada 8h',                                                   'Terminar tratamiento completo. Solo ibuprofeno si fiebre >38°. Hidratacion.',            7),
+('TAQUICARDIA SINUSAL',                'Taquicardia sinusal por ansiedad, sin cardiopatia subyacente',                 'Atenolol 25mg/dia / Loratadina 10mg/dia',                                                               'Tomar con desayuno. Controlar frecuencia cardiaca. Reducir cafeina.',                    8),
+('DERMATITIS ATOPICA',                 'Dermatitis atopica leve en pliegues de codos y rodillas',                      'Betametasona crema 0.05% topico / Emoliente corporal',                                                   'Aplicar capa fina en zona afectada. Emoliente tras el bano. No en cara.',                9),
+('HIPOTIROIDISMO PRIMARIO',            'Hipotiroidismo diagnosticado por TSH elevada y T4 libre bajo',                 'Levotiroxina 50mcg en ayunas',                                                                           'Esperar 30 min antes de comer. No con calcio o hierro. Control TSH en 4 sem.',           10),
+('GASTRITIS CRONICA',                  'Gastritis antral cronica no erosiva, H. pylori negativo',                      'Omeprazol 20mg antes del desayuno / Sucralfato 1g 3 veces al dia',                                       'Dieta blanda sin irritantes. Evitar AINES. Sucralfato 1h antes de comidas.',             11),
+('SIN PATOLOGIA AGUDA',                'Examen fisico y laboratorios dentro de rangos normales',                       '',                                                                                                        'Continuar habitos saludables. Actividad fisica 150 min/semana. Control anual.',          12),
+('AMIGDALITIS BACTERIANA',             'Amigdalitis pultacea compatible con Streptococcus pyogenes',                   'Amoxicilina 500mg cada 8h / Ibuprofeno pediatrico 200mg',                                                'Completar tratamiento 7 dias. Gargaras salinas. Calcular ibuprofeno por peso.',          13),
+('EMBARAZO NORMAL SEMANA 22',          'Gestacion de bajo riesgo con feto en adecuadas condiciones',                   'Acido folico 1mg/dia / Sulfato ferroso 300mg',                                                           'Indispensable en embarazo. Tomar con vitamina C para absorcion de hierro.',              14),
+('LUMBALGIA MECANICA',                 'Lumbalgia inespecifica de tipo mecanico sin irradiacion',                      'Ciclobenzaprina 5mg cada 8h / Diclofenaco 75mg cada 12h',                                                'Fisioterapia 3 veces/semana. Faja lumbar en actividad. Puede causar somnolencia.',       15),
+('FARINGOAMIGDALITIS VIRAL',           'Infeccion viral de vias respiratorias altas sin complicaciones',              'Paracetamol 1g cada 8h',                                                                                 'Reposo relativo 48h. No sobrepasar 3g al dia. Hidratacion abundante.',                   16),
+('NEUROPATIA PERIFERICA LEVE',         'Parestesias en manos sin deficit motor, origen a determinar',                 'Vitamina B1 100mg/dia / Vitamina B12 500mcg/dia',                                                        'Ejercicios de movilidad de manos. Tomar con el desayuno.',                               17),
+('POST-OPERATORIO BYPASS',             'Buena evolucion post bypass aortocoronario de doble vaso',                    'Aspirina 100mg/dia / Clopidogrel 75mg/dia / Warfarina 5mg/dia',                                          'Antiagregante + anticoagulante. Control INR semanal. Consultar antes de procedimientos.',18),
+('GASTRITIS POR AINES',                'Irritacion gastrica secundaria al uso cronico de ibuprofeno',                 'Omeprazol 20mg antes del desayuno',                                                                      'Suspender AINES. Dieta blanda. Evitar alcohol.',                                         19),
+('QUISTE OVARICO FUNCIONAL',           'Quiste folicular en ovario derecho de 3cm, sin tabiques',                     'Anticonceptivo oral 1 comprimido cada 24h',                                                              'Tomar a la misma hora. Ecografia de control en 60 dias.',                                20),
+('DESARROLLO NORMAL',                  'Crecimiento y desarrollo acordes a percentiles para la edad',                 'Sulfato ferroso 300mg/dia / Vitamina D 400UI/dia',                                                       'Vacuna triple viral aplicada. Suplemento para crecimiento.',                             21),
+('SINDROME DE INTESTINO IRRITABLE',    'SII con predominio diarreico, criterios de Roma IV',                          'Loperamida 2mg segun necesidad / Probiotico Lactobacillus 1 capsula/dia',                                 'Dieta baja en FODMAP. Evitar lactosa y gluten. Refrigerar probiotico.',                   22),
+('ESGUINCE DE TOBILLO GRADO II',       'Lesion ligamentosa parcial en tobillo izquierdo',                             'Ibuprofeno 400mg cada 8h / Diclofenaco gel 1% topico',                                                   'Inmovilizacion 10 dias. Hielo local. Aplicar gel con masaje suave.',                     23),
+('ACNE VULGAR GRADO 2',                'Acne inflamatorio moderado en region facial y dorsal',                        'Tretinona crema 0.025% nocturna / Doxiciclina 100mg cada 12h',                                           'Protector solar diario. Doxiciclina con abundante agua. No acostarse inmediatamente.',   24),
+('DIABETES MELLITUS TIPO 2',           'DM2 descompensada con HbA1c de 9.2%',                                        'Metformina 850mg cada 12h / Insulina Glargina 10 UI nocturna',                                           'Control glucemico diario. Dieta diabetica estricta. Rotar zonas de insulina.',           25),
+('LUMBALGIA OCUPACIONAL',              'Dolor lumbar secundario a postura inadecuada y sobrecarga',                   'Ciclobenzaprina 5mg nocturna / Diclofenaco 75mg cada 12h',                                               'Fisioterapia lumbar. Cambio ergonomico en trabajo. Faja de soporte.',                    26),
+('VERTIGO POSICIONAL BENIGNO',         'VPPB de canal posterior derecho, test de Dix-Hallpike positivo',              'Betahistina 16mg cada 8h / Dimenhidrinato 50mg cada 8h si vertigo',                                      'Maniobra de Epley realizada. Ejercicios vestibulares. Puede causar somnolencia.',        27),
+('HIPERTENSION ARTERIAL NO CONTROLADA','HTA con cifras persistentemente elevadas pese a monoterapia',                 'Amlodipino 5mg/dia / Losartan 50mg/dia',                                                                 'Dieta hiposodica estricta. Control semanal de presion. No suspender.',                   28),
+('ASMA BRONQUIAL',                     'Asma intermitente en nino con FEV1 80% del predicho',                          'Salbutamol inhalador 100mcg c/4-6h en crisis / Budesonida inhalada 200mcg',                              'Max 4 inhalaciones por crisis. Enjuagar boca tras cada uso.',                            29),
+('FIBRILACION AURICULAR',              'FA paroxistica en seguimiento con anticoagulacion oral',                      'Warfarina 5mg/dia / Digoxina 0.125mg/dia',                                                               'Control INR mensual. Controlar pulso antes de digoxina. Evitar AINES.',                  30);
 
 -- ========================
--- 13. TRATAMIENTOS (CORREGIDO - agregados consultas 21-30)
+-- 13. ELIMINADO: Tratamientos ya no existe
 -- ========================
-INSERT INTO Tratamientos (indicaciones, duracion_dias, consulta_id) VALUES
-('Reposo relativo, evitar pantallas, hidratacion adecuada. Analgesicos segun necesidad.',                7,   1),
-('Ajuste de antihipertensivo. Dieta hiposodica, ejercicio moderado diario.',                             30,  2),
-('Dieta equilibrada para la edad. Actividad fisica regular. Suplemento vitaminico.',                     30,  3),
-('Anticonceptivo oral para regularizar ciclos. Control ecografico en 30 dias.',                          60,  4),
-('Reposo de la articulacion. Hielo local 20 minutos cada 4 horas. Antiinflamatorio.',                    10,  5),
-('Propranolol 40mg/dia como profilaxis. Sumatriptan para crisis agudas.',                                90,  6),
-('Antibioticoterapia oral. Reposo, hidratacion y antipiretico si temperatura mayor 38.5.',               7,   7),
-('Reduccion de cafeina y tabaco. Tecnicas de relajacion. Betabloqueante si persiste.',                   14,  8),
-('Hidratante emoliente 2 veces al dia. Corticoide topico leve en lesiones activas.',                     21,  9),
-('Levotiroxina 50mcg en ayunas. Control de TSH en 4 semanas.',                                           90,  10),
-('Omeprazol 20mg antes del desayuno. Dieta blanda sin irritantes. Sin AINES.',                           30,  11),
-('Continuar habitos saludables. Actividad fisica 150 min/semana. Control anual.',                        365, 12),
-('Amoxicilina 500mg cada 8h. Ibuprofeno para el dolor y la fiebre. Gargaras salinas.',                   7,   13),
-('Acido folico y hierro como suplementos. Dieta rica en calcio. Reposo relativo.',                       30,  14),
-('Fisioterapia 3 veces por semana. Relajante muscular nocturno. Faja lumbar en actividad.',              21,  15),
-('Reposo relativo 48h. Paracetamol 1g cada 8h. Vitamina C. Hidratacion.',                               5,   16),
-('Vitaminas del grupo B (B1, B6, B12). Ejercicios de movilidad de manos.',                               60,  17),
-('Aspirina 100mg/dia. Control cardiologico mensual. Rehabilitacion cardiaca.',                           180, 18),
-('Suspender AINES. Omeprazol 20mg/dia. Dieta blanda. Evitar alcohol.',                                  30,  19),
-('Ecografia de control en 60 dias. Anticonceptivos orales para reduccion de quiste.',                    60,  20),
--- ✅ AGREGADOS: consultas 21-30
-('Vacuna triple viral aplicada. Suplemento de hierro y vitamina D para crecimiento.',                    30,  21),
-('Dieta baja en FODMAP. Probioticos diarios. Evitar lactosa y gluten.',                                  60,  22),
-('Inmovilizacion con vendaje funcional. Reposo 10 dias. Hielo local.',                                   10,  23),
-('Tretinona topica nocturna. Antibiotico oral. Protector solar diario.',                                 60,  24),
-('Ajuste de metformina e insulina basal. Dieta diabetica estricta. Control glucemico diario.',           90,  25),
-('Fisioterapia lumbar. Cambio ergonomico en puesto de trabajo. Faja de soporte.',                        30,  26),
-('Maniobra de Epley realizada. Ejercicios vestibulares en casa. Control en 2 semanas.',                  14,  27),
-('Amlodipino agregado al tratamiento. Dieta hiposodica estricta. Control en 15 dias.',                   30,  28),
-('Salbutamol de rescate. Budesonida inhalada de mantenimiento. Evitar desencadenantes.',                 90,  29),
-('Mantener anticoagulacion con warfarina. Control de INR mensual. Evitar AINES.',                       180, 30);
-
 -- ========================
--- 14. MEDICAMENTOS (CORREGIDO - agregados para tratamientos 21-30)
+-- 14. ELIMINADO: Medicamentos ya no existe
 -- ========================
-INSERT INTO Medicamentos (nombre, dosis, frecuencia, duracion_dias, instrucciones, tratamiento_id) VALUES
-('IBUPROFENO',                   '400mg',             'Cada 8 horas',                      5,   'Tomar con alimentos. No usar si tiene gastritis.',                         1),
-('PARACETAMOL',                  '500mg',             'Cada 6 horas si dolor',             7,   'No exceder 4 tomas al dia.',                                               1),
-('ENALAPRIL',                    '10mg',              'Cada 12 horas',                     30,  'Tomar a la misma hora. No suspender sin consultar.',                        2),
-('HIDROCLOROTIAZIDA',            '12.5mg',            'Una vez al dia en la manana',       30,  'Vigilar potasio. Hidratarse bien.',                                         2),
-('VITAMINA D',                   '1000UI',            'Una vez al dia',                    30,  'Tomar con el desayuno.',                                                    3),
-('VITAMINA C',                   '500mg',             'Una vez al dia',                    30,  'Puede tomarse con o sin alimentos.',                                        3),
-('ANTICONCEPTIVO ORAL COMBINADO','1 comprimido',      'Cada 24 horas',                     21,  'Tomar a la misma hora todos los dias.',                                     4),
-('ACIDO FOLICO',                 '5mg',               'Una vez al dia',                    30,  'Tomar en ayunas o con alimentos.',                                          4),
-('NAPROXENO',                    '500mg',             'Cada 12 horas',                     7,   'Tomar con alimentos. Evitar en ulcera peptica.',                            5),
-('TRAMADOL',                     '50mg',              'Cada 8 horas segun dolor',          5,   'Puede producir somnolencia. No manejar.',                                   5),
-('PROPRANOLOL',                  '40mg',              'Una vez al dia',                    90,  'No suspender bruscamente. Controlar pulso.',                                6),
-('SUMATRIPTAN',                  '50mg',              'En crisis, maximo 2/dia',           30,  'Usar al inicio del dolor. No exceder 200mg/dia.',                           6),
-('AMOXICILINA',                  '500mg',             'Cada 8 horas',                      7,   'Terminar el tratamiento completo. Con o sin comida.',                       7),
-('IBUPROFENO',                   '400mg',             'Cada 8 horas',                      5,   'Solo si fiebre mayor 38. Con alimentos.',                                   7),
-('ATENOLOL',                     '25mg',              'Una vez al dia',                    14,  'Tomar con el desayuno. Controlar frecuencia cardiaca.',                     8),
-('LORATADINA',                   '10mg',              'Una vez al dia',                    14,  'Puede causar leve somnolencia.',                                            8),
-('BETAMETASONA CREMA',           '0.05%',             'Dos veces al dia topico',           21,  'Aplicar capa fina en la zona afectada. No en cara.',                        9),
-('EMOLIENTE CORPORAL',           'Cantidad necesaria','Dos veces al dia',                  21,  'Aplicar en todo el cuerpo tras el bano.',                                   9),
-('LEVOTIROXINA',                 '50mcg',             'Una vez al dia en ayunas',          90,  'Esperar 30 min antes de comer. No con calcio o hierro.',                    10),
-('OMEPRAZOL',                    '20mg',              'Una vez al dia antes del desayuno', 30,  'Tomar 30 minutos antes del desayuno.',                                      11),
-('SUCRALFATO',                   '1g',                'Tres veces al dia antes de comidas',30,  'Tomar 1 hora antes de las comidas principales.',                            11),
-('AMOXICILINA',                  '500mg',             'Cada 8 horas',                      7,   'Completar tratamiento aunque mejore.',                                      13),
-('IBUPROFENO PEDIATRICO',        '200mg',             'Cada 6-8 horas segun peso',         5,   'Calcular dosis por peso: 10mg/kg.',                                         13),
-('ACIDO FOLICO',                 '1mg',               'Una vez al dia',                    30,  'Indispensable en el embarazo. Tomar a diario.',                             14),
-('SULFATO FERROSO',              '300mg',             'Dos veces al dia',                  30,  'Tomar con vitamina C para mejor absorcion.',                                14),
-('CICLOBENZAPRINA',              '5mg',               'Cada 8 horas',                      10,  'Puede causar somnolencia. No manejar.',                                     15),
-('DICLOFENACO',                  '75mg',              'Cada 12 horas',                     7,   'Tomar con alimentos. Solo 7 dias maximo.',                                  15),
-('PARACETAMOL',                  '1g',                'Cada 8 horas',                      5,   'No sobrepasar 3g al dia.',                                                  16),
-('VITAMINA B1 TIAMINA',          '100mg',             'Una vez al dia',                    60,  'Tomar con el desayuno.',                                                    17),
-('VITAMINA B12',                 '500mcg',            'Una vez al dia',                    60,  'Puede tomarse con o sin alimentos.',                                        17),
-('ASPIRINA',                     '100mg',             'Una vez al dia',                    180, 'Tomar con el desayuno. No suspender sin consultar.',                        18),
-('CLOPIDOGREL',                  '75mg',              'Una vez al dia',                    180, 'Antiagregante. Consultar antes de procedimientos.',                         18),
-('OMEPRAZOL',                    '20mg',              'Una vez al dia',                    30,  'Tomar 30 min antes del desayuno para gastritis.',                           19),
-('ANTICONCEPTIVO ORAL',          '1 comprimido',      'Una vez al dia',                    60,  'Tomar a la misma hora sin olvidar dosis.',                                  20),
-('METFORMINA',                   '850mg',             'Dos veces al dia con las comidas',  90,  'No suspender. Control glucemico en ayunas semanal.',                        6),
-('INSULINA GLARGINA',            '10 UI',             'Una vez al dia por la noche',       90,  'Aplicar subcutanea en abdomen rotando zonas.',                              6),
-('SALBUTAMOL INHALADOR',         '100mcg',            'Cada 4-6 horas en crisis',          30,  'Maximo 4 inhalaciones por crisis. Enjuagar boca.',                          7),
-('BUDESONIDA INHALADA',          '200mcg',            'Dos inhalaciones cada 12 horas',    90,  'Enjuagar la boca tras cada uso.',                                           7),
-('AMLODIPINO',                   '5mg',               'Una vez al dia',                    30,  'Tomar a la misma hora. No suspender abruptamente.',                         2),
-('WARFARINA',                    '5mg',               'Una vez al dia',                    180, 'Control de INR semanal al inicio. Evitar cambios en dieta con vitamina K.', 18),
--- ✅ AGREGADOS: medicamentos para tratamientos 21-30
-('SULFATO FERROSO',              '300mg',             'Una vez al dia',                    30,  'Tomar con jugo de naranja para mejor absorcion.',                           21),
-('VITAMINA D',                   '400UI',             'Una vez al dia',                    30,  'Tomar con el desayuno.',                                                    21),
-('LOPERAMIDA',                   '2mg',               'Segun necesidad, max 3/dia',        30,  'Solo si diarrea intensa. No usar mas de 2 dias seguidos.',                  22),
-('PROBIOTICO LACTOBACILLUS',     '1 capsula',         'Una vez al dia',                    60,  'Tomar con el desayuno. Refrigerar.',                                        22),
-('IBUPROFENO',                   '400mg',             'Cada 8 horas',                      7,   'Tomar con alimentos. Solo durante inmovilizacion.',                         23),
-('DICLOFENACO GEL',              '1%',                'Tres veces al dia topico',          10,  'Aplicar sobre la zona afectada con masaje suave.',                          23),
-('TRETINONA CREMA',              '0.025%',            'Una vez al dia nocturna',           60,  'Aplicar capa fina. Evitar exposicion solar.',                               24),
-('DOXICICLINA',                  '100mg',             'Cada 12 horas',                     30,  'Tomar con abundante agua. No acostarse inmediatamente.',                    24),
-('METFORMINA',                   '850mg',             'Dos veces al dia con las comidas',  90,  'Controlar glucosa en ayunas semanalmente.',                                 25),
-('INSULINA GLARGINA',            '10 UI',             'Una vez al dia por la noche',       90,  'Rotar zonas de aplicacion. Refrigerar.',                                    25),
-('CICLOBENZAPRINA',              '5mg',               'Una vez al dia nocturna',           14,  'Tomar antes de dormir. Puede causar somnolencia.',                          26),
-('DICLOFENACO',                  '75mg',              'Cada 12 horas',                     7,   'Tomar con alimentos. Maximo 7 dias.',                                       26),
-('BETAHISTINA',                  '16mg',              'Cada 8 horas',                      14,  'Tomar con las comidas para reducir nauseas.',                               27),
-('DIMENHIDRINATO',               '50mg',              'Cada 8 horas si vertigo',           7,   'Puede causar somnolencia. No manejar.',                                     27),
-('AMLODIPINO',                   '5mg',               'Una vez al dia',                    30,  'Tomar a la misma hora. No suspender abruptamente.',                         28),
-('LOSARTAN',                     '50mg',              'Una vez al dia',                    30,  'Controlar presion cada semana. No suspender sin consultar.',                 28),
-('SALBUTAMOL INHALADOR',         '100mcg',            'Cada 4-6 horas en crisis',          90,  'Maximo 4 inhalaciones por crisis. Enjuagar boca.',                          29),
-('BUDESONIDA INHALADA',          '200mcg',            'Dos inhalaciones cada 12 horas',    90,  'Enjuagar la boca tras cada uso para evitar candidiasis.',                   29),
-('WARFARINA',                    '5mg',               'Una vez al dia',                    180, 'Control de INR mensual. Evitar cambios bruscos en dieta.',                  30),
-('DIGOXINA',                     '0.125mg',           'Una vez al dia',                    180, 'Controlar pulso antes de tomar. Consultar si menor de 60 lpm.',             30);
