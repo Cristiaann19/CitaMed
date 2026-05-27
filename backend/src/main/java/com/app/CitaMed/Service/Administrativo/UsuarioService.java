@@ -5,6 +5,7 @@ import com.app.CitaMed.Repository.Administrativo.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +20,7 @@ public class UsuarioService {
         return usuarioRepository.findAll();
     }
 
+    @Transactional
     public String saveUser(Usuario usuario) {
         if (usuarioRepository.existsByUserName(usuario.getUserName())) {
             return "El usuario ya está registrado. Intente de nuevo";
@@ -33,6 +35,7 @@ public class UsuarioService {
         return usuarioRepository.findByUserName(userName);
     }
 
+    @Transactional
     public String updateStatus(Long id) {
         return usuarioRepository.findById(id).map(usuario -> {
             usuario.setActivo(!usuario.isActivo());
@@ -41,6 +44,7 @@ public class UsuarioService {
         }).orElse("Usuario no encontrado");
     }
 
+    @Transactional
     public String changeRol(Long id, Rol nuevoRol) {
         Usuario usuario = usuarioRepository.findById(id).orElse(null);
         if (usuario == null) return "Usuario no encontrado";

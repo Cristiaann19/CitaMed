@@ -4,6 +4,7 @@ import com.app.CitaMed.Model.Administrativo.Consultorio;
 import com.app.CitaMed.Repository.Administrativo.ConsultorioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
@@ -24,6 +25,7 @@ public class ConsultorioService {
         return consultorioRepository.findById(id).orElse(null);
     }
 
+    @Transactional
     public String save(ConsultorioDTO dto) {
         if (consultorioRepository.existsByNumero(dto.getNumero()))
             return "Ya existe un consultorio con ese número";
@@ -35,6 +37,7 @@ public class ConsultorioService {
         return "Consultorio registrado correctamente";
     }
 
+    @Transactional
     public String update(Long id, ConsultorioDTO dto) {
         Consultorio consultorio = consultorioRepository.findById(id).orElse(null);
         if (consultorio == null) return "Consultorio no encontrado";
@@ -44,6 +47,7 @@ public class ConsultorioService {
         return "Consultorio actualizado correctamente";
     }
 
+    @Transactional
     public String toggleDisponible(Long id) {
         Consultorio consultorio = consultorioRepository.findById(id).orElse(null);
         if (consultorio == null) return "Consultorio no encontrado";

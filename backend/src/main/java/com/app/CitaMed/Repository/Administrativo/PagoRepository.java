@@ -17,6 +17,8 @@ public interface PagoRepository extends JpaRepository<Pago, Long> {
     Optional<Pago> findByCitaId(Long citaId);
     @Query("SELECT COALESCE(SUM(p.monto),0) FROM Pago p WHERE p.fechaPago BETWEEN :inicio AND :fin")
     Double ingresos(@Param("inicio") LocalDateTime inicio, @Param("fin") LocalDateTime fin);
+    @Query("SELECT COALESCE(SUM(p.monto),0) FROM Pago p WHERE p.cita.medico.id = :medicoId AND p.fechaPago BETWEEN :inicio AND :fin")
+    Double ingresosPorMedico(@Param("medicoId") Long medicoId, @Param("inicio") LocalDateTime inicio, @Param("fin") LocalDateTime fin);
     @Query("SELECT new com.app.CitaMed.DTO.UltimoPagoDTO(CONCAT(p.cita.paciente.nombre,' '," +
     "p.cita.paciente.apellidoPaterno), p.metodoPago, p.cita.id, p.monto, p.estado) " +
     "FROM Pago p ORDER BY p.fechaPago DESC limit 4")

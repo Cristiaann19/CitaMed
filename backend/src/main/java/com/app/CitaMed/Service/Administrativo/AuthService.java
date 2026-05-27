@@ -36,9 +36,8 @@ public class AuthService {
                     .body(Map.of("error","Contraseña incorrecta"));
         }
 
-        // Include roles in the token so SecurityContext can be populated by JwtFilter
         java.util.List<String> roles = java.util.List.of(user.getRol().name());
-        String token = jwtUtil.generarToken(user.getUserName(), roles);
+        String token = jwtUtil.generarToken(user.getUserName(), roles, user.getId());
 
         Map<String,Object> response = new HashMap<>();
         response.put("nombre", user.getUserName());

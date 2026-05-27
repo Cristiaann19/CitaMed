@@ -2,6 +2,7 @@ package com.app.CitaMed.Controller.Administrativo;
 import com.app.CitaMed.DTO.ConsultorioDTO;
 import com.app.CitaMed.Model.Administrativo.Consultorio;
 import com.app.CitaMed.Service.Administrativo.ConsultorioService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +35,7 @@ public class ConsultorioController {
     }
 
     @PostMapping
-    public ResponseEntity<String> save(@RequestBody ConsultorioDTO dto) {
+    public ResponseEntity<String> save(@RequestBody @Valid ConsultorioDTO dto) {
         String resultado = consultorioService.save(dto);
         if (!resultado.equals("Consultorio registrado correctamente"))
             return ResponseEntity.badRequest().body(resultado);
@@ -42,7 +43,7 @@ public class ConsultorioController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> update(@PathVariable Long id, @RequestBody ConsultorioDTO dto) {
+    public ResponseEntity<String> update(@PathVariable Long id, @RequestBody @Valid ConsultorioDTO dto) {
         String resultado = consultorioService.update(id, dto);
         if (resultado.equals("Consultorio no encontrado") || resultado.equals("Área no encontrada"))
             return ResponseEntity.notFound().build();

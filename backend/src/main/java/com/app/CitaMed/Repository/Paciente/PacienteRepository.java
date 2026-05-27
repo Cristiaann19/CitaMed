@@ -10,11 +10,10 @@ import org.springframework.stereotype.Repository;
 @Repository
 
 public interface PacienteRepository extends JpaRepository<Paciente, Long> {
+    long count();
     boolean existsByDni(String dni);
     Paciente findByDniAndActivoTrue(String dni);
-    // find by dni regardless of activo (used for reactivations)
     Paciente findByDni(String dni);
-    // find active patients
     Page<Paciente> findByActivoTrue(Pageable pageable);
     java.util.List<Paciente> findByActivoTrue();
 

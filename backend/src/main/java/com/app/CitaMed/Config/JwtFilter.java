@@ -1,5 +1,4 @@
 package com.app.CitaMed.Config;
-
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -13,9 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
-import java.util.ArrayList;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
@@ -35,7 +32,6 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         String path = request.getRequestURI();
-        // Only skip JWT validation for truly public endpoints
         if (path.startsWith("/api/auth/")
                 || path.startsWith("/api/reniec/")
                 || path.startsWith("/api/lading")
@@ -66,11 +62,10 @@ public class JwtFilter extends OncePerRequestFilter {
         String username = jwtUtil.extraerUsername(token);
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             java.util.List<String> roles = jwtUtil.extraerRoles(token);
-            // Log extracted username and roles for debugging
-            logger.info("[JwtFilter] user=\"{}\" roles={}", username, roles);
+            Long userId = jwtUtil.extraerUserId(token);
+            logger.info("[JwtFilter] user=\"{}\" roles={} userId={}", username, roles, userId);
             java.util.List<GrantedAuthority> authorities = new java.util.ArrayList<>();
             for (String r : roles) {
-                // Normalize roles to Spring Security convention ROLE_<NAME>
                 String roleName = r.startsWith("ROLE_") ? r : "ROLE_" + r;
                 authorities.add(new SimpleGrantedAuthority(roleName));
             }
@@ -78,9 +73,13 @@ public class JwtFilter extends OncePerRequestFilter {
             UsernamePasswordAuthenticationToken authToken =
                     new UsernamePasswordAuthenticationToken(username, null, authorities);
             authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+            if (userId != null) {
+                authToken.setDetails(new org.springframework.security.web.authentication.WebAuthenticationDetailsSource()
+                        .buildDetails(request));
+            }
             SecurityContextHolder.getContext().setAuthentication(authToken);
         }
-
         filterChain.doFilter(request, response);
     }
 }

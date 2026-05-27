@@ -10,7 +10,8 @@ import com.app.CitaMed.Repository.Administrativo.ConsultorioRepository;
 import com.app.CitaMed.Repository.Medico.EspecialidadRepository;
 import com.app.CitaMed.Repository.Medico.MedicoRepository;
 import com.app.CitaMed.Repository.Administrativo.UsuarioRepository;
-import jakarta.transaction.Transactional;
+import com.app.CitaMed.Util.*;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -38,7 +39,18 @@ public class MedicoService {
         return medicoRepository.findByEspecialidadIdAndActivoTrue(especialidadId);
     }
 
+    @Transactional
     public String save(MedicoDTO dto) {
+        DniValidator.validar(dto.getDni());
+        NombreValidator.validar(dto.getNombre(), "nombre");
+        NombreValidator.validar(dto.getApellidoPaterno(), "apellido paterno");
+        if (dto.getApellidoMaterno() != null && !dto.getApellidoMaterno().isBlank())
+            NombreValidator.validar(dto.getApellidoMaterno(), "apellido materno");
+        TelefonoValidator.validar(dto.getTelefono());
+        EmailValidator.validar(dto.getEmail());
+        UserNameValidator.validar(dto.getUserName());
+        PasswordValidator.validar(dto.getPassword());
+
         if (medicoRepository.existsByDni(dto.getDni()))
             return "Ya existe un médico con ese DNI";
 
@@ -118,7 +130,18 @@ public class MedicoService {
         );
     }
 
+    @Transactional
     public String update(Long id, MedicoDTO dto) {
+        NombreValidator.validar(dto.getNombre(), "nombre");
+        NombreValidator.validar(dto.getApellidoPaterno(), "apellido paterno");
+        if (dto.getApellidoMaterno() != null && !dto.getApellidoMaterno().isBlank())
+            NombreValidator.validar(dto.getApellidoMaterno(), "apellido materno");
+        TelefonoValidator.validar(dto.getTelefono());
+        EmailValidator.validar(dto.getEmail());
+        UserNameValidator.validar(dto.getUserName());
+        if (dto.getPassword() != null && !dto.getPassword().isBlank())
+            PasswordValidator.validar(dto.getPassword());
+
         Medico medico = medicoRepository.findById(id).orElse(null);
         if (medico == null) return "Médico no encontrado";
 

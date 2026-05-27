@@ -8,6 +8,7 @@ import com.app.CitaMed.Repository.Administrativo.PagoRepository;
 import com.app.CitaMed.Repository.Agenda.CitaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -26,6 +27,7 @@ public class PagoService {
         return pagoRepository.findById(id).orElse(null);
     }
 
+    @Transactional
     public String save(PagoDTO dto) {
         Cita cita = citaRepository.findById(dto.getCitaId()).orElse(null);
         if (cita == null) return "Cita no encontrada";
@@ -46,6 +48,7 @@ public class PagoService {
         return "Pago registrado correctamente";
     }
 
+    @Transactional
     public String anular(Long id) {
         Pago pago = pagoRepository.findById(id).orElse(null);
         if (pago == null) return "Pago no encontrado";

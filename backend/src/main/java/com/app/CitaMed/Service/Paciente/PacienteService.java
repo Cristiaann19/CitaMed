@@ -4,8 +4,10 @@ import com.app.CitaMed.Model.Paciente.HistorialMedico;
 import com.app.CitaMed.Model.Paciente.Paciente;
 import com.app.CitaMed.Repository.Paciente.HistorialMedicoRepository;
 import com.app.CitaMed.Repository.Paciente.PacienteRepository;
+import com.app.CitaMed.Util.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
@@ -19,7 +21,12 @@ public class PacienteService {
         return pacienteRepository.findByActivoTrue();
     }
 
-    // Pageable version for clients
+    public List<Paciente> findAllByIds(List<Long> ids) {
+        return pacienteRepository.findAllById(ids).stream()
+                .filter(p -> p.getActivo() == null || p.getActivo())
+                .toList();
+    }
+
     public org.springframework.data.domain.Page<Paciente> findAll(org.springframework.data.domain.Pageable pageable) {
         return pacienteRepository.findByActivoTrue(pageable);
     }
@@ -43,7 +50,16 @@ public class PacienteService {
         return pacienteRepository.findByDniAndActivoTrue(dni);
     }
 
+    @Transactional
     public String save(PacienteDTO dto) {
+        DniValidator.validar(dto.getDni());
+        NombreValidator.validar(dto.getNombre(), "nombre");
+        NombreValidator.validar(dto.getApellidoPaterno(), "apellido paterno");
+        if (dto.getApellidoMaterno() != null && !dto.getApellidoMaterno().isBlank())
+            NombreValidator.validar(dto.getApellidoMaterno(), "apellido materno");
+        TelefonoValidator.validar(dto.getTelefono());
+        EmailValidator.validar(dto.getEmail());
+
         if (pacienteRepository.existsByDni(dto.getDni()))
             return "Ya existe un paciente con ese DNI";
 
@@ -67,7 +83,15 @@ public class PacienteService {
         return "Paciente registrado correctamente";
     }
 
+    @Transactional
     public String update(Long id, PacienteDTO dto) {
+        NombreValidator.validar(dto.getNombre(), "nombre");
+        NombreValidator.validar(dto.getApellidoPaterno(), "apellido paterno");
+        if (dto.getApellidoMaterno() != null && !dto.getApellidoMaterno().isBlank())
+            NombreValidator.validar(dto.getApellidoMaterno(), "apellido materno");
+        TelefonoValidator.validar(dto.getTelefono());
+        EmailValidator.validar(dto.getEmail());
+
         Paciente paciente = pacienteRepository.findById(id).orElse(null);
         if (paciente == null) return "Paciente no encontrado";
         paciente.setNombre(dto.getNombre().toUpperCase());
@@ -80,6 +104,7 @@ public class PacienteService {
         return "Paciente actualizado correctamente";
     }
 
+    @Transactional
     public String delete(Long id) {
         Paciente paciente = pacienteRepository.findById(id).orElse(null);
         if (paciente == null) {
@@ -90,6 +115,7 @@ public class PacienteService {
         return "Paciente eliminado correctamente";
     }
 
+    @Transactional
     public String toggleEstado(Long id) {
         Paciente paciente = pacienteRepository.findById(id).orElse(null);
         if (paciente == null) return "Paciente no encontrado";

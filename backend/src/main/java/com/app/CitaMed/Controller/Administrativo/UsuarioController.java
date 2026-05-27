@@ -2,6 +2,7 @@ package com.app.CitaMed.Controller.Administrativo;
 import com.app.CitaMed.Enums.Rol;
 import com.app.CitaMed.Model.Administrativo.Usuario;
 import com.app.CitaMed.Service.Administrativo.UsuarioService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +30,7 @@ public class UsuarioController {
     }
 
     @PostMapping
-    public ResponseEntity<String> save(@RequestBody Usuario usuario) {
+    public ResponseEntity<String> save(@RequestBody @Valid Usuario usuario) {
         String resultado = usuarioService.saveUser(usuario);
         if (!resultado.equals("Usuario guardado correctamente"))
             return ResponseEntity.badRequest().body(resultado);

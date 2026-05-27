@@ -6,6 +6,7 @@ import com.app.CitaMed.Model.Medico.Especialidad;
 import com.app.CitaMed.Service.Administrativo.ReservaService;
 import com.app.CitaMed.Service.Medico.EspecialidadService;
 import com.app.CitaMed.Service.Medico.MedicoService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,7 +43,7 @@ public class LadingPageController {
     }
 
     @PostMapping("/reserva")
-    public ResponseEntity<String> procesarReserva(@RequestBody ReservaDTO dto) {
+    public ResponseEntity<String> procesarReserva(@RequestBody @Valid ReservaDTO dto) {
         try {
             String resultado = reservaService.procesarReserva(dto);
             return ResponseEntity.ok(resultado);

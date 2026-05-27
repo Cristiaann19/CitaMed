@@ -13,6 +13,9 @@ interface DashboardDTO {
   ingresoMesAnterior: number;
   canceladasSemana: number;
   canceladasSemanaAnterior: number;
+  totalPacientes: number;
+  totalMedicos: number;
+  totalCitas: number;
 }
 
 interface UltimaCitaDTO {
@@ -74,7 +77,10 @@ export class DashboardComponent implements OnInit {
     ingresoMes: 0,
     ingresoMesAnterior: 0,
     canceladasSemana: 0,
-    canceladasSemanaAnterior: 0
+    canceladasSemanaAnterior: 0,
+    totalPacientes: 0,
+    totalMedicos: 0,
+    totalCitas: 0
   };
 
   ultimasCitas: UltimaCitaDTO[] = [];

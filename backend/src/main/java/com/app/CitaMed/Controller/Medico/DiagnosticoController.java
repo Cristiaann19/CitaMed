@@ -2,6 +2,7 @@ package com.app.CitaMed.Controller.Medico;
 import com.app.CitaMed.DTO.DiagnosticoDTO;
 import com.app.CitaMed.Model.Medico.Diagnostico;
 import com.app.CitaMed.Service.Medico.DiagnosticoService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class DiagnosticoController {
     }
 
     @PostMapping
-    public ResponseEntity<String> save(@RequestBody DiagnosticoDTO dto) {
+    public ResponseEntity<String> save(@RequestBody @Valid DiagnosticoDTO dto) {
         String resultado = diagnosticoService.save(dto);
         if (!resultado.equals("Diagnóstico registrado correctamente"))
             return ResponseEntity.badRequest().body(resultado);
@@ -36,7 +37,7 @@ public class DiagnosticoController {
     }
 
     @PutMapping("/cita/{citaId}")
-    public ResponseEntity<String> update(@PathVariable Long citaId, @RequestBody DiagnosticoDTO dto) {
+    public ResponseEntity<String> update(@PathVariable Long citaId, @RequestBody @Valid DiagnosticoDTO dto) {
         String resultado = diagnosticoService.update(citaId, dto);
         if (resultado.equals("Diagnóstico no encontrado"))
             return ResponseEntity.notFound().build();

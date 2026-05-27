@@ -21,11 +21,11 @@ public class JwtUtil {
         this.expiracion = expiration;
     }
 
-    // Generate token including roles claim
-    public String generarToken(String username, java.util.List<String> roles) {
+    public String generarToken(String username, java.util.List<String> roles, Long userId) {
         return Jwts.builder()
                 .setSubject(username)
                 .claim("roles", roles)
+                .claim("userId", userId)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiracion))
                 .signWith(key)
@@ -34,6 +34,10 @@ public class JwtUtil {
 
     public String extraerUsername(String token) {
         return getClaims(token).getSubject();
+    }
+
+    public Long extraerUserId(String token) {
+        return getClaims(token).get("userId", Long.class);
     }
 
     @SuppressWarnings("unchecked")

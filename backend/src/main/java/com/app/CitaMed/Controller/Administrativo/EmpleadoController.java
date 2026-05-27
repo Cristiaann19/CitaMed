@@ -2,6 +2,7 @@ package com.app.CitaMed.Controller.Administrativo;
 import com.app.CitaMed.DTO.EmpleadoDTO;
 import com.app.CitaMed.Model.Administrativo.Empleado;
 import com.app.CitaMed.Service.Administrativo.EmpleadoService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +35,7 @@ public class EmpleadoController {
     }
 
     @PostMapping
-    public ResponseEntity<String> save(@RequestBody EmpleadoDTO dto) {
+    public ResponseEntity<String> save(@RequestBody @Valid EmpleadoDTO dto) {
         String resultado = empleadoService.save(dto);
         if (!resultado.equals("Empleado registrado correctamente"))
             return ResponseEntity.badRequest().body(resultado);
@@ -42,7 +43,7 @@ public class EmpleadoController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> update(@PathVariable Long id, @RequestBody EmpleadoDTO dto) {
+    public ResponseEntity<String> update(@PathVariable Long id, @RequestBody @Valid EmpleadoDTO dto) {
         String resultado = empleadoService.update(id, dto);
         if (resultado.equals("Empleado no encontrado"))
             return ResponseEntity.notFound().build();

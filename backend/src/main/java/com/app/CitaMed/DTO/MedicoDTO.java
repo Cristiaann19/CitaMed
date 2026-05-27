@@ -4,7 +4,6 @@ import lombok.Data;
 import java.time.LocalDate;
 
 @Data
-
 public class MedicoDTO {
     private String nombre;
     private String apellidoPaterno;

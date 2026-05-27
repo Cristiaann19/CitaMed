@@ -4,7 +4,6 @@ import lombok.Data;
 import java.time.LocalTime;
 
 @Data
-
 public class HorarioMedicoDTO {
     private Long medicoId;
     private Long consultorioId;

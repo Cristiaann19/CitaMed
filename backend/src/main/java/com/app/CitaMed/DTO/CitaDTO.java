@@ -3,7 +3,6 @@ import lombok.Data;
 import java.time.LocalDateTime;
 
 @Data
-
 public class CitaDTO {
     private Long pacienteId;
     private Long medicoId;

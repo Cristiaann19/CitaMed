@@ -94,6 +94,48 @@
         </div>
     </div>
 
+    <!-- ── SECOND ROW: Total patients, doctors, appointments ── -->
+    <div class="grid grid-cols-3 gap-3 mb-4">
+        <!-- Total pacientes -->
+        <div class="bg-white rounded-[10px] border border-border p-4 flex flex-col gap-1.5">
+            <div class="w-9 h-9 rounded-lg bg-blue-100 flex items-center justify-center mb-0.5">
+                <span class="material-symbols-outlined text-blue-600 text-[18px]">group</span>
+            </div>
+            <div class="text-[11px] text-muted uppercase tracking-[0.07em] font-medium">
+                Total de pacientes
+            </div>
+            <div class="text-[26px] font-semibold text-navy leading-none">
+                {{ stats.totalPacientes }}
+            </div>
+        </div>
+
+        <!-- Total médicos -->
+        <div class="bg-white rounded-[10px] border border-border p-4 flex flex-col gap-1.5">
+            <div class="w-9 h-9 rounded-lg bg-purple-100 flex items-center justify-center mb-0.5">
+                <span class="material-symbols-outlined text-purple-600 text-[18px]">stethoscope</span>
+            </div>
+            <div class="text-[11px] text-muted uppercase tracking-[0.07em] font-medium">
+                Total de médicos
+            </div>
+            <div class="text-[26px] font-semibold text-navy leading-none">
+                {{ stats.totalMedicos }}
+            </div>
+        </div>
+
+        <!-- Total citas programadas -->
+        <div class="bg-white rounded-[10px] border border-border p-4 flex flex-col gap-1.5">
+            <div class="w-9 h-9 rounded-lg bg-orange-100 flex items-center justify-center mb-0.5">
+                <span class="material-symbols-outlined text-orange-600 text-[18px]">event_note</span>
+            </div>
+            <div class="text-[11px] text-muted uppercase tracking-[0.07em] font-medium">
+                Total de citas programadas
+            </div>
+            <div class="text-[26px] font-semibold text-navy leading-none">
+                {{ stats.totalCitas }}
+            </div>
+        </div>
+    </div>
+
     <!-- ── Últimas citas + Barras especialidades ── -->
     <div class="grid grid-cols-[2fr_1fr] gap-3.5 mb-3.5">
         <!-- Últimas citas -->

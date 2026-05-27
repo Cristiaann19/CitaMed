@@ -5,10 +5,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 
 public interface MedicoRepository extends JpaRepository<Medico, Long> {
+    long count();
     boolean existsByDni(String dni);
 
     List<Medico> findByEspecialidadIdAndActivoTrue(Long especialidadId);
@@ -30,4 +32,6 @@ public interface MedicoRepository extends JpaRepository<Medico, Long> {
             ORDER BY COUNT(c) DESC
             """)
     List<MedicoActivoDTO> medicosActivos();
+
+    Optional<Medico> findByUsuarioUserName(String userName);
 }

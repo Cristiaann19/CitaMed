@@ -16,4 +16,7 @@ public class DashboardDTO {
     private Double ingresoMesAnterior;
     private Long canceladasSemana;
     private Long canceladasSemanaAnterior;
+    private Long totalPacientes;
+    private Long totalMedicos;
+    private Long totalCitas;
 }

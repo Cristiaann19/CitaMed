@@ -1,2 +1,0 @@
-- agregar pasarela de pagos y para la parte del fronted del paciente y pueda reservar su cita
-- poner una api de correos electronicos para enviar la confirmacion de la cita

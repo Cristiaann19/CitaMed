@@ -3,6 +3,7 @@ import com.app.CitaMed.Model.Medico.Especialidad;
 import com.app.CitaMed.Repository.Medico.EspecialidadRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
@@ -15,11 +16,13 @@ public class EspecialidadService {
         return especialidadRepository.findAll();
     }
 
+    @Transactional
     public String save(Especialidad especialidad) {
         especialidadRepository.save(especialidad);
         return "Especialidad registrada correctamente";
     }
 
+    @Transactional
     public String update(Long id, Especialidad dto) {
         Especialidad especialidad = especialidadRepository.findById(id).orElse(null);
         if (especialidad == null) return "Especialidad no encontrada";
@@ -29,6 +32,7 @@ public class EspecialidadService {
         return "Especialidad actualizada correctamente";
     }
 
+    @Transactional
     public String delete(Long id) {
         if (!especialidadRepository.existsById(id))
             return "Especialidad no encontrada";

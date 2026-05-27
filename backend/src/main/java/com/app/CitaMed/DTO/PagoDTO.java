@@ -3,7 +3,6 @@ import com.app.CitaMed.Enums.MetodoPago;
 import lombok.Data;
 
 @Data
-
 public class PagoDTO {
     private Long citaId;
     private double monto;

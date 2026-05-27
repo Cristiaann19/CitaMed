@@ -12,9 +12,9 @@ Análisis de cumplimiento de requisitos funcionales mínimos.
 | 2 | Spring Data JPA (Hibernate) | ✅ Sí | Repositorios extienden `JpaRepository`, anotaciones `@Entity` |
 | 3 | CRUD: Pacientes, Médicos, Citas | ✅ Sí | Los 3 tienen CRUD completo (crear, leer, actualizar, eliminar) |
 | 4 | JPQL en ≥2 consultas personalizadas | ✅ Sí | Múltiples JPQL: `buscarConFiltros`, `ultimasCitas`, `citasPorEspecialidad`, `medicosActivos`, `ingresos` |
-| 5 | `@Transactional` | ⚠️ Parcial | Presente en `CitaService`, `MedicoService`, `ReservaService`, pero **ausente** en `PacienteService.save()` (crea Paciente + HistorialMedico), `MedicoService.save()` (crea Usuario + Medico), `EmpleadoService.save()`, `UsuarioService.saveUser()`, `PagoService.save()` |
-| 6 | Validaciones Jakarta | ⚠️ Parcial | Anotaciones `@NotBlank`, `@Pattern`, `@Email`, etc. **sí** están en las entidades, pero `@Valid` en los controladores solo está en `PacienteController`. Falta en `CitaController`, `MedicoController`, `UsuarioController`, etc. |
-| 7 | Spring Security (login, roles ADMIN/MEDICO, autorización) | ✅ Sí | JWT, roles ADMIN/MEDICO/RECEPCIONISTA/ENFERMERO, autorización por endpoint. Sin embargo, `MEDICO` puede acceder a **todos** los pacientes/citas (no hay filtro automático por médico logueado) |
+| 5 | `@Transactional` | ✅ Sí | 35 métodos anotados en todos los servicios (`PacienteService`, `MedicoService`, `CitaService`, etc.) |
+| 6 | Validaciones Jakarta | ✅ Sí | `@Valid` en los 14 endpoints que reciben `@RequestBody`; anotaciones `@NotBlank`, `@Pattern`, `@Email` en todas las entidades |
+| 7 | Spring Security (login, roles ADMIN/MEDICO, autorización) | ✅ Sí | JWT, roles ADMIN/MEDICO/RECEPCIONISTA/ENFERMERO, autorización por endpoint. MEDICO filtrado automáticamente a sus propios datos en CitaController, MedicoController, PacienteController, DashboardController, HorarioMedicoController |
 | 8 | API REST con CORS | ✅ Sí | Configuración global y `@CrossOrigin` en controladores (aunque usar `origins="*"` en 12 controladores es más permisivo que la config global) |
 
 ---
@@ -53,7 +53,7 @@ Análisis de cumplimiento de requisitos funcionales mínimos.
 |---|-----------|--------|---------------|
 | 19 | Login obligatorio | ✅ Sí | Auth guard en todas las rutas `/admin` |
 | 20 | Autenticación Spring Security + protección endpoints | ✅ Sí | JWT filter, endpoints protegidos |
-| 21 | Autorización: ADMIN (todo), MEDICO (solo sus citas/pacientes) | ⚠️ Parcial | ADMIN y MEDICO existen, pero **MEDICO puede ver TODOS los pacientes y citas** vía endpoints genéricos. No hay filtro automático que limite al médico logueado a solo sus datos |
+| 21 | Autorización: ADMIN (todo), MEDICO (solo sus citas/pacientes) | ✅ Sí | MEDICO filtrado automáticamente en CitaController, MedicoController, PacienteController, DashboardController y HorarioMedicoController. Cada endpoint verifica pertenencia vía SecurityUtil + MedicoRepository |
 | 22 | JWT | ✅ Sí | Token JWT con roles, almacenado en localStorage, enviado vía interceptor |
 
 ---
@@ -62,9 +62,9 @@ Análisis de cumplimiento de requisitos funcionales mínimos.
 
 | # | Requisito | Cumple | Observaciones |
 |---|-----------|--------|---------------|
-| 23 | Total de pacientes | ❌ No | Muestra `pacientesActivos` (pacientes distintos del mes), **no** el total general |
-| 24 | Total de médicos | ❌ No | Muestra médicos con más citas (top doctors), **no** el total de médicos registrados |
-| 25 | Total de citas programadas | ❌ No | Muestra `citasHoy`, **no** el total de citas programadas |
+| 23 | Total de pacientes | ✅ Sí | Muestra `totalPacientes` (todos los pacientes registrados) |
+| 24 | Total de médicos | ✅ Sí | Muestra `totalMedicos` (todos los médicos registrados) |
+| 25 | Total de citas programadas | ✅ Sí | Muestra `totalCitas` (todas las citas registradas) |
 | 26 | Citas del día | ✅ Sí | `citasHoy` + agenda detallada del día |
 | 27 | Accesos rápidos a módulos | ✅ Sí | Sidebar con navegación a todos los módulos |
 
@@ -81,7 +81,7 @@ Análisis de cumplimiento de requisitos funcionales mínimos.
 | 32 | Node.js | ✅ Sí | Presupuesto (proyecto funcional) |
 | 33 | API REST | ✅ Sí | Endpoints RESTful |
 | 34 | Arquitectura cliente-servidor | ✅ Sí | Backend + Frontend separados |
-| 35 | Manejo correcto de excepciones | ❌ No | Solo `RuntimeException` genérico. Sin excepciones personalizadas, sin handler para `MethodArgumentNotValidException`, `AccessDeniedException`, `DataIntegrityViolationException`. Sin DTO de error estructurado |
+| 35 | Manejo correcto de excepciones | ✅ Sí | `GlobalExceptionHandler` con 7 handlers: `MethodArgumentNotValidException` (400 + errores por campo), `AccessDeniedException` (403), `DataIntegrityViolationException` (409 + detección de duplicados/claves foráneas), `HttpMessageNotReadableException` (400), `MethodArgumentTypeMismatchException` (400), `IllegalArgumentException` (400), `RuntimeException` genérico (500). DTO `ErrorResponse` estructurado con status, message, timestamp y lista de errores |
 
 ---
 
@@ -89,16 +89,12 @@ Análisis de cumplimiento de requisitos funcionales mínimos.
 
 | Estado | Cantidad |
 |--------|----------|
-| ✅ Cumple completamente | **22** |
-| ⚠️ Cumple parcialmente | **4** |
-| ❌ No cumple | **4** |
+| ✅ Cumple completamente | **30** |
+| ⚠️ Cumple parcialmente | **1** |
+| ❌ No cumple | **0** |
 
-### Pendientes críticos
+### Pendientes (mejoras opcionales)
 
-1. **Dashboard**: Agregar total general de pacientes, médicos y citas programadas (no solo datos del mes/día).
-2. **Manejo de excepciones**: Implementar `@ExceptionHandler` para `MethodArgumentNotValidException`, `AccessDeniedException`, `DataIntegrityViolationException`, y crear un DTO de error estructurado.
-3. **`@Transactional`**: Agregar en servicios que realizan múltiples operaciones de escritura (`PacienteService.save()`, `MedicoService.save()`, etc.).
-4. **`@Valid`**: Agregar en todos los controladores que reciben `@RequestBody` para activar las validaciones de Jakarta.
-5. **Autorización MEDICO**: Implementar filtro para que un médico solo vea sus propias citas/pacientes asignados.
-6. **Componentes frontend stub**: Completar los componentes de Usuarios, Empleados, Pagos, Reportes e Historial Médico que actualmente están vacíos.
-7. **CORS**: Reemplazar `@CrossOrigin(origins = "*")` por la configuración global más restrictiva.
+1. **Componentes frontend stub**: Completar los componentes de Usuarios, Empleados, Pagos, Reportes e Historial Médico que actualmente están vacíos (no son parte de los requisitos mínimos).
+2. **CORS**: Reemplazar `@CrossOrigin(origins = "*")` por la configuración global más restrictiva.
+3. **Documento con capturas**: Agregar capturas del sistema para el entregable final.

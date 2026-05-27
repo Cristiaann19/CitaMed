@@ -5,6 +5,7 @@ import com.app.CitaMed.Enums.EstadoCita;
 import com.app.CitaMed.Repository.Administrativo.PagoRepository;
 import com.app.CitaMed.Repository.Agenda.CitaRepository;
 import com.app.CitaMed.Repository.Medico.MedicoRepository;
+import com.app.CitaMed.Repository.Paciente.PacienteRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -24,6 +25,7 @@ public class DashboardService {
     private final CitaRepository citaRepository;
     private final PagoRepository pagoRepository;
     private final MedicoRepository medicoRepository;
+    private final PacienteRepository pacienteRepository;
 
     public List<AgendaHoyDTO> agendaHoy() {
         log.info("Iniciando consulta para la agenda de hoy.");
@@ -46,9 +48,34 @@ public class DashboardService {
         ).toList();
     }
 
+    public List<AgendaHoyDTO> agendaHoyPorMedico(Long medicoId) {
+        log.info("Consultando agenda de hoy para el médico {}.", medicoId);
+        LocalDate hoy = LocalDate.now();
+
+        List<Object[]> data = citaRepository.agendaHoyNativePorMedico(
+                medicoId,
+                hoy.getYear(),
+                hoy.getMonthValue(),
+                hoy.getDayOfMonth()
+        );
+
+        return data.stream().map(obj ->
+                new AgendaHoyDTO(
+                        obj[0].toString(),
+                        obj[1].toString(),
+                        obj[2].toString()
+                )
+        ).toList();
+    }
+
     public List<MedicoActivoDTO> medicos() {
         log.info("Consultando médicos activos.");
         return medicoRepository.medicosActivos();
+    }
+
+    public List<MedicoActivoDTO> medicosActivosPorMedico(Long medicoId) {
+        log.info("Consultando datos del médico activo {}.", medicoId);
+        return List.of();
     }
 
     public List<UltimoPagoDTO> pagos() {
@@ -61,9 +88,50 @@ public class DashboardService {
         return citaRepository.ultimasCitas(PageRequest.of(0, 6));
     }
 
+    public List<UltimaCitaDTO> ultimasCitasPorMedico(Long medicoId) {
+        log.info("Consultando últimas citas del médico {} (límite 6).", medicoId);
+        return citaRepository.ultimasCitasByMedicoId(medicoId, PageRequest.of(0, 6));
+    }
+
     public List<EspecialidadDTO> especialidades() {
         log.info("Consultando citas por especialidad.");
         return citaRepository.citasPorEspecialidad();
+    }
+
+    public DashboardDTO obtenerStatsPorMedico(Long medicoId) {
+        log.info("Calculando estadísticas del dashboard para el médico {}.", medicoId);
+        LocalDate hoy = LocalDate.now();
+        LocalDateTime inicioHoy = hoy.atStartOfDay();
+        LocalDateTime finHoy = hoy.plusDays(1).atStartOfDay();
+        LocalDateTime inicioAyer = hoy.minusDays(1).atStartOfDay();
+        LocalDateTime finAyer = hoy.atStartOfDay();
+        LocalDate primerDiaMes = hoy.withDayOfMonth(1);
+        LocalDateTime inicioMes = primerDiaMes.atStartOfDay();
+        LocalDateTime finMes = hoy.plusDays(1).atStartOfDay();
+        LocalDate primerMesAnterior = primerDiaMes.minusMonths(1);
+        LocalDate ultimoMesAnterior = primerDiaMes.minusDays(1);
+        LocalDateTime inicioMesAnt = primerMesAnterior.atStartOfDay();
+        LocalDateTime finMesAnt = ultimoMesAnterior.plusDays(1).atStartOfDay();
+        LocalDate lunes = hoy.minusDays(hoy.getDayOfWeek().getValue() - 1);
+        LocalDateTime inicioSemana = lunes.atStartOfDay();
+        LocalDateTime finSemana = hoy.plusDays(1).atStartOfDay();
+        LocalDateTime inicioSemanaAnt = lunes.minusWeeks(1).atStartOfDay();
+        LocalDateTime finSemanaAnt = lunes.atStartOfDay();
+
+        Long totalPacientesMedico = citaRepository.countDistinctPacientesByMedicoId(medicoId);
+        return new DashboardDTO(
+                citaRepository.countByMedicoIdAndFechaHoraBetween(medicoId, inicioHoy, finHoy),
+                citaRepository.countByMedicoIdAndFechaHoraBetween(medicoId, inicioAyer, finAyer),
+                citaRepository.pacientesActivosPorMedico(medicoId, inicioMes, finMes),
+                citaRepository.pacientesActivosPorMedico(medicoId, inicioMesAnt, finMesAnt),
+                pagoRepository.ingresosPorMedico(medicoId, inicioMes, finMes),
+                pagoRepository.ingresosPorMedico(medicoId, inicioMesAnt, finMesAnt),
+                citaRepository.countByMedicoIdAndFechaHoraBetweenAndEstado(medicoId, inicioSemana, finSemana, EstadoCita.CANCELADA),
+                citaRepository.countByMedicoIdAndFechaHoraBetweenAndEstado(medicoId, inicioSemanaAnt, finSemanaAnt, EstadoCita.CANCELADA),
+                totalPacientesMedico,
+                1L,
+                citaRepository.countByMedicoId(medicoId)
+        );
     }
 
     public DashboardDTO obtenerStats() {
@@ -95,7 +163,10 @@ public class DashboardService {
                     pagoRepository.ingresos(inicioMes, finMes),
                     pagoRepository.ingresos(inicioMesAnt, finMesAnt),
                     citaRepository.countByFechaHoraBetweenAndEstado(inicioSemana, finSemana, EstadoCita.CANCELADA),
-                    citaRepository.countByFechaHoraBetweenAndEstado(inicioSemanaAnt, finSemanaAnt, EstadoCita.CANCELADA)
+                    citaRepository.countByFechaHoraBetweenAndEstado(inicioSemanaAnt, finSemanaAnt, EstadoCita.CANCELADA),
+                    pacienteRepository.count(),
+                    medicoRepository.count(),
+                    citaRepository.count()
             );
             log.info("Estadísticas calculadas exitosamente.");
             return stats;

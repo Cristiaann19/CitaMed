@@ -4,8 +4,10 @@ import com.app.CitaMed.Model.Administrativo.Empleado;
 import com.app.CitaMed.Model.Administrativo.Usuario;
 import com.app.CitaMed.Repository.Administrativo.EmpleadoRepository;
 import com.app.CitaMed.Repository.Administrativo.UsuarioRepository;
+import com.app.CitaMed.Util.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
@@ -27,7 +29,18 @@ public class EmpleadoService {
         return empleadoRepository.findByActivoTrue();
     }
 
+    @Transactional
     public String save(EmpleadoDTO dto) {
+        DniValidator.validar(dto.getDni());
+        NombreValidator.validar(dto.getNombre(), "nombre");
+        NombreValidator.validar(dto.getApellidoPaterno(), "apellido paterno");
+        if (dto.getApellidoMaterno() != null && !dto.getApellidoMaterno().isBlank())
+            NombreValidator.validar(dto.getApellidoMaterno(), "apellido materno");
+        TelefonoValidator.validar(dto.getTelefono());
+        EmailValidator.validar(dto.getEmail());
+        UserNameValidator.validar(dto.getUserName());
+        PasswordValidator.validar(dto.getPassword());
+
         if (empleadoRepository.existsByDni(dto.getDni()))
             return "Ya existe un empleado con ese DNI";
 
@@ -59,7 +72,15 @@ public class EmpleadoService {
         return "Empleado registrado correctamente";
     }
 
+    @Transactional
     public String update(Long id, EmpleadoDTO dto) {
+        NombreValidator.validar(dto.getNombre(), "nombre");
+        NombreValidator.validar(dto.getApellidoPaterno(), "apellido paterno");
+        if (dto.getApellidoMaterno() != null && !dto.getApellidoMaterno().isBlank())
+            NombreValidator.validar(dto.getApellidoMaterno(), "apellido materno");
+        TelefonoValidator.validar(dto.getTelefono());
+        EmailValidator.validar(dto.getEmail());
+
         Empleado empleado = empleadoRepository.findById(id).orElse(null);
         if (empleado == null) return "Empleado no encontrado";
 
@@ -74,6 +95,7 @@ public class EmpleadoService {
         return "Empleado actualizado correctamente";
     }
 
+    @Transactional
     public String toggleActivo(Long id) {
         Empleado empleado = empleadoRepository.findById(id).orElse(null);
         if (empleado == null) return "Empleado no encontrado";

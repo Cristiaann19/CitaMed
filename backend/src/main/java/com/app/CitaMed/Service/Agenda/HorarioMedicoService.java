@@ -8,6 +8,7 @@ import com.app.CitaMed.Repository.Agenda.HorarioMedicoRepository;
 import com.app.CitaMed.Repository.Medico.MedicoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
@@ -22,6 +23,7 @@ public class HorarioMedicoService {
         return horarioMedicoRepository.findByMedicoIdAndActivoTrue(medicoId);
     }
 
+    @Transactional
     public String save(HorarioMedicoDTO dto) {
         Medico medico = medicoRepository.findById(dto.getMedicoId()).orElse(null);
         if (medico == null) return "Médico no encontrado";
@@ -45,6 +47,7 @@ public class HorarioMedicoService {
         return "Horario registrado correctamente";
     }
 
+    @Transactional
     public String toggleActivo(Long id) {
         HorarioMedico horario = horarioMedicoRepository.findById(id).orElse(null);
         if (horario == null) return "Horario no encontrado";
@@ -53,6 +56,7 @@ public class HorarioMedicoService {
         return horario.isActivo() ? "Horario activado" : "Horario desactivado";
     }
 
+    @Transactional
     public String update(Long id, HorarioMedicoDTO dto) {
         HorarioMedico horario = horarioMedicoRepository.findById(id).orElse(null);
         if (horario == null) return "Horario no encontrado";

@@ -17,6 +17,7 @@ import com.app.CitaMed.Repository.Medico.MedicoRepository;
 import com.app.CitaMed.Repository.Paciente.HistorialMedicoRepository;
 import com.app.CitaMed.Repository.Paciente.PacienteRepository;
 import com.app.CitaMed.Service.MicroServicios.EmailService;
+import com.app.CitaMed.Util.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -100,12 +101,19 @@ public class ReservaService {
 
     @Transactional
     public String procesarReserva(ReservaDTO dto) {
+        DniValidator.validar(dto.getDni());
+        NombreValidator.validar(dto.getNombre(), "nombre");
+        NombreValidator.validar(dto.getApellidoPaterno(), "apellido paterno");
+        if (dto.getApellidoMaterno() != null && !dto.getApellidoMaterno().isBlank())
+            NombreValidator.validar(dto.getApellidoMaterno(), "apellido materno");
+        TelefonoValidator.validar(dto.getTelefono());
+        EmailValidator.validar(dto.getEmail());
+        MotivoValidator.validar(dto.getMotivoConsulta());
+
         Paciente paciente = pacienteRepository.findByDniAndActivoTrue(dto.getDni());
         if (paciente == null) {
-            // check if there's an inactive patient with same DNI
             Paciente posibleInactivo = pacienteRepository.findByDni(dto.getDni());
             if (posibleInactivo != null) {
-                // reactivate and update
                 posibleInactivo.setActivo(true);
                 posibleInactivo.setNombre(dto.getNombre().toUpperCase());
                 posibleInactivo.setApellidoPaterno(dto.getApellidoPaterno().toUpperCase());
@@ -145,6 +153,8 @@ public class ReservaService {
         Consultorio consultorio = medico.getConsultorio();
 
         LocalDateTime fechaHora = LocalDateTime.parse(dto.getFechaHora(), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"));
+
+        HorarioValidator.validar(fechaHora);
 
         if (citaRepository.existsByMedicoIdAndFechaHoraAndEstadoNot(medico.getId(), fechaHora, EstadoCita.CANCELADA)) {
             throw new RuntimeException("El horario seleccionado ya no está disponible");

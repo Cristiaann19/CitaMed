@@ -2,6 +2,7 @@ package com.app.CitaMed.Controller.Administrativo;
 import com.app.CitaMed.DTO.PagoDTO;
 import com.app.CitaMed.Model.Administrativo.Pago;
 import com.app.CitaMed.Service.Administrativo.PagoService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +30,7 @@ public class PagoController {
     }
 
     @PostMapping
-    public ResponseEntity<String> save(@RequestBody PagoDTO dto) {
+    public ResponseEntity<String> save(@RequestBody @Valid PagoDTO dto) {
         String resultado = pagoService.save(dto);
         if (!resultado.equals("Pago registrado correctamente"))
             return ResponseEntity.badRequest().body(resultado);

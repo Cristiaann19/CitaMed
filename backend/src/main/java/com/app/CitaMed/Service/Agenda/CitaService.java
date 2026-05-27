@@ -13,7 +13,8 @@ import com.app.CitaMed.Repository.Agenda.CitaRepository;
 import com.app.CitaMed.Repository.Medico.MedicoRepository;
 import com.app.CitaMed.Repository.Paciente.PacienteRepository;
 import com.app.CitaMed.Service.MicroServicios.EmailService;
-import jakarta.transaction.Transactional;
+import com.app.CitaMed.Util.HorarioValidator;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
@@ -43,6 +44,10 @@ public class CitaService {
         return citaRepository.findDetalleByPacienteId(pacienteId);
     }
 
+    public List<CitaDetalleDTO> findDetalleByMedicoAndPaciente(Long medicoId, Long pacienteId) {
+        return citaRepository.findDetalleByMedicoIdAndPacienteId(medicoId, pacienteId);
+    }
+
     public List<Cita> findAll() {
         return citaRepository.findAll();
     }
@@ -70,6 +75,8 @@ public class CitaService {
         if (!medico.isActivo()) return "El médico no está activo";
 
         if (medico.getConsultorio() == null) return "El médico no tiene un consultorio asignado";
+
+        try { HorarioValidator.validar(dto.getFechaHora()); } catch (IllegalArgumentException e) { return e.getMessage(); }
 
         if (citaRepository.existsByMedicoIdAndFechaHoraAndEstadoNot(dto.getMedicoId(), dto.getFechaHora(), EstadoCita.CANCELADA))
             return "El médico ya tiene una cita en ese horario";
@@ -125,6 +132,7 @@ public class CitaService {
         return "Cita cancelada correctamente";
     }
 
+    @Transactional
     public String completar(Long id) {
         Cita cita = citaRepository.findById(id).orElse(null);
         if (cita == null) return "Cita no encontrada";
@@ -135,6 +143,7 @@ public class CitaService {
         return "Cita completada correctamente";
     }
 
+    @Transactional
     public String noAsistio(Long id) {
         Cita cita = citaRepository.findById(id).orElse(null);
         if (cita == null) return "Cita no encontrada";
@@ -150,6 +159,8 @@ public class CitaService {
 
         if (cita.getEstado() != EstadoCita.PROGRAMADA)
             return "Solo se pueden reprogramar citas en estado PROGRAMADA";
+
+        try { HorarioValidator.validar(nuevaFechaHora); } catch (IllegalArgumentException e) { return e.getMessage(); }
 
         if (citaRepository.existsByMedicoIdAndFechaHoraAndEstadoNot(cita.getMedico().getId(), nuevaFechaHora, EstadoCita.CANCELADA))
             return "El médico ya tiene una cita en ese horario";
@@ -171,6 +182,7 @@ public class CitaService {
             return "Solo se pueden editar citas en estado PROGRAMADA";
 
         if (dto.getFechaHora() != null && !dto.getFechaHora().equals(cita.getFechaHora())) {
+            try { HorarioValidator.validar(dto.getFechaHora()); } catch (IllegalArgumentException e) { return e.getMessage(); }
             if (citaRepository.existsByMedicoIdAndFechaHoraAndEstadoNot(cita.getMedico().getId(), dto.getFechaHora(), EstadoCita.CANCELADA))
                 return "El médico ya tiene una cita en ese horario";
             cita.setFechaHora(dto.getFechaHora());

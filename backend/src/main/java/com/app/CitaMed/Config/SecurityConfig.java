@@ -46,9 +46,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/contacto/**").permitAll()
                         .requestMatchers("/api/lading/**").permitAll()
                         .requestMatchers("/api/landing/**").permitAll()
-                        // Public endpoints
                         .requestMatchers("/api/especialidad/**").permitAll()
-                        // Protected endpoints by role
                         .requestMatchers("/api/medico/**").hasAnyRole("ADMIN","MEDICO")
                         .requestMatchers("/api/horarioMedico/**").hasAnyRole("ADMIN","MEDICO")
                         .requestMatchers("/api/paciente/**").hasAnyRole("ADMIN","RECEPCIONISTA","ENFERMERO","MEDICO")
