@@ -1,4 +1,4 @@
-# Documento de Capturas - CitaMed
+# Documentación CitaMed
 
 Sistema de Gestion de Consultas Medicas - CitaMed
 
