@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { TableModule } from 'primeng/table';
@@ -14,7 +13,7 @@ import { GlobalToast } from '../../../core/services/global-toast';
 @Component({
   selector: 'app-pacientes-component',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule, DialogModule, ButtonModule, TableModule, PaginatorModule, LucideAngularModule],
+  imports: [CommonModule, FormsModule, DialogModule, ButtonModule, TableModule, PaginatorModule, LucideAngularModule],
   templateUrl: './pacientes-component.html',
   styleUrls: ['./pacientes-component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -187,7 +186,7 @@ export class PacientesComponent implements OnInit {
         },
         error: (err) => {
           console.error(err);
-          this.toast.error('Error registrando');
+          this.toast.error(err.error?.mensaje || 'Error registrando');
         },
       });
     }

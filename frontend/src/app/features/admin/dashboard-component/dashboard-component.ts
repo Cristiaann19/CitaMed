@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { RouterLink } from '@angular/router';
 import { ChangeDetectorRef } from '@angular/core';
+import { AuthService } from '../../../core/services/auth-service';
 
 interface DashboardDTO {
   citasHoy: number;
@@ -63,7 +64,7 @@ interface MedicoActivoDTO {
 
 export class DashboardComponent implements OnInit {
 
-  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) { }
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef, private authService: AuthService) { }
 
   medicos: MedicoActivoDTO[] = [];
   hoy: Date = new Date();
@@ -89,10 +90,12 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     this.cargarDashboard();
     this.cargarUltimasCitas();
-    this.cargarEspecialidades();
-    this.cargarMedicos();
     this.cargarAgendaHoy();
-    this.cargarPagos();
+    if (this.isAdminView()) {
+      this.cargarEspecialidades();
+      this.cargarMedicos();
+      this.cargarPagos();
+    }
   }
 
   cargarMedicos() {
@@ -205,4 +208,8 @@ export class DashboardComponent implements OnInit {
         error: (err) => console.log(err)
       });
   }
+
+  isAdminView(): boolean { return this.authService.isAdmin(); }
+  isMedicoView(): boolean { return this.authService.isMedico(); }
+  isRecepcionistaView(): boolean { return this.authService.isRecepcionista(); }
 }

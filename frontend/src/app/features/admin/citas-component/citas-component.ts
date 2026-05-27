@@ -268,10 +268,14 @@ export class CitasComponent implements OnInit {
 
     this.citaService.buscarPacientePorDni(dni).subscribe({
       next: (paciente) => {
-        this.pacienteEncontrado = paciente;
-        this.nuevaCita.pacienteId = paciente.id;
-        this.buscandoDni = false;
-        this.toast.success(`Paciente encontrado: ${paciente.nombre} ${paciente.apellidoPaterno}`);
+        if (paciente) {
+          this.pacienteEncontrado = paciente;
+          this.nuevaCita.pacienteId = paciente.id;
+          this.buscandoDni = false;
+          this.toast.success(`Paciente encontrado: ${paciente.nombre} ${paciente.apellidoPaterno}`);
+        } else {
+          this.consultarReniec(dni);
+        }
         this.cdr.markForCheck();
       },
       error: () => {
@@ -421,6 +425,11 @@ export class CitasComponent implements OnInit {
       .join(' | ');
   }
 
+  private toLocalISOString(date: Date): string {
+    const pad = (n: number) => String(n).padStart(2, '0');
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(date.getMinutes())}:00`;
+  }
+
   private horarioCitaValido(fecha: Date): boolean {
     if (this.horariosMedico.length === 0) return true;
     const diaSemana = this.dateToDiaSemana(fecha);
@@ -474,7 +483,7 @@ export class CitasComponent implements OnInit {
       this.toast.warn('El médico no atiende en la fecha y hora seleccionadas'); return;
     }
 
-    this.nuevaCita.fechaHora = this.fechaHoraCita.toISOString();
+    this.nuevaCita.fechaHora = this.toLocalISOString(this.fechaHoraCita);
 
     if (this.modoEdicion && this.citaEditandoId) {
       this.citaService.actualizar(this.citaEditandoId, this.nuevaCita).subscribe({
@@ -501,7 +510,7 @@ export class CitasComponent implements OnInit {
     if (this.horariosMedico.length > 0 && !this.horarioCitaValido(this.nuevaFechaReprogramacion)) {
       this.toast.warn('El médico no atiende en la fecha y hora seleccionadas'); return;
     }
-    this.citaService.reprogramar(this.citaSeleccionada.id, this.nuevaFechaReprogramacion.toISOString()).subscribe({
+      this.citaService.reprogramar(this.citaSeleccionada.id, this.toLocalISOString(this.nuevaFechaReprogramacion)).subscribe({
       next: (res) => {
         this.toast.success(res);
         this.mostrarReprogramarModal = false;

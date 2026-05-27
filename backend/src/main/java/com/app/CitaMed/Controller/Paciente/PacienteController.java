@@ -67,7 +67,6 @@ public class PacienteController {
     @GetMapping("/dni/{dni}")
     public ResponseEntity<Paciente> findByDni(@PathVariable String dni) {
         Paciente p = pacienteService.findByDni(dni);
-        if (p == null) return ResponseEntity.notFound().build();
         return ResponseEntity.ok(p);
     }
 

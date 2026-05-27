@@ -124,7 +124,7 @@ export class ContactoComponent implements OnInit, OnDestroy {
 
     combineLatest([especialidadId$, fecha$])
       .pipe(
-        debounceTime(300),                          // espera 300ms tras el último cambio
+        debounceTime(100),                          // espera 100ms tras el último cambio
         distinctUntilChanged(
           ([prevEsp, prevFecha], [currEsp, currFecha]) =>
             prevEsp === currEsp && prevFecha === currFecha
@@ -208,6 +208,8 @@ export class ContactoComponent implements OnInit, OnDestroy {
               fechaNacimiento: paciente.fechaNacimiento
             });
             this.bloquearCamposPaciente();
+          } else {
+            this.consultarReniec(dni);
           }
           this.cargandoDni = false;
         },

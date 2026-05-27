@@ -78,4 +78,8 @@ export class DashboardLayout implements OnInit {
   isMedicoView(): boolean {
     return this.authService.isMedico();
   }
+
+  isRecepcionistaView():boolean {
+    return this.authService.isRecepcionista();
+  }
 }

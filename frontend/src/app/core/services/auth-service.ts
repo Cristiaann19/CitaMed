@@ -33,7 +33,7 @@ export class AuthService {
   }
 
   getPerfil(): string | null {
-    return localStorage.getItem('perfil');
+    return localStorage.getItem('rol');
   }
 
   isLoggedIn(): boolean {
@@ -81,5 +81,9 @@ export class AuthService {
 
   isMedico(): boolean {
     return this.getRolesFromToken().some((r) => r === 'MEDICO' || r === 'ROLE_MEDICO');
+  }
+
+  isRecepcionista(): boolean {
+    return this.getRolesFromToken().some((r) => r === 'RECEPCIONISTA' || r === 'ROLE_RECEPCIONISTA');
   }
 }

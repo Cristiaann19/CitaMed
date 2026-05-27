@@ -3,6 +3,7 @@ package com.app.CitaMed.Controller.Agenda;
 import com.app.CitaMed.DTO.HorarioMedicoDTO;
 import com.app.CitaMed.Model.Agenda.HorarioMedico;
 import com.app.CitaMed.Model.Medico.Medico;
+import com.app.CitaMed.Repository.Agenda.HorarioMedicoRepository;
 import com.app.CitaMed.Repository.Medico.MedicoRepository;
 import com.app.CitaMed.Service.Agenda.HorarioMedicoService;
 import com.app.CitaMed.Util.SecurityUtil;
@@ -21,6 +22,7 @@ import java.util.List;
 public class HorarioMedicoController {
     private final HorarioMedicoService horarioMedicoService;
     private final MedicoRepository medicoRepository;
+    private final HorarioMedicoRepository horarioMedicoRepository;
 
     @GetMapping("/medico/{medicoId}")
     public ResponseEntity<List<HorarioMedico>> findByMedico(@PathVariable Long medicoId) {
@@ -47,6 +49,12 @@ public class HorarioMedicoController {
 
     @PatchMapping("/{id}/estado")
     public ResponseEntity<String> toggleActivo(@PathVariable Long id) {
+        if (SecurityUtil.isMedico()) {
+            Medico medico = medicoRepository.findByUsuarioUserName(SecurityUtil.getCurrentUsername()).orElse(null);
+            HorarioMedico horario = horarioMedicoRepository.findById(id).orElse(null);
+            if (medico == null || horario == null || !horario.getMedico().getId().equals(medico.getId()))
+                return ResponseEntity.status(403).build();
+        }
         String resultado = horarioMedicoService.toggleActivo(id);
         if (resultado.equals("Horario no encontrado"))
             return ResponseEntity.notFound().build();

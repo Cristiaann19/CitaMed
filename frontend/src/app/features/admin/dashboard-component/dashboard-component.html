@@ -32,7 +32,7 @@
     </div>
 
     <!-- Ingresos -->
-    <div class="bg-white rounded-[10px] border border-border p-4 flex flex-col gap-1.5">
+    <div *ngIf="isAdminView() || isRecepcionistaView()" class="bg-white rounded-[10px] border border-border p-4 flex flex-col gap-1.5">
       <div class="w-9 h-9 rounded-lg bg-amber-bg flex items-center justify-center mb-0.5">
         <span class="material-symbols-outlined text-amber-text text-[18px]">payments</span>
       </div>
@@ -54,7 +54,7 @@
     </div>
 
     <!-- Canceladas -->
-    <div class="bg-white rounded-[10px] border border-border p-4 flex flex-col gap-1.5">
+    <div *ngIf="isAdminView() || isRecepcionistaView()" class="bg-white rounded-[10px] border border-border p-4 flex flex-col gap-1.5">
       <div class="w-9 h-9 rounded-lg bg-red-bg flex items-center justify-center mb-0.5">
         <span class="material-symbols-outlined text-red-text text-[18px]">event_busy</span>
       </div>
@@ -72,44 +72,46 @@
         vs semana pasada
       </div>
     </div>
-    <!-- Total pacientes -->
-    <div class="bg-white rounded-[10px] border border-border p-4 flex flex-col gap-1.5">
-      <div class="w-9 h-9 rounded-lg bg-blue-100 flex items-center justify-center mb-0.5">
-        <span class="material-symbols-outlined text-blue-600 text-[18px]">group</span>
+    <ng-container *ngIf="isAdminView() || isRecepcionistaView()">
+      <!-- Total pacientes -->
+      <div class="bg-white rounded-[10px] border border-border p-4 flex flex-col gap-1.5">
+        <div class="w-9 h-9 rounded-lg bg-blue-100 flex items-center justify-center mb-0.5">
+          <span class="material-symbols-outlined text-blue-600 text-[18px]">group</span>
+        </div>
+        <div class="text-[11px] text-muted uppercase tracking-[0.07em] font-medium">
+          Total de pacientes
+        </div>
+        <div class="text-[26px] font-semibold text-navy leading-none">
+          {{ stats.totalPacientes }}
+        </div>
       </div>
-      <div class="text-[11px] text-muted uppercase tracking-[0.07em] font-medium">
-        Total de pacientes
-      </div>
-      <div class="text-[26px] font-semibold text-navy leading-none">
-        {{ stats.totalPacientes }}
-      </div>
-    </div>
 
-    <!-- Total médicos -->
-    <div class="bg-white rounded-[10px] border border-border p-4 flex flex-col gap-1.5">
-      <div class="w-9 h-9 rounded-lg bg-purple-100 flex items-center justify-center mb-0.5">
-        <span class="material-symbols-outlined text-purple-600 text-[18px]">stethoscope</span>
+      <!-- Total médicos -->
+      <div class="bg-white rounded-[10px] border border-border p-4 flex flex-col gap-1.5">
+        <div class="w-9 h-9 rounded-lg bg-purple-100 flex items-center justify-center mb-0.5">
+          <span class="material-symbols-outlined text-purple-600 text-[18px]">stethoscope</span>
+        </div>
+        <div class="text-[11px] text-muted uppercase tracking-[0.07em] font-medium">
+          Total de médicos
+        </div>
+        <div class="text-[26px] font-semibold text-navy leading-none">
+          {{ stats.totalMedicos }}
+        </div>
       </div>
-      <div class="text-[11px] text-muted uppercase tracking-[0.07em] font-medium">
-        Total de médicos
-      </div>
-      <div class="text-[26px] font-semibold text-navy leading-none">
-        {{ stats.totalMedicos }}
-      </div>
-    </div>
 
-    <!-- Total citas programadas -->
-    <div class="bg-white rounded-[10px] border border-border p-4 flex flex-col gap-1.5">
-      <div class="w-9 h-9 rounded-lg bg-orange-100 flex items-center justify-center mb-0.5">
-        <span class="material-symbols-outlined text-orange-600 text-[18px]">event_note</span>
+      <!-- Total citas programadas -->
+      <div class="bg-white rounded-[10px] border border-border p-4 flex flex-col gap-1.5">
+        <div class="w-9 h-9 rounded-lg bg-orange-100 flex items-center justify-center mb-0.5">
+          <span class="material-symbols-outlined text-orange-600 text-[18px]">event_note</span>
+        </div>
+        <div class="text-[11px] text-muted uppercase tracking-[0.07em] font-medium">
+          Total de citas programadas
+        </div>
+        <div class="text-[26px] font-semibold text-navy leading-none">
+          {{ stats.totalCitas }}
+        </div>
       </div>
-      <div class="text-[11px] text-muted uppercase tracking-[0.07em] font-medium">
-        Total de citas programadas
-      </div>
-      <div class="text-[26px] font-semibold text-navy leading-none">
-        {{ stats.totalCitas }}
-      </div>
-    </div>
+    </ng-container>
   </div>
 
 
@@ -180,8 +182,8 @@
       </table>
     </div>
 
-    <!-- Especialidades más solicitadas -->
-    <div class="bg-white rounded-[10px] border border-border p-[18px]">
+        <!-- Especialidades más solicitadas -->
+        <div *ngIf="isAdminView() || isRecepcionistaView()" class="bg-white rounded-[10px] border border-border p-[18px]">
       <div class="flex items-center justify-between mb-3.5">
                 <span class="text-[13px] font-semibold text-navy">
                     Especialidades más solicitadas
@@ -310,7 +312,7 @@
       </div>
 
       <!-- Últimos pagos -->
-      <div class="bg-white rounded-[10px] border border-border p-[18px]">
+      <div *ngIf="isAdminView() || isRecepcionistaView()" class="bg-white rounded-[10px] border border-border p-[18px]">
         <div class="flex items-center justify-between mb-3.5">
           <span class="text-[13px] font-semibold text-navy">Últimos pagos</span>
           <span routerLink="/admin/pagos" class="text-[12px] text-teal-dark font-medium cursor-pointer hover:underline">

@@ -75,7 +75,7 @@ public class CitaController {
             dto.setMedicoId(medico.getId());
         }
         String resultado = citaService.save(dto);
-        if (resultado.contains("no encontrado") || resultado.contains("no está") || resultado.contains("ya tiene"))
+        if (!resultado.equals("Cita registrada correctamente"))
             return ResponseEntity.badRequest().body(resultado);
         return ResponseEntity.status(HttpStatus.CREATED).body(resultado);
     }
@@ -91,7 +91,7 @@ public class CitaController {
         }
         String resultado = citaService.actualizar(id, dto);
         if (resultado.equals("Cita no encontrada")) return ResponseEntity.notFound().build();
-        if (resultado.contains("Solo se pueden") || resultado.contains("ya tiene") || resultado.contains("no encontrado") || resultado.contains("no está"))
+        if (!resultado.equals("Cita actualizada correctamente"))
             return ResponseEntity.badRequest().body(resultado);
         return ResponseEntity.ok(resultado);
     }
@@ -110,7 +110,7 @@ public class CitaController {
         }
         String resultado = citaService.reprogramar(id, nuevaFecha);
         if (resultado.equals("Cita no encontrada")) return ResponseEntity.notFound().build();
-        if (resultado.contains("Solo se pueden") || resultado.contains("ya tiene"))
+        if (!resultado.equals("Cita reprogramada correctamente"))
             return ResponseEntity.badRequest().body(resultado);
         return ResponseEntity.ok(resultado);
     }

@@ -24,11 +24,11 @@ INSERT INTO Usuarios (user_name, password, rol, activo) VALUES
 ('med.rivas',          '$2a$10$800I/8HGwCkjx0iApGb/kevpKOnZ1jp2UjTTWCg9CKaUNKdFhoywa', 'MEDICO',         true),
 ('med.pinto',          '$2a$10$800I/8HGwCkjx0iApGb/kevpKOnZ1jp2UjTTWCg9CKaUNKdFhoywa', 'MEDICO',         true),
 ('med.aguilar',        '$2a$10$800I/8HGwCkjx0iApGb/kevpKOnZ1jp2UjTTWCg9CKaUNKdFhoywa', 'MEDICO',         true),
-('enf.lopez',          '$2a$10$800I/8HGwCkjx0iApGb/kevpKOnZ1jp2UjTTWCg9CKaUNKdFhoywa', 'ENFERMERO',      true),
-('enf.perez',          '$2a$10$800I/8HGwCkjx0iApGb/kevpKOnZ1jp2UjTTWCg9CKaUNKdFhoywa', 'ENFERMERO',      true),
-('enf.ruiz',           '$2a$10$800I/8HGwCkjx0iApGb/kevpKOnZ1jp2UjTTWCg9CKaUNKdFhoywa', 'ENFERMERO',      true),
-('enf.diaz',           '$2a$10$800I/8HGwCkjx0iApGb/kevpKOnZ1jp2UjTTWCg9CKaUNKdFhoywa', 'ENFERMERO',      true),
-('enf.ortiz',          '$2a$10$800I/8HGwCkjx0iApGb/kevpKOnZ1jp2UjTTWCg9CKaUNKdFhoywa', 'ENFERMERO',      true);
+('enf.lopez',          '$2a$10$800I/8HGwCkjx0iApGb/kevpKOnZ1jp2UjTTWCg9CKaUNKdFhoywa', 'RECEPCIONISTA',      true),
+('enf.perez',          '$2a$10$800I/8HGwCkjx0iApGb/kevpKOnZ1jp2UjTTWCg9CKaUNKdFhoywa', 'RECEPCIONISTA',      true),
+('enf.ruiz',           '$2a$10$800I/8HGwCkjx0iApGb/kevpKOnZ1jp2UjTTWCg9CKaUNKdFhoywa', 'RECEPCIONISTA',      true),
+('enf.diaz',           '$2a$10$800I/8HGwCkjx0iApGb/kevpKOnZ1jp2UjTTWCg9CKaUNKdFhoywa', 'RECEPCIONISTA',      true),
+('enf.ortiz',          '$2a$10$800I/8HGwCkjx0iApGb/kevpKOnZ1jp2UjTTWCg9CKaUNKdFhoywa', 'RECEPCIONISTA',      true);
 
 -- ========================
 -- 2. ESPECIALIDADES
@@ -67,9 +67,7 @@ INSERT INTO Consultorios (numero, descripcion, disponible, especialidad_id) VALU
 -- ========================
 -- 4. EMPLEADOS
 -- ========================
--- ========================
--- 4. EMPLEADOS (CORREGIDO)
--- ========================
+
 INSERT INTO Empleados (nombre, apellido_paterno, apellido_materno, dni, telefono, direccion, email, fecha_nacimiento, genero, salario, fecha_ingreso, activo, usuario_id) VALUES
 -- Integrantes del equipo (ADMIN) apuntando a IDs 2, 3, 4
 ('MARCELO ARIEL',  'ALARCON',   'MANAY',    '74100001', '987000001', 'Av. Los Desarrolladores 101, Chiclayo', 'marcelo.alarcon@citamed.com',  '1999-05-15', 'MASCULINO', 4500.00, '2024-01-01', true,  2),
@@ -178,11 +176,6 @@ INSERT INTO Historiales_Medicos (paciente_id) VALUES
 -- ========================
 -- 9. CITAS
 -- ========================
-SET FOREIGN_KEY_CHECKS = 0;
-TRUNCATE TABLE Diagnosticos;
-TRUNCATE TABLE Pagos;
-TRUNCATE TABLE Citas;
-SET FOREIGN_KEY_CHECKS = 1;
 
 INSERT INTO Citas (paciente_id, medico_id, consultorio_id, fecha_hora, motivo_consulta, estado) VALUES
 (1,  1,  1,  '2026-05-04 08:00:00', 'Dolor de cabeza persistente y mareos',      'ATENDIDA'), -- ID 1

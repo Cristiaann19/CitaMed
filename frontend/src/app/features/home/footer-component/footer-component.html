@@ -26,11 +26,9 @@
         </h4>
 
         <ul class="flex flex-col gap-2">
-          <li><a href="#" class="text-sm text-white hover:text-white transition-colors">Cardiología</a></li>
-          <li><a href="#" class="text-sm text-white hover:text-white transition-colors">Pediatría</a></li>
-          <li><a href="#" class="text-sm text-white hover:text-white transition-colors">Neurología</a></li>
-          <li><a href="#" class="text-sm text-white hover:text-white transition-colors">Ginecología</a></li>
-          <li><a href="#" class="text-sm text-white hover:text-white transition-colors">Traumatología</a></li>
+          <li *ngFor="let e of especialidades">
+            <a href="#" class="text-sm text-white hover:text-white transition-all hover:underline underline-offset-2">{{ e.nombre }}</a>
+          </li>
         </ul>
       </div>
 

@@ -43,7 +43,11 @@ export class LoginComponent implements OnInit {
       this.authService.login(usuario, clave).subscribe({
         next: (response) => {
           this.loaderService.hide();
-          this.router.navigate(['/admin']);
+          if (response.perfil === 'MEDICO') {
+            this.router.navigate(['/admin/citas']);
+          } else {
+            this.router.navigate(['/admin/dashboard']);
+          }
         },
         error: (err) => {
           this.loaderService.hide();

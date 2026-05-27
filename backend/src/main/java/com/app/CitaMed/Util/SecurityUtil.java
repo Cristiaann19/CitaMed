@@ -30,8 +30,4 @@ public class SecurityUtil {
     public static boolean isRecepcionista() {
         return hasRole("RECEPCIONISTA");
     }
-
-    public static boolean isEnfermero() {
-        return hasRole("ENFERMERO");
-    }
 }

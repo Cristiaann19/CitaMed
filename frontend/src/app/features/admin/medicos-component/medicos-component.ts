@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { MedicoService } from '../../../core/services/medico-service';
@@ -38,7 +38,6 @@ import { TableModule } from 'primeng/table';
   imports: [
     CommonModule,
     FormsModule,
-    HttpClientModule,
     DialogModule,
     ButtonModule,
     TableModule,

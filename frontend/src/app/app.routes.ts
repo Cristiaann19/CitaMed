@@ -55,7 +55,7 @@ export const routes: Routes = [
       {
         path: 'pacientes',
         component: PacientesComponent,
-        data: { title: 'Pacientes', roles: ['ADMIN', 'RECEPCIONISTA'] },
+        data: { title: 'Pacientes', roles: ['ADMIN', 'MEDICO', 'RECEPCIONISTA'] },
         canActivate: [() => import('./core/guards/role.guard').then((m) => m.roleGuard as any)],
       },
       {

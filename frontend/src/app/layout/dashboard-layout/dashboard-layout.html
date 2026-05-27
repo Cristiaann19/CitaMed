@@ -15,7 +15,7 @@
     </div>
 
     <!-- Principal -->
-    @if (isAdminView()) {
+    @if (isAdminView() || isRecepcionistaView() ) {
       <div class="px-3.5 pt-4 pb-1.5 text-white/30 text-[10px] tracking-[0.12em] uppercase font-semibold">Principal
       </div>
       <a routerLink="/admin/dashboard" routerLinkActive="bg-teal !text-white"
@@ -30,12 +30,12 @@
       clínica
     </div>
 
-    <a *ngIf="isAdminView() || isMedicoView()" routerLink="/admin/citas" routerLinkActive="bg-teal !text-white"
+    <a *ngIf="isAdminView() || isMedicoView() || isRecepcionistaView()" routerLink="/admin/citas" routerLinkActive="bg-teal !text-white"
        class="flex items-center gap-2.5 px-2.5 py-2 mx-2 rounded-[7px] text-white/52 text-[13px] hover:bg-white/[0.07] hover:text-white/90 transition-all">
       <span class="material-symbols-outlined text-[17px] flex-shrink-0">calendar_month</span>
       Citas
     </a>
-    <a *ngIf="isAdminView() || isMedicoView() " routerLink="/admin/pacientes" routerLinkActive="bg-teal !text-white"
+    <a *ngIf="isAdminView() || isMedicoView() || isRecepcionistaView() " routerLink="/admin/pacientes" routerLinkActive="bg-teal !text-white"
        class="flex items-center gap-2.5 px-2.5 py-2 mx-2 rounded-[7px] text-white/52 text-[13px] hover:bg-white/[0.07] hover:text-white/90 transition-all">
       <span class="material-symbols-outlined text-[17px] flex-shrink-0">person</span>
       Pacientes
@@ -55,28 +55,24 @@
       <span class="material-symbols-outlined text-[17px] flex-shrink-0">schedule</span>
       Horarios médicos
     </a>
-    <a *ngIf="isAdminView() || isMedicoView()" routerLink="/admin/historial-medico"
+    <a *ngIf="isAdminView() || isMedicoView() || isRecepcionistaView()" routerLink="/admin/historial-medico"
        routerLinkActive="bg-teal !text-white"
        class="flex items-center gap-2.5 px-2.5 py-2 mx-2 rounded-[7px] text-white/52 text-[13px] hover:bg-white/[0.07] hover:text-white/90 transition-all">
       <span class="material-symbols-outlined text-[17px] flex-shrink-0">history</span>
       Historial médico
     </a>
-
-    @if (isAdminView()) {
+    @if (isAdminView() || isRecepcionistaView()){
       <!-- Administración -->
       <div class="px-3.5 pt-4 pb-1.5 text-white/30 text-[10px] tracking-[0.12em] uppercase font-semibold">
         Administración
       </div>
 
+    }
+    @if (isAdminView()){
       <a routerLink="/admin/empleados" routerLinkActive="bg-teal !text-white"
          class="flex items-center gap-2.5 px-2.5 py-2 mx-2 rounded-[7px] text-white/52 text-[13px] hover:bg-white/[0.07] hover:text-white/90 transition-all">
         <span class="material-symbols-outlined text-[17px] flex-shrink-0">badge</span>
         Empleados
-      </a>
-      <a routerLink="/admin/pagos" routerLinkActive="bg-teal !text-white"
-         class="flex items-center gap-2.5 px-2.5 py-2 mx-2 rounded-[7px] text-white/52 text-[13px] hover:bg-white/[0.07] hover:text-white/90 transition-all">
-        <span class="material-symbols-outlined text-[17px] flex-shrink-0">payments</span>
-        Pagos
       </a>
       <a routerLink="/admin/usuarios" routerLinkActive="bg-teal !text-white"
          class="flex items-center gap-2.5 px-2.5 py-2 mx-2 rounded-[7px] text-white/52 text-[13px] hover:bg-white/[0.07] hover:text-white/90 transition-all">
@@ -89,6 +85,15 @@
         Reportes
       </a>
     }
+    @if (isRecepcionistaView()) {
+      <a routerLink="/admin/pagos" routerLinkActive="bg-teal !text-white"
+         class="flex items-center gap-2.5 px-2.5 py-2 mx-2 rounded-[7px] text-white/52 text-[13px] hover:bg-white/[0.07] hover:text-white/90 transition-all">
+        <span class="material-symbols-outlined text-[17px] flex-shrink-0">payments</span>
+        Pagos
+      </a>
+    }
+
+
 
 
     <!-- Bottom -->

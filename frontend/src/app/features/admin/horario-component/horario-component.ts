@@ -11,6 +11,7 @@ import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { PaginatorModule } from 'primeng/paginator';
 import { GlobalToast } from '../../../core/services/global-toast';
+import { AuthService } from '../../../core/services/auth-service';
 import {
   HorarioMedicoService,
   Medico,
@@ -37,6 +38,8 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HorarioComponent implements OnInit {
+  public authService = inject(AuthService);
+
   constructor(
     private svc: HorarioMedicoService,
     private cdr: ChangeDetectorRef,
