@@ -161,7 +161,8 @@
               </button>
               <button (click)="cambiarEstado(medico)"
                       class="px-4 py-2 rounded-xl text-white text-sm font-bold transition-all cursor-pointer"
-                      [ngClass]="medico.activo ? 'bg-red-500 hover:bg-red-600' : 'bg-[#329791] hover:bg-[#267c77]'">{{ medico.activo ? 'Desactivar' : 'Activar' }}
+                      [ngClass]="medico.activo ? 'bg-red-500 hover:bg-red-600' : 'bg-[#329791] hover:bg-[#267c77]'">
+                <i class="pi pi-user-minus text-sm"></i>
               </button>
             </div>
           </td>
