@@ -122,10 +122,12 @@ public class CitaService {
         String errorHorario = validarHorarioMedico(dto.getMedicoId(), dto.getFechaHora());
         if (errorHorario != null) return errorHorario;
 
-        if (citaRepository.existsByMedicoIdAndFechaHoraAndEstadoNot(dto.getMedicoId(), dto.getFechaHora(), EstadoCita.CANCELADA))
+        LocalDateTime inicio = dto.getFechaHora();
+        LocalDateTime fin = inicio.plusHours(1);
+        if (citaRepository.countOverlapByMedico(dto.getMedicoId(), EstadoCita.CANCELADA, inicio.minusHours(1), fin) > 0)
             return "El médico ya tiene una cita en ese horario";
 
-        if (citaRepository.existsByPacienteIdAndFechaHoraAndEstadoNot(dto.getPacienteId(), dto.getFechaHora(), EstadoCita.CANCELADA))
+        if (citaRepository.countOverlapByPaciente(dto.getPacienteId(), EstadoCita.CANCELADA, inicio.minusHours(1), fin) > 0)
             return "El paciente ya tiene una cita en ese horario";
 
         Cita cita = new Cita();
@@ -209,7 +211,8 @@ public class CitaService {
         String errorHorario = validarHorarioMedico(cita.getMedico().getId(), nuevaFechaHora);
         if (errorHorario != null) return errorHorario;
 
-        if (citaRepository.existsByMedicoIdAndFechaHoraAndEstadoNot(cita.getMedico().getId(), nuevaFechaHora, EstadoCita.CANCELADA))
+        LocalDateTime fin = nuevaFechaHora.plusHours(1);
+        if (citaRepository.countOverlapByMedico(cita.getMedico().getId(), EstadoCita.CANCELADA, nuevaFechaHora.minusHours(1), fin) > 0)
             return "El médico ya tiene una cita en ese horario";
 
         LocalDateTime fechaAnterior = cita.getFechaHora();
@@ -232,7 +235,9 @@ public class CitaService {
             try { HorarioValidator.validar(dto.getFechaHora()); } catch (IllegalArgumentException e) { return e.getMessage(); }
             String errorHorario = validarHorarioMedico(cita.getMedico().getId(), dto.getFechaHora());
             if (errorHorario != null) return errorHorario;
-            if (citaRepository.existsByMedicoIdAndFechaHoraAndEstadoNot(cita.getMedico().getId(), dto.getFechaHora(), EstadoCita.CANCELADA))
+            LocalDateTime inicio = dto.getFechaHora();
+            LocalDateTime fin = inicio.plusHours(1);
+            if (citaRepository.countOverlapByMedico(cita.getMedico().getId(), EstadoCita.CANCELADA, inicio.minusHours(1), fin) > 0)
                 return "El médico ya tiene una cita en ese horario";
             cita.setFechaHora(dto.getFechaHora());
         }

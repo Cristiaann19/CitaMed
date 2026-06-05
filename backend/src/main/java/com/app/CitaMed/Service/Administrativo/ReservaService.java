@@ -156,7 +156,8 @@ public class ReservaService {
 
         HorarioValidator.validar(fechaHora);
 
-        if (citaRepository.existsByMedicoIdAndFechaHoraAndEstadoNot(medico.getId(), fechaHora, EstadoCita.CANCELADA)) {
+        LocalDateTime fin = fechaHora.plusHours(1);
+        if (citaRepository.countOverlapByMedico(medico.getId(), EstadoCita.CANCELADA, fechaHora.minusHours(1), fin) > 0) {
             throw new RuntimeException("El horario seleccionado ya no está disponible");
         }
 
@@ -198,7 +199,7 @@ public class ReservaService {
         List<String> slots = new ArrayList<>();
         int current = inicio.getHour() * 60 + inicio.getMinute();
         int end = fin.getHour() * 60 + fin.getMinute();
-        while (current + 30 <= end) {
+        while (current + 60 <= end) {
             int h = current / 60;
             int m = current % 60;
             slots.add(String.format("%sT%02d:%02d:00", fecha, h, m));

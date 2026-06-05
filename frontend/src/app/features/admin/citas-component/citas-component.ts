@@ -3,12 +3,14 @@ import {
   ChangeDetectorRef,
   Component,
   OnInit,
+  viewChild,
+  ViewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
-import { TableModule } from 'primeng/table';
+import { Table, TableModule } from 'primeng/table';
 import { DatePickerModule } from 'primeng/datepicker';
 import { SelectModule } from 'primeng/select';
 import { InputTextModule } from 'primeng/inputtext';
@@ -20,6 +22,7 @@ import { Paciente } from '../../../model/Paciente';
 import { Especialidad } from '../../../model/Especialidad';
 import { GlobalToast } from '../../../core/services/global-toast';
 import { HttpClient } from '@angular/common/http';
+import { SortEvent } from 'primeng/api';
 import { HorarioMedicoService, HorarioMedico } from '../../../core/services/horario-medico-service';
 
 interface FiltroEstado {
@@ -46,6 +49,10 @@ interface FiltroEstado {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CitasComponent implements OnInit {
+  @ViewChild('dt') dt!: Table;
+  initialValue: CitaDetalle[] = [];
+  isSorted: boolean | null = null;
+
   citas: CitaDetalle[] = [];
   citasFiltradas: CitaDetalle[] = [];
   medicos: Medico[] = [];
@@ -101,7 +108,7 @@ export class CitasComponent implements OnInit {
     direccion: '',
     fechaNacimiento: '',
     genero: '',
-    grupoSanguineo: ''
+    grupoSanguineo: '',
   };
 
   generos = [
@@ -121,10 +128,10 @@ export class CitasComponent implements OnInit {
   ];
 
   estadosDisponibles: FiltroEstado[] = [
-    { label: 'Todas',      value: null },
+    { label: 'Todas', value: null },
     { label: 'Programada', value: EstadoCita.PROGRAMADA },
-    { label: 'Atendida',   value: EstadoCita.ATENDIDA },
-    { label: 'Cancelada',  value: EstadoCita.CANCELADA },
+    { label: 'Atendida', value: EstadoCita.ATENDIDA },
+    { label: 'Cancelada', value: EstadoCita.CANCELADA },
     { label: 'No Asistió', value: EstadoCita.NO_ASISTIO },
   ];
 
@@ -169,7 +176,7 @@ export class CitasComponent implements OnInit {
       next: (data) => {
         this.pacientes = Array.isArray(data)
           ? (data as any[]).filter((p) => p.activo !== false)
-          : (data as any).content ?? [];
+          : ((data as any).content ?? []);
         this.cdr.markForCheck();
       },
     });
@@ -177,7 +184,10 @@ export class CitasComponent implements OnInit {
 
   cargarEspecialidades(): void {
     this.http.get<Especialidad[]>('http://localhost:8080/api/especialidad').subscribe({
-      next: (data) => { this.especialidades = data; this.cdr.markForCheck(); },
+      next: (data) => {
+        this.especialidades = data;
+        this.cdr.markForCheck();
+      },
     });
   }
 
@@ -187,14 +197,16 @@ export class CitasComponent implements OnInit {
     if (this.terminoBusqueda.trim()) {
       const t = this.terminoBusqueda.toLowerCase();
       res = res.filter((c) => {
-        const pac = `${c.pacienteNombre} ${c.pacienteApellidoPaterno} ${c.pacienteApellidoMaterno}`.toLowerCase();
-        const med = `${c.medicoNombre} ${c.medicoApellidoPaterno} ${c.medicoApellidoMaterno}`.toLowerCase();
+        const pac =
+          `${c.pacienteNombre} ${c.pacienteApellidoPaterno} ${c.pacienteApellidoMaterno}`.toLowerCase();
+        const med =
+          `${c.medicoNombre} ${c.medicoApellidoPaterno} ${c.medicoApellidoMaterno}`.toLowerCase();
         return pac.includes(t) || med.includes(t) || c.pacienteDni.includes(t);
       });
     }
 
     if (this.filtroEstado) res = res.filter((c) => c.estado === this.filtroEstado);
-    if (this.filtroMedico)  res = res.filter((c) => c.medicoId === this.filtroMedico);
+    if (this.filtroMedico) res = res.filter((c) => c.medicoId === this.filtroMedico);
 
     if (this.filtroFechaInicio)
       res = res.filter((c) => new Date(c.fechaHora) >= this.filtroFechaInicio!);
@@ -206,6 +218,8 @@ export class CitasComponent implements OnInit {
     }
 
     this.citasFiltradas = res;
+    this.initialValue = [...res];
+    this.isSorted = null;
     this.cdr.markForCheck();
   }
 
@@ -238,9 +252,15 @@ export class CitasComponent implements OnInit {
     this.buscandoDni = false;
     this.reniecCargando = false;
     this.nuevoPaciente = {
-      nombre: '', apellidoPaterno: '', apellidoMaterno: '',
-      telefono: '', email: '', direccion: '',
-      fechaNacimiento: '', genero: '', grupoSanguineo: ''
+      nombre: '',
+      apellidoPaterno: '',
+      apellidoMaterno: '',
+      telefono: '',
+      email: '',
+      direccion: '',
+      fechaNacimiento: '',
+      genero: '',
+      grupoSanguineo: '',
     };
   }
 
@@ -280,7 +300,7 @@ export class CitasComponent implements OnInit {
       },
       error: () => {
         this.consultarReniec(dni);
-      }
+      },
     });
   }
 
@@ -306,7 +326,7 @@ export class CitasComponent implements OnInit {
         this.reniecCargando = false;
         this.buscandoDni = false;
         this.cdr.markForCheck();
-      }
+      },
     });
   }
 
@@ -324,25 +344,32 @@ export class CitasComponent implements OnInit {
 
   registrarPacienteYContinuar(): void {
     if (!this.nuevoPaciente.nombre?.trim()) {
-      this.toast.warn('Ingrese el nombre del paciente'); return;
+      this.toast.warn('Ingrese el nombre del paciente');
+      return;
     }
     if (!this.nuevoPaciente.apellidoPaterno?.trim()) {
-      this.toast.warn('Ingrese el apellido paterno'); return;
+      this.toast.warn('Ingrese el apellido paterno');
+      return;
     }
     if (!this.nuevoPaciente.apellidoMaterno?.trim()) {
-      this.toast.warn('Ingrese el apellido materno'); return;
+      this.toast.warn('Ingrese el apellido materno');
+      return;
     }
     if (!/^\d{9}$/.test(this.nuevoPaciente.telefono)) {
-      this.toast.warn('El teléfono debe tener 9 dígitos'); return;
+      this.toast.warn('El teléfono debe tener 9 dígitos');
+      return;
     }
     if (!this.nuevoPaciente.fechaNacimiento) {
-      this.toast.warn('Seleccione la fecha de nacimiento'); return;
+      this.toast.warn('Seleccione la fecha de nacimiento');
+      return;
     }
     if (!this.nuevoPaciente.genero) {
-      this.toast.warn('Seleccione el género'); return;
+      this.toast.warn('Seleccione el género');
+      return;
     }
     if (!this.nuevoPaciente.grupoSanguineo) {
-      this.toast.warn('Seleccione el grupo sanguíneo'); return;
+      this.toast.warn('Seleccione el grupo sanguíneo');
+      return;
     }
 
     const payload = { dni: this.dniPaciente.trim(), ...this.nuevoPaciente };
@@ -351,7 +378,11 @@ export class CitasComponent implements OnInit {
       next: (res: any) => {
         const pacienteId = res?.id;
         if (pacienteId) this.nuevaCita.pacienteId = pacienteId;
-        this.pacienteEncontrado = { id: pacienteId, dni: this.dniPaciente.trim(), ...this.nuevoPaciente } as any;
+        this.pacienteEncontrado = {
+          id: pacienteId,
+          dni: this.dniPaciente.trim(),
+          ...this.nuevoPaciente,
+        } as any;
         this.pacienteNoEncontrado = false;
         this.mostrarCamposPaciente = false;
         this.toast.success('Paciente registrado correctamente');
@@ -360,7 +391,7 @@ export class CitasComponent implements OnInit {
       },
       error: (err) => {
         this.toast.error(err?.error?.mensaje || 'Error al registrar paciente');
-      }
+      },
     });
   }
 
@@ -374,7 +405,7 @@ export class CitasComponent implements OnInit {
     this.nuevaFechaReprogramacion = new Date(cita.fechaHora);
     this.horarioMedicoService.getHorariosPorMedico(cita.medicoId).subscribe({
       next: (data) => {
-        this.horariosMedico = data.filter(h => h.activo);
+        this.horariosMedico = data.filter((h) => h.activo);
         this.cdr.markForCheck();
       },
     });
@@ -401,7 +432,7 @@ export class CitasComponent implements OnInit {
     if (this.nuevaCita.medicoId && this.nuevaCita.medicoId > 0) {
       this.horarioMedicoService.getHorariosPorMedico(this.nuevaCita.medicoId).subscribe({
         next: (data) => {
-          this.horariosMedico = data.filter(h => h.activo);
+          this.horariosMedico = data.filter((h) => h.activo);
           this.cdr.markForCheck();
         },
       });
@@ -434,14 +465,18 @@ export class CitasComponent implements OnInit {
     if (this.horariosMedico.length === 0) return true;
     const diaSemana = this.dateToDiaSemana(fecha);
     const horaCita = `${String(fecha.getHours()).padStart(2, '0')}:${String(fecha.getMinutes()).padStart(2, '0')}`;
-    return this.horariosMedico.some(h =>
-      h.dia === diaSemana && horaCita >= h.horaInicio && horaCita <= h.horaFin
+    return this.horariosMedico.some(
+      (h) => h.dia === diaSemana && horaCita >= h.horaInicio && horaCita <= h.horaFin,
     );
   }
 
-  get now(): Date { return new Date(); }
+  get now(): Date {
+    return new Date();
+  }
 
-  esFechaFutura(d: Date): boolean { return d > this.now; }
+  esFechaFutura(d: Date): boolean {
+    return d > this.now;
+  }
 
   get motivoInvalido(): boolean {
     const m = this.nuevaCita.motivoConsulta;
@@ -461,38 +496,51 @@ export class CitasComponent implements OnInit {
 
   guardarCita(): void {
     if (!this.nuevaCita.pacienteId || this.nuevaCita.pacienteId === 0) {
-      this.toast.warn('Busque y seleccione un paciente por DNI'); return;
+      this.toast.warn('Busque y seleccione un paciente por DNI');
+      return;
     }
     if (!this.nuevaCita.medicoId) {
-      this.toast.warn('Seleccione un médico'); return;
+      this.toast.warn('Seleccione un médico');
+      return;
     }
     if (!this.fechaHoraCita) {
-      this.toast.warn('Seleccione fecha y hora'); return;
+      this.toast.warn('Seleccione fecha y hora');
+      return;
     }
     if (this.fechaHoraCita <= new Date()) {
-      this.toast.warn('La fecha debe ser posterior a la actual'); return;
+      this.toast.warn('La fecha debe ser posterior a la actual');
+      return;
     }
     if (!this.nuevaCita.motivoConsulta?.trim()) {
-      this.toast.warn('Ingrese el motivo de consulta'); return;
+      this.toast.warn('Ingrese el motivo de consulta');
+      return;
     }
     if (this.nuevaCita.motivoConsulta.trim().length < 5) {
-      this.toast.warn('El motivo debe tener al menos 5 caracteres'); return;
+      this.toast.warn('El motivo debe tener al menos 5 caracteres');
+      return;
     }
 
     if (this.horariosMedico.length > 0 && !this.horarioCitaValido(this.fechaHoraCita)) {
-      this.toast.warn('El médico no atiende en la fecha y hora seleccionadas'); return;
+      this.toast.warn('El médico no atiende en la fecha y hora seleccionadas');
+      return;
     }
 
     this.nuevaCita.fechaHora = this.toLocalISOString(this.fechaHoraCita);
 
     if (this.modoEdicion && this.citaEditandoId) {
       this.citaService.actualizar(this.citaEditandoId, this.nuevaCita).subscribe({
-        next: (res) => { this.toast.success(res); this.cerrarModalYRecargar(); },
+        next: (res) => {
+          this.toast.success(res);
+          this.cerrarModalYRecargar();
+        },
         error: (err) => this.toast.error(err.error || 'Error al actualizar la cita'),
       });
     } else {
       this.citaService.registrar(this.nuevaCita).subscribe({
-        next: (res) => { this.toast.success(res); this.cerrarModalYRecargar(); },
+        next: (res) => {
+          this.toast.success(res);
+          this.cerrarModalYRecargar();
+        },
         error: (err) => this.toast.error(err.error || 'Error al registrar la cita'),
       });
     }
@@ -508,16 +556,19 @@ export class CitasComponent implements OnInit {
       return;
     }
     if (this.horariosMedico.length > 0 && !this.horarioCitaValido(this.nuevaFechaReprogramacion)) {
-      this.toast.warn('El médico no atiende en la fecha y hora seleccionadas'); return;
+      this.toast.warn('El médico no atiende en la fecha y hora seleccionadas');
+      return;
     }
-      this.citaService.reprogramar(this.citaSeleccionada.id, this.toLocalISOString(this.nuevaFechaReprogramacion)).subscribe({
-      next: (res) => {
-        this.toast.success(res);
-        this.mostrarReprogramarModal = false;
-        this.cargarCitas();
-      },
-      error: (err) => this.toast.error(err.error || 'Error al reprogramar'),
-    });
+    this.citaService
+      .reprogramar(this.citaSeleccionada.id, this.toLocalISOString(this.nuevaFechaReprogramacion))
+      .subscribe({
+        next: (res) => {
+          this.toast.success(res);
+          this.mostrarReprogramarModal = false;
+          this.cargarCitas();
+        },
+        error: (err) => this.toast.error(err.error || 'Error al reprogramar'),
+      });
   }
 
   confirmarEliminar(cita: CitaDetalle): void {
@@ -558,14 +609,20 @@ export class CitasComponent implements OnInit {
 
   completarCita(cita: CitaDetalle): void {
     this.citaService.completar(cita.id).subscribe({
-      next: (res) => { this.toast.success(res); this.cargarCitas(); },
+      next: (res) => {
+        this.toast.success(res);
+        this.cargarCitas();
+      },
       error: (err) => this.toast.error(err.error || 'Error al completar'),
     });
   }
 
   marcarNoAsistio(cita: CitaDetalle): void {
     this.citaService.noAsistio(cita.id).subscribe({
-      next: (res) => { this.toast.success(res); this.cargarCitas(); },
+      next: (res) => {
+        this.toast.success(res);
+        this.cargarCitas();
+      },
       error: (err) => this.toast.error(err.error || 'Error al actualizar'),
     });
   }
@@ -595,16 +652,16 @@ export class CitasComponent implements OnInit {
   obtenerClaseEstado(estado: EstadoCita): string {
     const map: Record<EstadoCita, string> = {
       [EstadoCita.PROGRAMADA]: 'bg-teal-100 text-teal-800',
-      [EstadoCita.ATENDIDA]:   'bg-green-100 text-green-800',
-      [EstadoCita.CANCELADA]:  'bg-red-100 text-red-800',
+      [EstadoCita.ATENDIDA]: 'bg-green-100 text-green-800',
+      [EstadoCita.CANCELADA]: 'bg-red-100 text-red-800',
       [EstadoCita.NO_ASISTIO]: 'bg-amber-100 text-amber-800',
     };
     return map[estado] ?? '';
   }
 
-  puedeReprogramar     = (c: CitaDetalle) => c.estado === EstadoCita.PROGRAMADA;
-  puedeCancelar        = (c: CitaDetalle) => c.estado === EstadoCita.PROGRAMADA;
-  puedeCompletar       = (c: CitaDetalle) => c.estado === EstadoCita.PROGRAMADA;
+  puedeReprogramar = (c: CitaDetalle) => c.estado === EstadoCita.PROGRAMADA;
+  puedeCancelar = (c: CitaDetalle) => c.estado === EstadoCita.PROGRAMADA;
+  puedeCompletar = (c: CitaDetalle) => c.estado === EstadoCita.PROGRAMADA;
   puedeMarcarNoAsistio = (c: CitaDetalle) => c.estado === EstadoCita.PROGRAMADA;
 
   // Validation helpers for HTML
@@ -622,5 +679,50 @@ export class CitasComponent implements OnInit {
 
   dni8Valido(dni: string): boolean {
     return /^\d{8}$/.test(dni);
+  }
+
+  /*
+   * =====================================
+   *      LOGICA PARA HACER EL SORT
+   * =====================================
+   * */
+
+  private resetting = false;
+
+  customSort(event: SortEvent): void {
+    if (this.resetting) return;
+
+    if (this.isSorted == null || this.isSorted === undefined) {
+      this.isSorted = true;
+      this.sortTableData(event);
+    } else if (this.isSorted === true) {
+      this.isSorted = false;
+      this.sortTableData(event);
+    } else {
+      this.isSorted = null;
+      this.resetting = true;
+      this.citasFiltradas = [...this.initialValue];
+      this.dt.reset();
+      setTimeout(() => {
+        this.resetting = false;
+      }, 0);
+    }
+  }
+
+  private sortTableData(event: SortEvent): void {
+    this.citasFiltradas.sort((data1, data2) => {
+      const value1 = (data1 as any)[event.field!];
+      const value2 = (data2 as any)[event.field!];
+      let result: number;
+
+      if (value1 == null && value2 != null) result = -1;
+      else if (value1 != null && value2 == null) result = 1;
+      else if (value1 == null && value2 == null) result = 0;
+      else if (typeof value1 === 'string' && typeof value2 === 'string')
+        result = value1.localeCompare(value2);
+      else result = value1 < value2 ? -1 : value1 > value2 ? 1 : 0;
+
+      return event.order! * result;
+    });
   }
 }

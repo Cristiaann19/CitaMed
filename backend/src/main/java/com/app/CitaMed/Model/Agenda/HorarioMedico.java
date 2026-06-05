@@ -43,7 +43,6 @@ public class HorarioMedico {
 
     @NotNull(message = "Debe seleccionar un consultorio")
     @ManyToOne
-    @JsonIgnore
     @JoinColumn(name = "consultorio_id", nullable = false)
     private Consultorio consultorio;
 }

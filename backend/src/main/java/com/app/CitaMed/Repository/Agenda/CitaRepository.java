@@ -23,9 +23,23 @@ public interface CitaRepository extends JpaRepository<Cita, Long> {
 
     List<Cita> findByPacienteId(Long pacienteId);
 
-    boolean existsByMedicoIdAndFechaHoraAndEstadoNot(Long medicoId, LocalDateTime fechaHora, EstadoCita estado);
+    @Query("SELECT COUNT(c) FROM Cita c WHERE c.medico.id = :medicoId " +
+           "AND c.estado <> :estadoCancelada " +
+           "AND c.fechaHora < :nuevaFin " +
+           "AND :nuevaInicioMinus1h < c.fechaHora")
+    long countOverlapByMedico(@Param("medicoId") Long medicoId,
+                              @Param("estadoCancelada") EstadoCita estadoCancelada,
+                              @Param("nuevaInicioMinus1h") LocalDateTime nuevaInicioMinus1h,
+                              @Param("nuevaFin") LocalDateTime nuevaFin);
 
-    boolean existsByPacienteIdAndFechaHoraAndEstadoNot(Long pacienteId, LocalDateTime fechaHora, EstadoCita estado);
+    @Query("SELECT COUNT(c) FROM Cita c WHERE c.paciente.id = :pacienteId " +
+           "AND c.estado <> :estadoCancelada " +
+           "AND c.fechaHora < :nuevaFin " +
+           "AND :nuevaInicioMinus1h < c.fechaHora")
+    long countOverlapByPaciente(@Param("pacienteId") Long pacienteId,
+                                @Param("estadoCancelada") EstadoCita estadoCancelada,
+                                @Param("nuevaInicioMinus1h") LocalDateTime nuevaInicioMinus1h,
+                                @Param("nuevaFin") LocalDateTime nuevaFin);
 
     Long countByFechaHoraBetween(LocalDateTime inicio, LocalDateTime fin);
 

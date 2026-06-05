@@ -98,21 +98,63 @@
   <!-- TABLA -->
   <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
     <p-table
+      #dt
       [value]="citasFiltradas"
       [paginator]="true"
       [rows]="10"
       [rowsPerPageOptions]="[5, 10, 20, 50]"
       [responsiveLayout]="'scroll'"
+      [sortMode]="'single'"
+      [customSort]="true"
+      (onSort)="customSort($event)"
       class="min-w-full">
 
       <ng-template pTemplate="header">
         <tr class="bg-[#e4f1f1]/20 border-b border-[#e4f1f1]/10">
-          <th class="text-left px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">Paciente</th>
-          <th class="text-left px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">M&eacute;dico</th>
-          <th class="text-left px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">Consultorio</th>
-          <th class="text-left px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">Fecha y Hora</th>
-          <th class="text-left px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">Estado</th>
-          <th class="text-center px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">Acciones</th>
+          <th pSortableColumn="pacienteNombre"
+              class="text-left px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">
+            <div class="flex items-center gap-2">
+              Paciente
+              <p-sortIcon field="pacienteNombre" />
+            </div>
+          </th>
+          <th pSortableColumn="medicoNombre"
+              class="text-left px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">
+            <div class="flex items-center gap-2">
+              Médico
+              <p-sortIcon field="medicoNombre" />
+            </div>
+          </th>
+          <th pSortableColumn="consultorioNumero"
+              class="text-left px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">
+            <div class="flex items-center gap-2">
+              Consultorio
+              <p-sortIcon field="consultorioNumero" />
+            </div>
+          </th>
+
+          <!-- Fecha — ordena por fechaHora -->
+          <th pSortableColumn="fechaHora"
+              class="text-left px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">
+            <div class="flex items-center gap-2">
+              Fecha y Hora
+              <p-sortIcon field="fechaHora" />
+            </div>
+          </th>
+
+          <!-- Estado — ordena por estado -->
+          <th pSortableColumn="estado"
+              class="text-left px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">
+            <div class="flex items-center gap-2">
+              Estado
+              <p-sortIcon field="estado" />
+            </div>
+          </th>
+
+          <!-- Acciones — sin ordenamiento -->
+          <th class="text-center px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">
+            Acciones
+          </th>
         </tr>
       </ng-template>
 
@@ -420,6 +462,7 @@
           dateFormat="dd/mm/yy"
           hourFormat="24"
           [minDate]="hoy"
+          [stepMinute]="60"
           placeholder="Seleccione fecha y hora"
           [style]="{'width': '100%'}">
         </p-datepicker>
@@ -602,6 +645,7 @@
         dateFormat="dd/mm/yy"
         hourFormat="24"
         [minDate]="hoy"
+        [stepMinute]="60"
         placeholder="Seleccione nueva fecha y hora"
         [style]="{'width': '100%'}">
       </p-datepicker>

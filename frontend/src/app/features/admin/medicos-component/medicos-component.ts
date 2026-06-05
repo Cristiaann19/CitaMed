@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -30,7 +30,8 @@ import {
   User,
 } from 'lucide-angular';
 import { PaginatorModule } from 'primeng/paginator';
-import { TableModule } from 'primeng/table';
+import { Table, TableModule } from 'primeng/table';
+import { SortEvent } from 'primeng/api';
 
 @Component({
   selector: 'app-medicos',
@@ -71,6 +72,11 @@ export class MedicosComponent implements OnInit {
   Ear = Ear;
   Accessibility = Accessibility;
   User = User;
+
+  @ViewChild('dt') dt!: Table;
+  initialValue: Medico[] = [];
+  isSorted: boolean | null = null;
+  private resetting = false;
 
   medicos: Medico[] = [];
   medicosFiltrados: Medico[] = [];
@@ -118,6 +124,8 @@ export class MedicosComponent implements OnInit {
       next: (data: Medico[]) => {
         this.medicos = data;
         this.medicosFiltrados = [...data];
+        this.initialValue = [...data];
+        this.isSorted = null;
         this.cdr.markForCheck();
       },
       error: (err: any) => {
@@ -333,6 +341,8 @@ export class MedicosComponent implements OnInit {
       return coincideTexto && coincideEspecialidad;
     });
 
+    this.initialValue = [...this.medicosFiltrados];
+    this.isSorted = null;
     this.cdr.markForCheck();
   }
 
@@ -366,6 +376,43 @@ export class MedicosComponent implements OnInit {
     };
 
     return mapaIconos[key] ?? this.Stethoscope;
+  }
+
+  customSort(event: SortEvent): void {
+    if (this.resetting) return;
+
+    if (this.isSorted == null || this.isSorted === undefined) {
+      this.isSorted = true;
+      this.sortTableData(event);
+    } else if (this.isSorted === true) {
+      this.isSorted = false;
+      this.sortTableData(event);
+    } else {
+      this.isSorted = null;
+      this.resetting = true;
+      this.medicosFiltrados = [...this.initialValue];
+      this.dt.reset();
+      setTimeout(() => {
+        this.resetting = false;
+      }, 0);
+    }
+  }
+
+  private sortTableData(event: SortEvent): void {
+    this.medicosFiltrados.sort((data1, data2) => {
+      const value1 = (data1 as any)[event.field!];
+      const value2 = (data2 as any)[event.field!];
+      let result: number;
+
+      if (value1 == null && value2 != null) result = -1;
+      else if (value1 != null && value2 == null) result = 1;
+      else if (value1 == null && value2 == null) result = 0;
+      else if (typeof value1 === 'string' && typeof value2 === 'string')
+        result = value1.localeCompare(value2);
+      else result = value1 < value2 ? -1 : value1 > value2 ? 1 : 0;
+
+      return event.order! * result;
+    });
   }
 
   resetFormulario(): void {

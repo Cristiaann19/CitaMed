@@ -14,6 +14,7 @@ import { PagosComponent } from './features/admin/pagos-component/pagos-component
 import { Reportes } from './features/admin/reportes/reportes';
 import { HistorialMedicoC } from './features/admin/historial-medico-c/historial-medico-c';
 import { authGuard } from './core/guards/auth.guard';
+import { Page404Component } from './shared/components/page404-component/page404-component';
 
 export const routes: Routes = [
   {
@@ -96,5 +97,5 @@ export const routes: Routes = [
     ],
   },
   { path: '', redirectTo: 'inicio', pathMatch: 'full' },
-  { path: '**', redirectTo: 'inicio' },
+  { path: '**', component: Page404Component },
 ];

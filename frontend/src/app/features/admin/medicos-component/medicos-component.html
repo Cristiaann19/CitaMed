@@ -46,21 +46,56 @@
 
   <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
     <p-table
+      #dt
       [value]="medicosFiltrados"
       [paginator]="true"
       [rows]="10"
       [rowsPerPageOptions]="[5,10,20]"
       [responsiveLayout]="'scroll'"
+      [customSort]="true"
+      (onSort)="customSort($event)"
       class="min-w-full">
       <ng-template pTemplate="header">
         <tr class="bg-[#e4f1f1]/20 border-b border-[#e4f1f1]/10">
-          <th class="text-left px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">Médico</th>
-          <th class="text-left px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">Especialidad</th>
-          <th class="text-left px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">Contacto</th>
-          <th class="text-left px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">Género</th>
-          <th class="text-left px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">CMP</th>
-          <th class="text-left px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">Consultorio</th>
-          <th class="text-center px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">Estado</th>
+          <th pSortableColumn="nombre" class="text-left px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">
+            <div class="flex items-center gap-2">
+              Médico
+              <p-sortIcon field="nombre" />
+            </div>
+          </th>
+          <th class="text-left px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">
+            <div class="flex items-center gap-2">
+              Especialidad
+            </div>
+          </th>
+          <th class="text-left px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">
+            <div class="flex items-center gap-2">
+              Contacto
+            </div>
+          </th>
+          <th pSortableColumn="genero" class="text-left px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">
+            <div class="flex items-center gap-2">
+              Género
+              <p-sortIcon field="genero" />
+            </div>
+          </th>
+          <th pSortableColumn="numeroColegiatura" class="text-left px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">
+            <div class="flex items-center gap-2">
+              CMP
+              <p-sortIcon field="numeroColegiatura" />
+            </div>
+          </th>
+          <th class="text-left px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">
+            <div class="flex items-center gap-2">
+              Consultorio
+            </div>
+          </th>
+          <th pSortableColumn="activo" class="text-center px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">
+            <div class="flex items-center gap-2 justify-center">
+              Estado
+              <p-sortIcon field="activo" />
+            </div>
+          </th>
           <th class="text-center px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">Acciones</th>
         </tr>
       </ng-template>
@@ -126,7 +161,8 @@
               </button>
               <button (click)="cambiarEstado(medico)"
                       class="px-4 py-2 rounded-xl text-white text-sm font-bold transition-all cursor-pointer"
-                      [ngClass]="medico.activo ? 'bg-red-500 hover:bg-red-600' : 'bg-[#329791] hover:bg-[#267c77]'">{{ medico.activo ? 'Desactivar' : 'Activar' }}
+                      [ngClass]="medico.activo ? 'bg-red-500 hover:bg-red-600' : 'bg-[#329791] hover:bg-[#267c77]'">
+                <i class="pi pi-user-minus text-sm"></i>
               </button>
             </div>
           </td>

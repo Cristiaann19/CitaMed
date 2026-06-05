@@ -7,7 +7,7 @@ export interface HorarioMedico {
   horaInicio: string;
   horaFin: string;
   activo: boolean;
-  consultorio?: { id: number; nombre: string; numero: string };
+  consultorio?: { id: number; descripcion: string; numero: string };
 }
 
 export interface HorarioMedicoDTO {
@@ -35,7 +35,7 @@ export interface Medico {
 
 export interface Consultorio {
   id: number;
-  nombre: string;
+  descripcion: string;
   numero: string;
   disponible: boolean;
 }
