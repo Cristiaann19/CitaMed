@@ -17,9 +17,16 @@
                  class="w-full pl-11 pr-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#0D72C5] focus:ring-4 focus:ring-blue-100 transition-all outline-none text-sm bg-white" />
         </div>
         <!-- Filtro especialidad -->
-        <input type="text" [(ngModel)]="filtroEspecialidad" (input)="filtrar()"
-               placeholder="Filtrar por especialidad..."
-               class="px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#0D72C5] focus:ring-4 focus:ring-blue-100 transition-all outline-none text-sm bg-white w-full sm:w-52" />
+        <p-select
+          [(ngModel)]="filtroEspecialidad"
+          [options]="especialidades"
+          optionLabel="nombre"
+          optionValue="id"
+          placeholder="Filtrar por especialidad"
+          (onChange)="filtrar()"
+          [showClear]="true"
+          styleClass="w-full sm:w-52">
+        </p-select>
       </div>
     </div>
   </div>
