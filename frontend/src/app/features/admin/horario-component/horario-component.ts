@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { PaginatorModule } from 'primeng/paginator';
+import { SelectModule } from 'primeng/select';
 import { GlobalToast } from '../../../core/services/global-toast';
 import { AuthService } from '../../../core/services/auth-service';
 import {
@@ -20,6 +21,8 @@ import {
   DiaSemana,
   Consultorio,
 } from '../../../core/services/horario-medico-service';
+import { Especialidad } from '../../../model/Especialidad';
+import { EspecialidadService } from '../../../core/services/especialidad-service';
 
 @Component({
   selector: 'app-horario-component',
@@ -29,6 +32,7 @@ import {
     FormsModule,
     DialogModule,
     ButtonModule,
+    SelectModule,
     DecimalPipe,
     SlicePipe,
     PaginatorModule,
@@ -40,10 +44,13 @@ import {
 export class HorarioComponent implements OnInit {
   public authService = inject(AuthService);
 
+  especialidades: Especialidad[] = [];
+
   constructor(
     private svc: HorarioMedicoService,
     private cdr: ChangeDetectorRef,
     private toast: GlobalToast,
+    private especialidadService: EspecialidadService,
   ) { }
 
   medicos: Medico[] = [];
@@ -54,7 +61,7 @@ export class HorarioComponent implements OnInit {
   medicoIdParaBorrar: number | null = null;
 
   terminoBusqueda = '';
-  filtroEspecialidad = '';
+  filtroEspecialidad: number | null = null;
 
   displayModal = false;
   displayDelete = false;
@@ -85,6 +92,17 @@ export class HorarioComponent implements OnInit {
   ngOnInit(): void {
     this.cargarMedicos();
     this.cargarConsultorios();
+    this.cargarEspecialidades();
+  }
+
+  cargarEspecialidades(): void {
+    this.especialidadService.obtenerTodas().subscribe({
+      next: (data) => {
+        this.especialidades = data;
+        this.cdr.markForCheck();
+      },
+      error: () => this.toast.error('No se pudieron cargar las especialidades'),
+    });
   }
 
   cargarMedicos(): void {
@@ -155,11 +173,10 @@ export class HorarioComponent implements OnInit {
 
   filtrar(): void {
     const term = this.terminoBusqueda.toLowerCase();
-    const esp = this.filtroEspecialidad.toLowerCase();
     this.medicosFiltrados = this.medicos.filter((m) => {
       const nombre = `${m.nombre} ${m.apellidoPaterno}`.toLowerCase();
       const matchNombre = nombre.includes(term);
-      const matchEsp = esp ? m.especialidad?.nombre?.toLowerCase().includes(esp) : true;
+      const matchEsp = this.filtroEspecialidad != null ? m.especialidad?.id === this.filtroEspecialidad : true;
       return matchNombre && matchEsp;
     });
     this.first = 0;

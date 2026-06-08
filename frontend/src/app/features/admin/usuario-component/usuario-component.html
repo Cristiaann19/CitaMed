@@ -1,1 +1,351 @@
-usuarios works!
+<div class="p-1">
+  <!-- HEADER -->
+  <div class="bg-white rounded-3xl shadow-sm border border-blue-100/50 p-8 mb-6">
+    <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-5">
+      <div>
+        <h3 class="text-4xl font-bold text-[#329791] mb-2">
+          Usuarios del Sistema
+        </h3>
+        <p class="text-gray-600 text-sm">
+          Gesti&oacute;n de cuentas de usuario y roles
+        </p>
+      </div>
+
+      <button
+        (click)="abrirNueva()"
+        class="h-[48px] px-5 rounded-xl bg-[#329791] hover:bg-[#267c77] text-white font-bold text-sm transition-all shadow-sm cursor-pointer flex items-center gap-2 justify-center">
+        <i class="pi pi-plus"></i>
+        Nuevo Usuario
+      </button>
+    </div>
+  </div>
+
+  <!-- FILTROS -->
+  <div class="bg-white rounded-3xl shadow-sm border border-blue-100/50 p-6 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="relative">
+        <i class="pi pi-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+        <input
+          type="text"
+          [(ngModel)]="terminoBusqueda"
+          (input)="aplicarFiltros()"
+          placeholder="Buscar por nombre de usuario..."
+          class="w-full pl-11 pr-4 h-12 rounded-xl border-2 border-gray-200 focus:border-[#329791] focus:ring-4 focus:ring-[#329791]/10 transition-all outline-none text-sm bg-white" />
+      </div>
+
+      <div class="flex items-end justify-end">
+        <button
+          (click)="limpiarFiltros()"
+          class="px-4 py-2 text-sm font-semibold text-[#329791] hover:bg-[#329791]/10 rounded-lg transition-all">
+          <i class="pi pi-filter-slash mr-2"></i>
+          Limpiar filtros
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ERROR -->
+  <div *ngIf="error" class="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg mb-6">
+    <p class="text-red-700 text-sm">{{ error }}</p>
+  </div>
+
+  <!-- TABLA -->
+  <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+    <p-table
+      #dt
+      [value]="usuariosFiltrados"
+      [paginator]="true"
+      [rows]="10"
+      [rowsPerPageOptions]="[5, 10, 20, 50]"
+      [responsiveLayout]="'scroll'"
+      [sortMode]="'single'"
+      [customSort]="true"
+      (onSort)="customSort($event)"
+      class="min-w-full">
+
+      <ng-template pTemplate="header">
+        <tr class="bg-[#e4f1f1]/20 border-b border-[#e4f1f1]/10">
+          <th pSortableColumn="userName"
+              class="text-left px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">
+            <div class="flex items-center gap-2">
+              Usuario
+              <p-sortIcon field="userName" />
+            </div>
+          </th>
+          <th pSortableColumn="rol"
+              class="text-left px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">
+            <div class="flex items-center gap-2">
+              Rol
+              <p-sortIcon field="rol" />
+            </div>
+          </th>
+          <th pSortableColumn="activo"
+              class="text-left px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">
+            <div class="flex items-center gap-2">
+              Estado
+              <p-sortIcon field="activo" />
+            </div>
+          </th>
+          <th class="text-center px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">
+            Acciones
+          </th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-usuario>
+        <tr class="border-b border-gray-100 hover:bg-[#329791]/[0.03] transition-all">
+          <td class="px-6 py-5">
+            <span class="font-semibold text-gray-800 text-sm">{{ usuario.userName }}</span>
+          </td>
+          <td class="px-6 py-5">
+            <span
+              class="inline-block px-3 py-1.5 rounded-full text-xs font-bold"
+              [ngClass]="obtenerClaseRol(usuario.rol)">
+              {{ usuario.rol }}
+            </span>
+          </td>
+          <td class="px-6 py-5">
+            <span
+              class="inline-block px-3 py-1.5 rounded-full text-xs font-bold"
+              [ngClass]="usuario.activo ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'">
+              {{ usuario.activo ? 'Activo' : 'Inactivo' }}
+            </span>
+          </td>
+          <td class="px-6 py-5">
+            <div class="flex items-center justify-center gap-2">
+              <button
+                (click)="abrirCambiarRol(usuario)"
+                class="w-9 h-9 rounded-lg bg-blue-100 hover:bg-blue-200 text-blue-700 flex items-center justify-center cursor-pointer transition-all"
+                title="Cambiar rol">
+                <i class="pi pi-user-edit text-sm"></i>
+              </button>
+              <button
+                (click)="confirmarCambiarEstado(usuario)"
+                class="w-9 h-9 rounded-lg flex items-center justify-center cursor-pointer transition-all"
+                [ngClass]="usuario.activo ? 'bg-orange-100 hover:bg-orange-200 text-orange-700' : 'bg-green-100 hover:bg-green-200 text-green-700'"
+                [title]="usuario.activo ? 'Desactivar usuario' : 'Activar usuario'">
+                <i class="pi text-sm" [ngClass]="usuario.activo ? 'pi-pause-circle' : 'pi-play-circle'"></i>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="4" class="!text-center !align-middle py-20 text-gray-400">
+            <i class="pi pi-users !text-6xl mb-4 block"></i>
+            <p class="font-semibold text-lg">No se encontraron usuarios</p>
+            <p class="text-sm mt-2">Intenta ajustar los filtros o registra un nuevo usuario</p>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<!-- ============================================
+     MODAL: NUEVO USUARIO
+============================================ -->
+<p-dialog
+  header="Nuevo Usuario"
+  [(visible)]="mostrarModal"
+  [modal]="true"
+  [style]="{ width: '500px' }"
+  [draggable]="false"
+  [resizable]="false">
+
+  <div class="space-y-5 mt-4">
+    <div>
+      <label class="text-xs font-semibold text-gray-600 block mb-2">
+        Nombre de usuario <span class="text-red-500">*</span>
+      </label>
+      <input
+        type="text"
+        [(ngModel)]="usuarioForm.userName"
+        placeholder="Ej: jperez"
+        class="w-full px-4 py-3 rounded-xl border-2 outline-none transition-all"
+        [class.border-red-400]="!usuarioForm.userName.trim() && mostrarModal"
+        [class.border-gray-200]="usuarioForm.userName.trim() || !mostrarModal" />
+    </div>
+
+    <div>
+      <label class="text-xs font-semibold text-gray-600 block mb-2">
+        Contrase&ntilde;a <span class="text-red-500">*</span>
+      </label>
+      <p-password
+        [(ngModel)]="usuarioForm.password"
+        [feedback]="true"
+        [promptLabel]="'Ingrese una contrase&ntilde;a'"
+        [weakLabel]="'D&eacute;bil'"
+        [mediumLabel]="'Media'"
+        [strongLabel]="'Fuerte'"
+        [style]="{'width': '100%'}"
+        styleClass="w-full"
+        inputStyleClass="w-full px-4 py-3 rounded-xl border-2 border-gray-200 outline-none transition-all">
+      </p-password>
+    </div>
+
+    <div>
+      <label class="text-xs font-semibold text-gray-600 block mb-2">
+        Rol <span class="text-red-500">*</span>
+      </label>
+      <p-select
+        [(ngModel)]="usuarioForm.rol"
+        [options]="[Rol.ADMIN, Rol.MEDICO, Rol.RECEPCIONISTA]"
+        placeholder="Seleccione un rol"
+        [style]="{'width': '100%', 'height': '48px'}"
+        styleClass="w-full"
+        appendTo="body">
+      </p-select>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-end gap-3 pt-4">
+      <button
+        (click)="mostrarModal = false"
+        class="px-5 py-2.5 rounded-xl bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold cursor-pointer transition-all">
+        Cancelar
+      </button>
+      <button
+        (click)="guardar()"
+        [disabled]="!usuarioForm.userName.trim() || !usuarioForm.password || usuarioForm.password.length < 6"
+        class="px-5 py-2.5 rounded-xl bg-[#329791] hover:bg-[#267c77] text-white font-bold cursor-pointer transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+        <i class="pi pi-save mr-2"></i>
+        Guardar
+      </button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<!-- ============================================
+     MODAL: CAMBIAR ROL
+============================================ -->
+<p-dialog
+  header="Cambiar Rol"
+  [(visible)]="mostrarModalRol"
+  [modal]="true"
+  [style]="{ width: '450px' }"
+  [draggable]="false"
+  [resizable]="false">
+
+  <div *ngIf="usuarioRolEditando" class="space-y-5 mt-4">
+    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-lg space-y-2 text-sm">
+      <div class="flex justify-between">
+        <span class="text-gray-600">Usuario:</span>
+        <span class="font-semibold text-gray-800">{{ usuarioRolEditando.userName }}</span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-gray-600">Rol actual:</span>
+        <span
+          class="inline-block px-2 py-0.5 rounded-full text-xs font-bold"
+          [ngClass]="obtenerClaseRol(usuarioRolEditando.rol)">
+          {{ usuarioRolEditando.rol }}
+        </span>
+      </div>
+    </div>
+
+    <div>
+      <label class="text-xs font-semibold text-gray-600 block mb-2">
+        Nuevo rol <span class="text-red-500">*</span>
+      </label>
+      <p-select
+        [(ngModel)]="nuevoRol"
+        [options]="[Rol.ADMIN, Rol.MEDICO, Rol.RECEPCIONISTA]"
+        placeholder="Seleccione un rol"
+        [style]="{'width': '100%', 'height': '48px'}"
+        styleClass="w-full"
+        appendTo="body">
+      </p-select>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-end gap-3 pt-4">
+      <button
+        (click)="mostrarModalRol = false"
+        class="px-5 py-2.5 rounded-xl bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold cursor-pointer transition-all">
+        Cancelar
+      </button>
+      <button
+        (click)="cambiarRol()"
+        class="px-5 py-2.5 rounded-xl bg-[#329791] hover:bg-[#267c77] text-white font-bold cursor-pointer transition-all">
+        <i class="pi pi-check mr-2"></i>
+        Cambiar Rol
+      </button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<!-- ============================================
+     MODAL: CONFIRMAR CAMBIAR ESTADO
+============================================ -->
+<p-dialog
+  [header]="usuarioCambiandoEstado?.activo ? 'Desactivar Usuario' : 'Activar Usuario'"
+  [(visible)]="mostrarConfirmarEstado"
+  [modal]="true"
+  [style]="{ width: '450px' }"
+  [draggable]="false"
+  [resizable]="false">
+
+  <div *ngIf="usuarioCambiandoEstado" class="py-4">
+    <div class="flex items-center gap-4 mb-4">
+      <div
+        class="w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
+        [ngClass]="usuarioCambiandoEstado.activo ? 'bg-orange-100' : 'bg-green-100'">
+        <i
+          class="text-xl"
+          [ngClass]="usuarioCambiandoEstado.activo ? 'pi pi-pause-circle text-orange-600' : 'pi pi-play-circle text-green-600'"></i>
+      </div>
+      <div>
+        <h4 class="font-bold text-gray-800">
+          {{ usuarioCambiandoEstado.activo ? 'Desactivar usuario' : 'Activar usuario' }}
+        </h4>
+        <p class="text-sm text-gray-500">
+          {{ usuarioCambiandoEstado.activo ? 'El usuario no podr&aacute; iniciar sesi&oacute;n' : 'El usuario podr&aacute; iniciar sesi&oacute;n nuevamente' }}
+        </p>
+      </div>
+    </div>
+
+    <div class="bg-gray-50 rounded-xl p-4 space-y-2 text-sm">
+      <div class="flex justify-between">
+        <span class="text-gray-600">Usuario:</span>
+        <span class="font-semibold text-gray-800">{{ usuarioCambiandoEstado.userName }}</span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-gray-600">Rol:</span>
+        <span
+          class="inline-block px-2 py-0.5 rounded-full text-xs font-bold"
+          [ngClass]="obtenerClaseRol(usuarioCambiandoEstado.rol)">
+          {{ usuarioCambiandoEstado.rol }}
+        </span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-gray-600">Estado actual:</span>
+        <span
+          class="inline-block px-2 py-0.5 rounded-full text-xs font-bold"
+          [ngClass]="usuarioCambiandoEstado.activo ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'">
+          {{ usuarioCambiandoEstado.activo ? 'Activo' : 'Inactivo' }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-end gap-3">
+      <button
+        (click)="mostrarConfirmarEstado = false"
+        class="px-5 py-2.5 rounded-xl bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold cursor-pointer transition-all">
+        Cancelar
+      </button>
+      <button
+        (click)="toggleEstado()"
+        class="px-5 py-2.5 rounded-xl text-white font-bold cursor-pointer transition-all"
+        [ngClass]="usuarioCambiandoEstado?.activo ? 'bg-orange-500 hover:bg-orange-600' : 'bg-green-600 hover:bg-green-700'">
+        <i class="pi mr-2" [ngClass]="usuarioCambiandoEstado?.activo ? 'pi-pause-circle' : 'pi-play-circle'"></i>
+        {{ usuarioCambiandoEstado?.activo ? 'Desactivar' : 'Activar' }}
+      </button>
+    </div>
+  </ng-template>
+</p-dialog>

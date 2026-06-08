@@ -1,4 +1,5 @@
 <div class="p-1">
+  <!-- HEADER -->
   <div class="bg-white rounded-3xl shadow-sm border border-blue-100/50 p-8 mb-6">
     <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-5">
       <div>
@@ -9,32 +10,83 @@
           Listado de especialidades disponibles en el sistema
         </p>
       </div>
+
+      <button
+        (click)="abrirNueva()"
+        class="h-[48px] px-5 rounded-xl bg-[#329791] hover:bg-[#267c77] text-white font-bold text-sm transition-all shadow-sm cursor-pointer flex items-center gap-2 justify-center">
+        <i class="pi pi-plus"></i>
+        Nueva Especialidad
+      </button>
     </div>
   </div>
 
+  <!-- FILTROS -->
+  <div class="bg-white rounded-3xl shadow-sm border border-blue-100/50 p-6 mb-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div class="relative">
+        <i class="pi pi-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+        <input
+          type="text"
+          [(ngModel)]="terminoBusqueda"
+          (input)="aplicarFiltros()"
+          placeholder="Buscar por nombre o descripci&oacute;n..."
+          class="w-full pl-11 pr-4 h-12 rounded-xl border-2 border-gray-200 focus:border-[#329791] focus:ring-4 focus:ring-[#329791]/10 transition-all outline-none text-sm bg-white" />
+      </div>
+
+      <div class="flex items-end justify-end">
+        <button
+          (click)="limpiarFiltros()"
+          class="px-4 py-2 text-sm font-semibold text-[#329791] hover:bg-[#329791]/10 rounded-lg transition-all">
+          <i class="pi pi-filter-slash mr-2"></i>
+          Limpiar filtros
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ERROR -->
   <div *ngIf="error" class="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg mb-6">
     <p class="text-red-700 text-sm">{{ error }}</p>
   </div>
 
-  <div *ngIf="cargando" class="bg-white rounded-3xl shadow-sm border border-gray-100 p-20 text-center">
-    <i class="pi pi-spin pi-spinner !text-4xl mb-4 block text-[#329791]"></i>
-    <p class="font-semibold text-lg text-gray-400">Cargando especialidades...</p>
-  </div>
+  <!-- TABLA -->
+  <div class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+    <p-table
+      #dt
+      [value]="especialidadesFiltradas"
+      [paginator]="true"
+      [rows]="10"
+      [rowsPerPageOptions]="[5, 10, 20, 50]"
+      [responsiveLayout]="'scroll'"
+      [sortMode]="'single'"
+      [customSort]="true"
+      (onSort)="customSort($event)"
+      class="min-w-full">
 
-  <div *ngIf="!cargando && !error" class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-    <table class="w-full">
-      <thead>
+      <ng-template pTemplate="header">
         <tr class="bg-[#e4f1f1]/20 border-b border-[#e4f1f1]/10">
-          <th class="text-left px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">#</th>
-          <th class="text-left px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">Nombre</th>
-          <th class="text-left px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">Descripci&oacute;n</th>
+          <th pSortableColumn="nombre"
+              class="text-left px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">
+            <div class="flex items-center gap-2">
+              Nombre
+              <p-sortIcon field="nombre" />
+            </div>
+          </th>
+          <th pSortableColumn="descripcion"
+              class="text-left px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">
+            <div class="flex items-center gap-2">
+              Descripci&oacute;n
+              <p-sortIcon field="descripcion" />
+            </div>
+          </th>
+          <th class="text-center px-6 py-4 text-xs font-black uppercase tracking-wider text-[#329791]">
+            Acciones
+          </th>
         </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let esp of especialidades; let i = index" class="border-b border-gray-100 hover:bg-[#329791]/[0.03] transition-all">
-          <td class="px-6 py-5">
-            <span class="font-bold text-[#329791]">{{ i + 1 }}</span>
-          </td>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-esp>
+        <tr class="border-b border-gray-100 hover:bg-[#329791]/[0.03] transition-all">
           <td class="px-6 py-5">
             <span class="inline-block px-3 py-1.5 rounded-xl bg-[#329791]/10 text-[#329791] text-xs font-bold">
               {{ esp.nombre }}
@@ -43,14 +95,144 @@
           <td class="px-6 py-5">
             <span class="text-sm text-gray-700">{{ esp.descripcion }}</span>
           </td>
-        </tr>
-        <tr *ngIf="especialidades.length === 0">
-          <td colspan="3" class="text-center py-20 text-gray-400">
-            <i class="pi pi-search !text-6xl mb-4 block"></i>
-            <p class="font-semibold text-lg">No hay especialidades registradas</p>
+          <td class="px-6 py-5">
+            <div class="flex items-center justify-center gap-2">
+              <button
+                (click)="abrirEditar(esp)"
+                class="w-9 h-9 rounded-lg bg-amber-100 hover:bg-amber-200 text-amber-700 flex items-center justify-center cursor-pointer transition-all"
+                title="Editar especialidad">
+                <i class="pi pi-pencil text-sm"></i>
+              </button>
+              <button
+                (click)="confirmarEliminar(esp)"
+                class="w-9 h-9 rounded-lg bg-red-100 hover:bg-red-200 text-red-700 flex items-center justify-center cursor-pointer transition-all"
+                title="Eliminar especialidad">
+                <i class="pi pi-trash text-sm"></i>
+              </button>
+            </div>
           </td>
         </tr>
-      </tbody>
-    </table>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="3" class="!text-center !align-middle py-20 text-gray-400">
+            <i class="pi pi-search !text-6xl mb-4 block"></i>
+            <p class="font-semibold text-lg">No se encontraron especialidades</p>
+            <p class="text-sm mt-2">Intenta ajustar los filtros o registra una nueva especialidad</p>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
   </div>
 </div>
+
+<!-- ============================================
+     MODAL: NUEVA / EDITAR ESPECIALIDAD
+============================================ -->
+<p-dialog
+  [header]="modoEdicion ? 'Editar Especialidad' : 'Nueva Especialidad'"
+  [(visible)]="mostrarModal"
+  [modal]="true"
+  [style]="{ width: '550px' }"
+  [draggable]="false"
+  [resizable]="false">
+
+  <div class="space-y-5 mt-4">
+    <div>
+      <label class="text-xs font-semibold text-gray-600 block mb-2">
+        Nombre <span class="text-red-500">*</span>
+      </label>
+      <input
+        type="text"
+        [(ngModel)]="especialidadForm.nombre"
+        placeholder="Ingrese el nombre de la especialidad"
+        class="w-full px-4 py-3 rounded-xl border-2 outline-none transition-all"
+        [class.border-red-400]="!especialidadForm.nombre.trim() && mostrarModal"
+        [class.border-gray-200]="especialidadForm.nombre.trim() || !mostrarModal" />
+    </div>
+
+    <div>
+      <label class="text-xs font-semibold text-gray-600 block mb-2">
+        Descripci&oacute;n
+      </label>
+      <textarea
+        [(ngModel)]="especialidadForm.descripcion"
+        rows="4"
+        maxlength="200"
+        placeholder="Ingrese una descripci&oacute;n de la especialidad"
+        class="w-full px-4 py-3 rounded-xl border-2 border-gray-200 outline-none transition-all resize-none"></textarea>
+      <div class="flex justify-end mt-1">
+        <span class="text-xs text-gray-400">{{ especialidadForm.descripcion.length }}/200</span>
+      </div>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-end gap-3 pt-4">
+      <button
+        (click)="mostrarModal = false"
+        class="px-5 py-2.5 rounded-xl bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold cursor-pointer transition-all">
+        Cancelar
+      </button>
+      <button
+        (click)="guardar()"
+        [disabled]="!especialidadForm.nombre.trim()"
+        class="px-5 py-2.5 rounded-xl bg-[#329791] hover:bg-[#267c77] text-white font-bold cursor-pointer transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+        <i class="pi pi-save mr-2"></i>
+        {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
+      </button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<!-- ============================================
+     MODAL: CONFIRMAR ELIMINAR
+============================================ -->
+<p-dialog
+  header="Confirmar Eliminaci&oacute;n"
+  [(visible)]="mostrarConfirmarDelete"
+  [modal]="true"
+  [style]="{ width: '450px' }"
+  [draggable]="false"
+  [resizable]="false">
+
+  <div *ngIf="especialidadEliminando" class="py-4">
+    <div class="flex items-center gap-4 mb-4">
+      <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center flex-shrink-0">
+        <i class="pi pi-exclamation-triangle text-red-600 text-xl"></i>
+      </div>
+      <div>
+        <h4 class="font-bold text-gray-800">Eliminar especialidad</h4>
+        <p class="text-sm text-gray-500">Esta acci&oacute;n no se puede deshacer</p>
+      </div>
+    </div>
+
+    <div class="bg-gray-50 rounded-xl p-4 space-y-2 text-sm">
+      <div class="flex justify-between">
+        <span class="text-gray-600">Nombre:</span>
+        <span class="font-semibold text-gray-800">{{ especialidadEliminando.nombre }}</span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-gray-600">Descripci&oacute;n:</span>
+        <span class="font-semibold text-gray-800">{{ especialidadEliminando.descripcion }}</span>
+      </div>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-end gap-3">
+      <button
+        (click)="mostrarConfirmarDelete = false"
+        class="px-5 py-2.5 rounded-xl bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold cursor-pointer transition-all">
+        Cancelar
+      </button>
+      <button
+        (click)="eliminar()"
+        class="px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold cursor-pointer transition-all">
+        <i class="pi pi-trash mr-2"></i>
+        Eliminar
+      </button>
+    </div>
+  </ng-template>
+</p-dialog>

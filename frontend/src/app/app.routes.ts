@@ -62,7 +62,8 @@ export const routes: Routes = [
       {
         path: 'especialidades',
         component: EspecialidadesComponent,
-        data: { title: 'Especialidades' },
+        data: { title: 'Especialidades', roles: ['ADMIN', 'MEDICO', 'RECEPCIONISTA'] },
+        canActivate: [() => import('./core/guards/role.guard').then((m) => m.roleGuard as any)],
       },
       {
         path: 'horarios',
