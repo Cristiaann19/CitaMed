@@ -114,7 +114,26 @@ Funcionalidades:
 
 ---
 
-## 6. Gestion de Citas
+## 6. Gestion de Especialidades
+
+CRUD completo de especialidades.
+
+![especialidades](capturas/especialidades.png)
+
+Modal de especialidad:
+
+![modalEspecialidades](capturas/modalEspecialidades.png)
+
+Funcionalidades:
+- Listar especialidades con paginacion
+- Buscar por nombre
+- Registrar nueva especialidad
+- Editar especialidad
+- Activar / Desactivar especialidad
+
+---
+
+## 7. Gestion de Citas
 
 CRUD completo y operaciones de estado.
 
@@ -144,7 +163,7 @@ Funcionalidades:
 
 ---
 
-## 7. Gestion de Horarios
+## 8. Gestion de Horarios
 
 Administracion de horarios por medico.
 
@@ -167,6 +186,7 @@ Funcionalidades:
 | Dashboard | Metricas completas |
 | Pacientes CRUD | Completo |
 | Medicos CRUD | Completo |
+| Especialidades CRUD | Completo |
 | Citas CRUD | Completo (+ estados) |
 | Horarios | Completo |
 | Seguridad | Roles ADMIN / MEDICO / RECEPCIONISTA |

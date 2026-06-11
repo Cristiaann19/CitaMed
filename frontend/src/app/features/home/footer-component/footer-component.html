@@ -25,15 +25,15 @@
           Especialidades
         </h4>
 
-        <ul class="flex flex-col gap-2">
+        <ul class="grid grid-cols-2 gap-x-16 list-none p-0 m-0">
           <li *ngFor="let e of especialidades">
-            <a href="#" class="text-sm text-white hover:text-white transition-all hover:underline underline-offset-2">{{ e.nombre }}</a>
+            <a href="#" class="text-sm text-white hover:text-white transition-all hover:underline underline-offset-2 whitespace-nowrap">{{ e.nombre }}</a>
           </li>
         </ul>
       </div>
 
       <!-- Columna 3 -->
-      <div class="flex flex-col gap-4">
+      <div class="flex flex-col gap-4 mr-16 ml-25">
         <h4 class="text-xs font-bold uppercase tracking-widest text-white border-b border-white/10 pb-2">
           Pacientes
         </h4>
